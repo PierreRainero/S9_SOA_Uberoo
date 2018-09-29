@@ -1,0 +1,33 @@
+# General
+*.class
+*.jar
+**/.idea
+**/target/
+*.exe
+
+# Intellij
+**/*.iml
+**/.idea
+
+# Eclipse
+.project
+.classpath
+*.pydevproject
+.metadata
+.gradle
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.externalToolBuilders/
+*.launch
+.cproject
+.factorypath
+.buildpath
+.target
+.texlipse
