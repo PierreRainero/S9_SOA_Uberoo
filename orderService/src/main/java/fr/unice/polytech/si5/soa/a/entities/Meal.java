@@ -10,10 +10,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+/**
+ * Class name	Meal
+ * Date			29/09/2018
+ * @author		PierreRainero
+ */
 @Entity
 @Data
 @Table(name = "`Meal`")
@@ -31,9 +37,28 @@ public class Meal implements Serializable {
 	private int id;
 	
 	@Column(name = "name", nullable = false)
-	protected String name;
+	private String name;
 
+	/**
+	 * Default constructor
+	 */
 	public Meal() {
 		// Default constructor for JPA
+	}
+	
+	/**
+	 * Normal construtor using Data Transfert Object
+	 * @param mealDatas DTO for {@link Meal}
+	 */
+	public Meal(MealDTO mealDatas) {
+		this.name = mealDatas.getName();
+	}
+	
+	/**
+	 * Generate a Data Transfer Object from a business object
+	 * @return DTO for a {@link Meal}
+	 */
+	public MealDTO toDTO() {
+		return new MealDTO(name);
 	}
 }

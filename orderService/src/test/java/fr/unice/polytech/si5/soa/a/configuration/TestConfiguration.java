@@ -1,48 +1,52 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
+import org.springframework.context.annotation.Configuration;
+
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.entities.Command;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 
 /**
- * Class name	ApplicationConfiguration
+ * Class name	TestConfiguration
  * Date			29/09/2018
  * @author		PierreRainero
  */
 @Configuration
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
-// Components to used :
+// Components to used
 @ComponentScans(value = { 
-		@ComponentScan("fr.unice.polytech.si5.soa.a.dao"),
-		@ComponentScan("fr.unice.polytech.si5.soa.a.services")
+        @ComponentScan("fr.gfi.outilrecrutement.webservice.dao"),
+        @ComponentScan("fr.gfi.outilrecrutement.webservice.service")
 })
-public class ApplicationConfiguration {
+public class TestConfiguration {
 	@Autowired
 	private Environment env;
 
 	@Bean
 	public DataSource getDataSource() {
 		BasicDataSource dataSource = new BasicDataSource();
-		dataSource.setDriverClassName(env.getProperty("db.driver"));
-		dataSource.setUrl(env.getProperty("db.url"));
-		dataSource.setUsername(env.getProperty("db.username"));
-		dataSource.setPassword(env.getProperty("db.password"));
+		dataSource.setDriverClassName(env.getProperty("hsqldb.driver"));
+		dataSource.setUrl(env.getProperty("hsqldb.url"));
+		dataSource.setUsername(env.getProperty("hsqldb.username"));
+		dataSource.setPassword(env.getProperty("hsqldb.password"));
 		return dataSource;
 	}
 
@@ -54,9 +58,10 @@ public class ApplicationConfiguration {
 		Properties props = new Properties();
 		props.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
 		props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-		props.put("hibernate.hbm2ddl.auto", env.getProperty("db.hbm2ddl.auto"));
-		props.put("hibernate.dialect", env.getProperty("db.dialect"));
+		props.put("hibernate.hbm2ddl.auto", env.getProperty("hsqldb.hbm2ddl.auto"));
+		props.put("hibernate.dialect", env.getProperty("hsqldb.dialect"));
 
+		// Entities
 		factoryBean.setHibernateProperties(props);
 		factoryBean.setAnnotatedClasses(Command.class, Meal.class);
 		return factoryBean;
@@ -68,4 +73,10 @@ public class ApplicationConfiguration {
 		transactionManager.setSessionFactory(getSessionFactory().getObject());
 		return transactionManager;
 	}
+	
+	@Qualifier("mock")
+	@Bean
+    public IOrderTakerDao iServiceCandidate() {
+        return Mockito.mock(IOrderTakerDao.class);
+    }
 }
