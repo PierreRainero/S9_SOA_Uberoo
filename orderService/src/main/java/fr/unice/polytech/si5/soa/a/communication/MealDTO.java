@@ -18,6 +18,13 @@ public class MealDTO implements Serializable {
 	private String name;
 	
 	/**
+	 * Default constructor
+	 */
+	public MealDTO() {
+		// Default constructor for Jackson databinding
+	}
+	
+	/**
 	 * Normal constructor 
 	 * @param name meal's name
 	 */

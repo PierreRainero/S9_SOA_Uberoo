@@ -36,14 +36,14 @@ public class OrderTakerDaoImpl implements IOrderTakerDao {
      */
 	public Command addCommand(Command commandToAdd) {
 		Session session = sessionFactory.getCurrentSession();
-		logger.debug("inside DAO LAYER");
+
 		try {
 			session.save(commandToAdd);
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
 			logger.error("Cannot execute query : addCommand", e);
 		}
-		logger.debug("go outside DAO LAYER");
+
 		return commandToAdd;
 	}
 

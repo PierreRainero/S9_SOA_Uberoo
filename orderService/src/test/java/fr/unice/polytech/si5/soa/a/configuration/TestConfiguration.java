@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.entities.Command;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 
 /**
  * Class name	TestConfiguration
@@ -33,8 +34,8 @@ import fr.unice.polytech.si5.soa.a.entities.Meal;
 @EnableTransactionManagement
 // Components to used
 @ComponentScans(value = { 
-        @ComponentScan("fr.gfi.outilrecrutement.webservice.dao"),
-        @ComponentScan("fr.gfi.outilrecrutement.webservice.service")
+		@ComponentScan("fr.unice.polytech.si5.soa.a.dao"),
+		@ComponentScan("fr.unice.polytech.si5.soa.a.services")
 })
 public class TestConfiguration {
 	@Autowired
@@ -76,7 +77,13 @@ public class TestConfiguration {
 	
 	@Qualifier("mock")
 	@Bean
-    public IOrderTakerDao iServiceCandidate() {
+    public IOrderTakerDao iOrderTakerDao() {
         return Mockito.mock(IOrderTakerDao.class);
+    }
+	
+	@Qualifier("mock")
+	@Bean
+    public IOrderTakerService iOrderTakerService() {
+        return Mockito.mock(IOrderTakerService.class);
     }
 }

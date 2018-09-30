@@ -20,6 +20,13 @@ public class CommandDTO implements Serializable {
 	private List<MealDTO> meals = new ArrayList<>();
 	
 	/**
+	 * Default constructor
+	 */
+	public CommandDTO() {
+		// Default constructor for Jackson databinding
+	}
+	
+	/**
 	 * Normal constructor 
 	 * @param meals list of meals (DTO)
 	 */

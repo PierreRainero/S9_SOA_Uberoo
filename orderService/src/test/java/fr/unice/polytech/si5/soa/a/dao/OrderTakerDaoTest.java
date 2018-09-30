@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.hibernate.Session;
@@ -20,6 +21,11 @@ import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Command;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 
+/**
+ * Class name	OrderTakerDaoTest
+ * Date			29/09/2018
+ * @author		PierreRainero
+ */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TestConfiguration.class })
 public class OrderTakerDaoTest {
@@ -80,7 +86,7 @@ public class OrderTakerDaoTest {
 	public void addANewCommand() {
 		Command command = orderDao.addCommand(bobCommand);
 		
-		assertNotEquals(null, command);
+		assertNotNull(command);
 		assertNotEquals(0, command.getId());
 		assertEquals(1, command.getMeals().size());
 	}

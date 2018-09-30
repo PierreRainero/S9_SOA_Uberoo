@@ -1,0 +1,7 @@
+version: '3.3'
+
+services:
+  organiserClient:
+    image: "soa/wb/orderservice"
+    ports:
+      - "9555:8080"

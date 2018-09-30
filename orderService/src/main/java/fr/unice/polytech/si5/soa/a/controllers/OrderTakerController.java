@@ -1,4 +1,4 @@
-package fr.unice.polytech.si5.soa.a.controller;
+package fr.unice.polytech.si5.soa.a.controllers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +28,7 @@ public class OrderTakerController {
 
 	@RequestMapping(value = "/",
 			method = RequestMethod.POST,
+			consumes = {"application/JSON; charset=UTF-8"},
 			produces = {"application/JSON; charset=UTF-8"})
 	public ResponseEntity<CommandDTO> addUser(@RequestBody CommandDTO command) {
 		return ResponseEntity.ok(orderService.addCommand(command));
