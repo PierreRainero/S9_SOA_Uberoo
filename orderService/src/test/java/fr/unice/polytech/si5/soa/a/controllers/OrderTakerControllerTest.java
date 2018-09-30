@@ -2,7 +2,7 @@ package fr.unice.polytech.si5.soa.a.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -30,6 +30,8 @@ import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Command;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.User;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
 
@@ -66,8 +68,14 @@ public class OrderTakerControllerTest {
 		Meal ramen = new Meal();
 		ramen.setName("Ramen soup");
 		
+		User bob = new User();
+		bob.setFirstName("Bob");
+		bob.setLastName("Harington");
+		
 		Command command  = new Command();
 		command.addMeal(ramen);
+		command.setDeliveryAddress("930 Route des Colles, 06410 Biot");
+		command.setTransmitter(bob);
 		
 		bobCommand = command.toDTO();
 	}
@@ -89,5 +97,19 @@ public class OrderTakerControllerTest {
         CommandDTO commandAdded = captor.getValue();
         assertNotNull(commandAdded);
         assertEquals(1, commandAdded.getMeals().size());
+	}
+    
+    @Test
+    public void addCommandWithoutTransmitterUsingHTTPPost() throws Exception {
+		when(orderServiceMock.addCommand(any(CommandDTO.class))).thenThrow(UnknowUserException.class);
+		
+		mockMvc.perform(post(BASE_URI)
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+               .content(TestUtil.convertObjectToJsonBytes(bobCommand))
+        ).andExpect(status().isNotFound());
+        
+        ArgumentCaptor<CommandDTO> captor = ArgumentCaptor.forClass(CommandDTO.class);
+        verify(orderServiceMock, times(1)).addCommand(captor.capture());
+        verifyNoMoreInteractions(orderServiceMock);
 	}
 }

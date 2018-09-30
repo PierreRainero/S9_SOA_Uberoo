@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.unice.polytech.si5.soa.a.communication.CommandDTO;
+import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 
 /**
@@ -31,6 +33,14 @@ public class OrderTakerController {
 			consumes = {"application/JSON; charset=UTF-8"},
 			produces = {"application/JSON; charset=UTF-8"})
 	public ResponseEntity<CommandDTO> addUser(@RequestBody CommandDTO command) {
-		return ResponseEntity.ok(orderService.addCommand(command));
+		try {
+			return ResponseEntity.ok(orderService.addCommand(command));
+		}catch(UnknowUserException e) {
+			logger.info(e.getMessage(), e);
+			return ResponseEntity.status(404).body(null);
+		}catch(EmptyDeliveryAddressException e) {
+			logger.info(e.getMessage(), e);
+			return ResponseEntity.status(400).body(null);
+		}
 	}
 }

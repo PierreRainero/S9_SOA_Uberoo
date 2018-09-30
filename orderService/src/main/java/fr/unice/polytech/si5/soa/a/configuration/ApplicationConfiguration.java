@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import fr.unice.polytech.si5.soa.a.entities.Command;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.User;
 
 /**
  * Class name	ApplicationConfiguration
@@ -58,7 +59,7 @@ public class ApplicationConfiguration {
 		props.put("hibernate.dialect", env.getProperty("db.dialect"));
 
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(Command.class, Meal.class);
+		factoryBean.setAnnotatedClasses(Command.class, Meal.class, User.class);
 		return factoryBean;
 	}
 

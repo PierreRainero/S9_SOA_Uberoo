@@ -8,12 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.sun.istack.internal.NotNull;
 
 import fr.unice.polytech.si5.soa.a.communication.CommandDTO;
 import lombok.Data;
@@ -46,6 +50,13 @@ public class Command implements Serializable {
 	@ManyToMany
 	@Setter(NONE)
 	private List<Meal> meals = new ArrayList<>();
+	
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@NotNull
+	private User transmitter;
+	
+	@Column(name = "deliveryAddress", nullable = false)
+	private String deliveryAddress;
 
 	/**
 	 * Default constructor
@@ -55,11 +66,18 @@ public class Command implements Serializable {
 	}
 	
 	/**
+	 * Normal construtor using Data Transfert Object
+	 * @param commandDatas DTO for {@link Command}
+	 */
+	public Command(CommandDTO commandDatas) {
+		this.deliveryAddress = commandDatas.getDeliveryAddress();
+	}
+	/**
 	 * Generate a Data Transfer Object from a business object
 	 * @return DTO for a {@link Command}
 	 */
 	public CommandDTO toDTO() {
-		return new CommandDTO(meals.stream().map(command -> command.toDTO()).collect(Collectors.toList()));
+		return new CommandDTO(meals.stream().map(command -> command.toDTO()).collect(Collectors.toList()), transmitter.toDTO(), deliveryAddress);
 	}
 	
 	/**

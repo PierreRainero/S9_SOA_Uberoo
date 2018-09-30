@@ -20,8 +20,10 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
+import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.Command;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 
 /**
@@ -64,7 +66,7 @@ public class TestConfiguration {
 
 		// Entities
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(Command.class, Meal.class);
+		factoryBean.setAnnotatedClasses(Command.class, Meal.class, User.class);
 		return factoryBean;
 	}
 
@@ -79,6 +81,12 @@ public class TestConfiguration {
 	@Bean
     public IOrderTakerDao iOrderTakerDao() {
         return Mockito.mock(IOrderTakerDao.class);
+    }
+	
+	@Qualifier("mock")
+	@Bean
+    public IUserDao iUserDao() {
+        return Mockito.mock(IUserDao.class);
     }
 	
 	@Qualifier("mock")

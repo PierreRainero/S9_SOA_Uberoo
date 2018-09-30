@@ -1,8 +1,10 @@
 package fr.unice.polytech.si5.soa.a.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Optional;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -18,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
-import fr.unice.polytech.si5.soa.a.entities.Command;
-import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.User;
 
 /**
@@ -29,34 +29,24 @@ import fr.unice.polytech.si5.soa.a.entities.User;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TestConfiguration.class })
-public class OrderTakerDaoTest {
+public class UserDaoTest {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
 	@Autowired
-	private IOrderTakerDao orderDao;
+	private IUserDao userDao;
 	
-	private Meal ramen;
-	private Command bobCommand;
 	private User bob;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
-		ramen = new Meal();
-		ramen.setName("Ramen soup");
 		
 		bob = new User();
 		bob.setFirstName("Bob");
 		bob.setLastName("Harington");
 		
-		bobCommand = new Command();
-		bobCommand.addMeal(ramen);
-		bobCommand.setDeliveryAddress("930 Route des Colles, 06410 Biot");
-		bobCommand.setTransmitter(bob);
-		
 		Session session = sessionFactory.openSession();
 		try {
-			session.save(ramen);
 			session.save(bob);
 			session.beginTransaction().commit();
 		} catch (SQLGrammarException e) {
@@ -73,19 +63,12 @@ public class OrderTakerDaoTest {
 	    try {
 	    	transaction = session.beginTransaction();
 	    	
-	    	if(bobCommand.getId() != 0) {
-	    		session.delete(bobCommand);
-	    	}
-	    	
-			session.delete(ramen);
 			session.delete(bob);
 			
 			session.flush();
 			transaction.commit();
-			
-			bobCommand = null;
+
 			bob = null;
-			ramen = null;
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
 		} finally {
@@ -94,11 +77,19 @@ public class OrderTakerDaoTest {
 	}
 	
 	@Test
-	public void addANewCommand() {
-		Command command = orderDao.addCommand(bobCommand);
+	public void findExistingUserById() {
+		Optional<User> userWrapped = userDao.findUserById(bob.getId());
 		
-		assertNotNull(command);
-		assertNotEquals(0, command.getId());
-		assertEquals(1, command.getMeals().size());
+		assertTrue(userWrapped.isPresent());
+		
+		User user = userWrapped.get();
+		assertEquals(bob.getFirstName(), user.getFirstName());
+	}
+	
+	@Test
+	public void dontFindNonExistingUserById() {
+		Optional<User> userWrapped = userDao.findUserById(-1);
+		
+		assertFalse(userWrapped.isPresent());
 	}
 }
