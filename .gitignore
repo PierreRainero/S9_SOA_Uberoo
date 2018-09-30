@@ -4,7 +4,7 @@
 **/.idea
 **/target/
 *.exe
-*./logs
+**/logs
 
 # Intellij
 **/*.iml
