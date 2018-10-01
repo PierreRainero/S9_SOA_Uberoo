@@ -5,3 +5,11 @@ services:
     image: "soa/wb/orderservice"
     ports:
       - "9555:8080"
+  messageBus:
+    image: "soa/bus"
+    ports:
+      - "5000:5000"
+  database:
+    image: "soa/database"
+    ports:
+      - "3306:3306"
