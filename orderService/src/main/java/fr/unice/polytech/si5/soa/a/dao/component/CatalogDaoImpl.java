@@ -1,13 +1,12 @@
 package fr.unice.polytech.si5.soa.a.dao.component;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -29,12 +28,13 @@ import fr.unice.polytech.si5.soa.a.entities.Meal;
 @Repository
 @Transactional
 public class CatalogDaoImpl implements ICatalogDao {
-	private static Logger logger = LogManager.getLogger(CatalogDaoImpl.class);
-
 	@Autowired
 	private SessionFactory sessionFactory;
 
 	@Override
+	/**
+     * {@inheritDoc}
+     */
 	public Optional<Meal> findMealByName(String name) {
 		Session session = sessionFactory.getCurrentSession();
 		CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -48,5 +48,21 @@ public class CatalogDaoImpl implements ICatalogDao {
 		}catch(Exception e) {
 			return Optional.empty();
 		}
+	}
+
+	@Override
+	/**
+     * {@inheritDoc}
+     */
+	public List<Meal> findMealsByTag(String tag) {
+		Session session = sessionFactory.getCurrentSession();
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<Meal> criteria = builder.createQuery(Meal.class);
+		Root<Meal> root =  criteria.from(Meal.class);
+		
+		criteria.select(root).where(builder.isMember(tag, root.get("tags")));
+		Query<Meal> query = session.createQuery(criteria);
+		
+		return query.getResultList();
 	}
 }

@@ -1,11 +1,7 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -33,8 +29,6 @@ import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 @Primary
 @Service("OrderTakerService")
 public class OrderTakerServiceImpl implements IOrderTakerService {
-	private static Logger logger = LogManager.getLogger(OrderTakerServiceImpl.class);
-	
 	@Autowired
 	private IOrderTakerDao orderDao;
 	

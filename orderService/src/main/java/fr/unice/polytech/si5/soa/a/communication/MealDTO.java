@@ -1,6 +1,8 @@
 package fr.unice.polytech.si5.soa.a.communication;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +23,7 @@ public class MealDTO implements Serializable {
 	private static final long serialVersionUID = -8640334793101869876L;
 	
 	private String name;
+	private List<String> tags = new ArrayList<>();
 	
 	/**
 	 * Default constructor
@@ -33,7 +36,8 @@ public class MealDTO implements Serializable {
 	 * Normal constructor 
 	 * @param name meal's name
 	 */
-	public MealDTO(String name) {
+	public MealDTO(String name, List<String> tags) {
 		this.name = name;
+		this.tags = tags;
 	}
 }

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.Session;
@@ -20,7 +21,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
-import fr.unice.polytech.si5.soa.a.entities.User;
 
 /**
  * Class name	CatalogDaoTest
@@ -30,6 +30,8 @@ import fr.unice.polytech.si5.soa.a.entities.User;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TestConfiguration.class })
 public class CatalogDaoTest {
+	private static final String ASIAN_CATEGORY = "Asian";
+	
 	@Autowired
 	private SessionFactory sessionFactory;
 	
@@ -37,15 +39,22 @@ public class CatalogDaoTest {
 	private ICatalogDao catalogDao;
 	
 	private Meal ramen;
+	private Meal sushis;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
 		ramen = new Meal();
 		ramen.setName("Ramen soup");
+		ramen.addTag(ASIAN_CATEGORY);
+		
+		sushis = new Meal();
+		sushis.setName("Sushis");
+		sushis.addTag(ASIAN_CATEGORY);
 		
 		Session session = sessionFactory.openSession();
 		try {
 			session.save(ramen);
+			session.save(sushis);
 			session.beginTransaction().commit();
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
@@ -62,11 +71,13 @@ public class CatalogDaoTest {
 	    	transaction = session.beginTransaction();
 	    	
 			session.delete(ramen);
+			session.delete(sushis);
 			
 			session.flush();
 			transaction.commit();
 
 			ramen = null;
+			sushis = null;
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
 		} finally {
@@ -89,5 +100,19 @@ public class CatalogDaoTest {
 		Optional<Meal> mealWrapped = catalogDao.findMealByName("superfétatoire");
 		
 		assertFalse(mealWrapped.isPresent());
+	}
+	
+	@Test
+	public void findAMealsByTag() {
+		List<Meal> result = catalogDao.findMealsByTag(ASIAN_CATEGORY);
+		
+		assertFalse(result.isEmpty());
+		assertEquals(2, result.size());
+	}
+	
+	@Test
+	public void dontFindAnyMealByTag() {
+		List<Meal> result = catalogDao.findMealsByTag("superfétatoire");
+		assertTrue(result.isEmpty());
 	}
 }

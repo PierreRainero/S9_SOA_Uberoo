@@ -17,7 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.sun.istack.internal.NotNull;
+import org.springframework.lang.NonNull;
 
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import lombok.Data;
@@ -26,13 +26,13 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Class name	Command
- * Date			29/09/2018
+ * Class name	Order
+ * Date			01/10/2018
  * @author		PierreRainero
  */
 @Entity
 @Data
-@Table(name = "`COMMAND`")
+@Table(name = "`ORDER`")
 @EqualsAndHashCode(exclude={"id"})
 @ToString()
 public class Order implements Serializable {
@@ -52,7 +52,7 @@ public class Order implements Serializable {
 	private List<Meal> meals = new ArrayList<>();
 	
 	@ManyToOne(cascade = CascadeType.MERGE)
-	@NotNull
+	@NonNull
 	private User transmitter;
 	
 	@Column(name = "deliveryAddress", nullable = false)
@@ -77,11 +77,11 @@ public class Order implements Serializable {
 	 * @return DTO for a {@link Order}
 	 */
 	public OrderDTO toDTO() {
-		return new OrderDTO(meals.stream().map(command -> command.toDTO()).collect(Collectors.toList()), transmitter.toDTO(), deliveryAddress);
+		return new OrderDTO(meals.stream().map(meal -> meal.toDTO()).collect(Collectors.toList()), transmitter.toDTO(), deliveryAddress);
 	}
 	
 	/**
-	 * Add a meal to the command list
+	 * Add a meal to the order list
 	 * @param meal meal to add
 	 */
 	public void addMeal(Meal meal) {
@@ -89,7 +89,7 @@ public class Order implements Serializable {
 	}
 	
 	/**
-	 * Remove a meal of the command list
+	 * Remove a meal of the order list
 	 * @param meal meal to remove
 	 */
 	public void removeMeal(Meal meal) {

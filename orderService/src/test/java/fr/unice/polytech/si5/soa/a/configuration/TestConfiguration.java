@@ -25,6 +25,7 @@ import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.Order;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.User;
+import fr.unice.polytech.si5.soa.a.services.ICatalogService;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 
 /**
@@ -100,5 +101,11 @@ public class TestConfiguration {
 	@Bean
     public IOrderTakerService iOrderTakerService() {
         return Mockito.mock(IOrderTakerService.class);
+    }
+	
+	@Qualifier("mock")
+	@Bean
+    public ICatalogService iCatalogService() {
+        return Mockito.mock(ICatalogService.class);
     }
 }

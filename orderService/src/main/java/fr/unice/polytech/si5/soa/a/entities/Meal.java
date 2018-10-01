@@ -3,9 +3,13 @@ package fr.unice.polytech.si5.soa.a.entities;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -23,7 +27,7 @@ import lombok.ToString;
 @Entity
 @Data
 @Table(name = "`Meal`")
-@EqualsAndHashCode(exclude={"id"})
+@EqualsAndHashCode(exclude={"id", "tags"})
 @ToString()
 public class Meal implements Serializable {
 	/**
@@ -38,6 +42,9 @@ public class Meal implements Serializable {
 	
 	@Column(name = "name", nullable = false, unique=true)
 	private String name;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	private List<String> tags = new ArrayList<>();
 
 	/**
 	 * Default constructor
@@ -50,8 +57,9 @@ public class Meal implements Serializable {
 	 * Normal construtor using Data Transfert Object
 	 * @param mealDatas DTO for {@link Meal}
 	 */
-	public Meal(MealDTO mealDatas) {
+	public Meal(MealDTO mealDatas, List<String> tags) {
 		this.name = mealDatas.getName();
+		this.tags = mealDatas.getTags();
 	}
 	
 	/**
@@ -59,6 +67,24 @@ public class Meal implements Serializable {
 	 * @return DTO for a {@link Meal}
 	 */
 	public MealDTO toDTO() {
-		return new MealDTO(name);
+		return new MealDTO(name, tags);
+	}
+	
+	/**
+	 * Add a tag to the tag list
+	 * @param tag tag to add
+	 */
+	public void addTag(String tag) {
+		if(!tags.contains(tag)) {
+			tags.add(tag);
+		}
+	}
+	
+	/**
+	 * Remove a tag to the tag list
+	 * @param tag tag to remove
+	 */
+	public void removeTag(String tag) {
+		tags.remove(tag);
 	}
 }

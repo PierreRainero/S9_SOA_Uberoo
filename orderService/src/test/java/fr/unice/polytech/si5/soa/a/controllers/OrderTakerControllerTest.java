@@ -2,7 +2,6 @@ package fr.unice.polytech.si5.soa.a.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -99,9 +98,9 @@ public class OrderTakerControllerTest {
         verify(orderServiceMock, times(1)).addOrder(captor.capture());
         verifyNoMoreInteractions(orderServiceMock);
         
-        OrderDTO commandAdded = captor.getValue();
-        assertNotNull(commandAdded);
-        assertEquals(1, commandAdded.getMeals().size());
+        OrderDTO commandToAdd = captor.getValue();
+        assertNotNull(commandToAdd);
+        assertEquals(1, commandToAdd.getMeals().size());
 	}
     
     @Test
