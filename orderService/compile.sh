@@ -1,5 +1,5 @@
 #!/bin/bash
 
-mvn clean install
+mvn clean package
 
 docker build -t "soa/wb/orderservice" .

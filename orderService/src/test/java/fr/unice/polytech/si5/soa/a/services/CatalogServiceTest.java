@@ -1,12 +1,10 @@
 package fr.unice.polytech.si5.soa.a.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
+import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
+import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.services.component.CatalogServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,10 +18,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import fr.unice.polytech.si5.soa.a.communication.MealDTO;
-import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
-import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
-import fr.unice.polytech.si5.soa.a.entities.Meal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 /**
  * Class name	CatalogServiceTest
@@ -42,7 +42,7 @@ public class CatalogServiceTest {
 	
 	@Autowired
 	@InjectMocks
-	private ICatalogService catalogService;
+	private CatalogServiceImpl catalogService;
 	
 	private Meal ramen;
 	
