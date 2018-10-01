@@ -8,8 +8,8 @@ services:
   messageBus:
     image: "soa/bus"
     ports:
-      - "5000:5000"
+      - "5001:5000"
   database:
     image: "soa/database"
     ports:
-      - "3306:3306"
+      - "3307:3306"
