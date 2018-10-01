@@ -47,7 +47,7 @@ public class User implements Serializable {
 	@Setter(NONE)
 	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "transmitter")
 	@ToString.Exclude
-	private List<Command> commands = new ArrayList<>();
+	private List<Order> commands = new ArrayList<>();
 	
 	@Column(name = "lastName", nullable = false)
 	private String lastName;

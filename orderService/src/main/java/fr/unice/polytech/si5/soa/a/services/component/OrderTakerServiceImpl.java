@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,12 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import fr.unice.polytech.si5.soa.a.communication.CommandDTO;
+import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
+import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
-import fr.unice.polytech.si5.soa.a.entities.Command;
+import fr.unice.polytech.si5.soa.a.entities.Order;
 import fr.unice.polytech.si5.soa.a.entities.User;
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 
@@ -34,26 +40,42 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 	
 	@Autowired
 	private IUserDao userDao;
+	
+	@Autowired
+	private ICatalogDao catalogDao;
 
 	@Override
 	/**
      * {@inheritDoc}
      */
-	public CommandDTO addCommand(CommandDTO commandToAdd) throws UnknowUserException, EmptyDeliveryAddressException {
-		Command command = new Command(commandToAdd);
+	public OrderDTO addOrder(OrderDTO orderToAdd) throws UnknowUserException, EmptyDeliveryAddressException, UnknowMealException {
+		Order order = new Order(orderToAdd);
 		
-		if(command.getDeliveryAddress()==null || command.getDeliveryAddress().isEmpty()) {
+		if(order.getDeliveryAddress()==null || order.getDeliveryAddress().isEmpty()) {
 			throw new EmptyDeliveryAddressException("Delivery address cannot be empty");
 		}
 		
-		Optional<User> userWrapped = userDao.findUserById(commandToAdd.getTransmitter().getId());
+		Optional<User> userWrapped = userDao.findUserById(orderToAdd.getTransmitter().getId());
 		if(!userWrapped.isPresent()) {
-			throw new UnknowUserException("Can't find user with id = "+commandToAdd.getTransmitter().getId());
+			throw new UnknowUserException("Can't find user with id = "+orderToAdd.getTransmitter().getId());
 		}
-		command.setTransmitter(userWrapped.get());
+		order.setTransmitter(userWrapped.get());
 		
-		// @TODO Aller chercher les plats via un dao pour instancier l'objet command correctement avant de le passer
-		return orderDao.addCommand(command).toDTO();
+		findMeals(order, orderToAdd.getMeals());
+
+		return orderDao.addOrder(order).toDTO();
+	}
+	
+	private void findMeals(Order order, List<MealDTO> mealsDTO) throws UnknowMealException{
+		for(MealDTO mealDTO : mealsDTO) {
+			Optional<Meal> tmp = catalogDao.findMealByName(mealDTO.getName());
+			
+			if(!tmp.isPresent()) {
+				throw new UnknowMealException("Can't find meal nammed \""+mealDTO.getName()+"\"");
+			}
+			
+			order.addMeal(tmp.get());
+		}
 	}
 	
 }

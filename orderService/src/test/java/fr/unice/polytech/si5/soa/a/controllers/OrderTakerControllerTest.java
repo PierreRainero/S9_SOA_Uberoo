@@ -25,12 +25,14 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import fr.unice.polytech.si5.soa.a.communication.CommandDTO;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
-import fr.unice.polytech.si5.soa.a.entities.Command;
+import fr.unice.polytech.si5.soa.a.entities.Order;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.User;
+import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
@@ -45,6 +47,9 @@ import fr.unice.polytech.si5.soa.a.util.TestUtil;
 @WebAppConfiguration
 public class OrderTakerControllerTest {
 	private final static String BASE_URI = "/orders/";
+	private final static String ERROR_UNKNOW_USER = "Can't find user with id = -1";
+	private final static String ERROR_EMPTY_ADDRESS = "Delivery address cannot be empty";
+	private final static String ERROR_UNKNOW_MEAL = "Can't find meal nammed \"superfétatoire\"";
 	private MockMvc mockMvc;
 	
 	@Qualifier("mock")
@@ -56,7 +61,7 @@ public class OrderTakerControllerTest {
     @InjectMocks
     private OrderTakerController orderTakerController;
     
-	private CommandDTO bobCommand;
+	private OrderDTO bobCommand;
     
     @BeforeEach
 	public void setUp() throws Exception {
@@ -72,7 +77,7 @@ public class OrderTakerControllerTest {
 		bob.setFirstName("Bob");
 		bob.setLastName("Harington");
 		
-		Command command  = new Command();
+		Order command  = new Order();
 		command.addMeal(ramen);
 		command.setDeliveryAddress("930 Route des Colles, 06410 Biot");
 		command.setTransmitter(bob);
@@ -82,7 +87,7 @@ public class OrderTakerControllerTest {
     
     @Test
     public void addCommandUsingHTTPPost() throws Exception {
-		when(orderServiceMock.addCommand(any(CommandDTO.class))).thenReturn(bobCommand);
+		when(orderServiceMock.addOrder(any(OrderDTO.class))).thenReturn(bobCommand);
 		
 		mockMvc.perform(post(BASE_URI)
                .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -90,26 +95,54 @@ public class OrderTakerControllerTest {
         ).andExpect(status().isOk())
          .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
         
-        ArgumentCaptor<CommandDTO> captor = ArgumentCaptor.forClass(CommandDTO.class);
-        verify(orderServiceMock, times(1)).addCommand(captor.capture());
+        ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
+        verify(orderServiceMock, times(1)).addOrder(captor.capture());
         verifyNoMoreInteractions(orderServiceMock);
         
-        CommandDTO commandAdded = captor.getValue();
+        OrderDTO commandAdded = captor.getValue();
         assertNotNull(commandAdded);
         assertEquals(1, commandAdded.getMeals().size());
 	}
     
     @Test
     public void addCommandWithoutTransmitterUsingHTTPPost() throws Exception {
-		when(orderServiceMock.addCommand(any(CommandDTO.class))).thenThrow(UnknowUserException.class);
+		when(orderServiceMock.addOrder(any(OrderDTO.class))).thenThrow(new UnknowUserException(ERROR_UNKNOW_USER));
 		
 		mockMvc.perform(post(BASE_URI)
                .contentType(TestUtil.APPLICATION_JSON_UTF8)
                .content(TestUtil.convertObjectToJsonBytes(bobCommand))
-        ).andExpect(status().isNotFound());
+        ).andExpect(status().isNotFound()).andExpect(content().string(ERROR_UNKNOW_USER));
         
-        ArgumentCaptor<CommandDTO> captor = ArgumentCaptor.forClass(CommandDTO.class);
-        verify(orderServiceMock, times(1)).addCommand(captor.capture());
+        ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
+        verify(orderServiceMock, times(1)).addOrder(captor.capture());
+        verifyNoMoreInteractions(orderServiceMock);
+	}
+    
+    @Test
+    public void addCommandWithoutDeliveryAddressUsingHTTPPost() throws Exception {
+		when(orderServiceMock.addOrder(any(OrderDTO.class))).thenThrow(new EmptyDeliveryAddressException(ERROR_EMPTY_ADDRESS));
+		
+		mockMvc.perform(post(BASE_URI)
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+               .content(TestUtil.convertObjectToJsonBytes(bobCommand))
+        ).andExpect(status().isBadRequest()).andExpect(content().string(ERROR_EMPTY_ADDRESS));
+        
+        ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
+        verify(orderServiceMock, times(1)).addOrder(captor.capture());
+        verifyNoMoreInteractions(orderServiceMock);
+	}
+    
+    @Test
+    public void addCommandWithUnknowMealUsingHTTPPost() throws Exception {
+		when(orderServiceMock.addOrder(any(OrderDTO.class))).thenThrow(new UnknowMealException(ERROR_UNKNOW_MEAL));
+		
+		mockMvc.perform(post(BASE_URI)
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+               .content(TestUtil.convertObjectToJsonBytes(bobCommand))
+        ).andExpect(status().isNotFound()).andExpect(content().string(ERROR_UNKNOW_MEAL));
+        
+        ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
+        verify(orderServiceMock, times(1)).addOrder(captor.capture());
         verifyNoMoreInteractions(orderServiceMock);
 	}
 }

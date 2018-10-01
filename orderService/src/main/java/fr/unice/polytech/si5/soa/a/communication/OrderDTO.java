@@ -16,7 +16,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode()
 @ToString()
-public class CommandDTO implements Serializable {
+public class OrderDTO implements Serializable {
 	/**
 	 * Generated UID version
 	 */
@@ -29,7 +29,7 @@ public class CommandDTO implements Serializable {
 	/**
 	 * Default constructor
 	 */
-	public CommandDTO() {
+	public OrderDTO() {
 		// Default constructor for Jackson databinding
 	}
 	
@@ -37,7 +37,7 @@ public class CommandDTO implements Serializable {
 	 * Normal constructor 
 	 * @param meals list of meals (DTO)
 	 */
-	public CommandDTO(List<MealDTO> meals, UserDTO transmitter, String deliveryAddress) {
+	public OrderDTO(List<MealDTO> meals, UserDTO transmitter, String deliveryAddress) {
 		this.meals = meals;
 		this.transmitter = transmitter;
 		this.deliveryAddress = deliveryAddress;

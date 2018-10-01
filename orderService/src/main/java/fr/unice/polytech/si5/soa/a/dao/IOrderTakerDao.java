@@ -1,6 +1,6 @@
 package fr.unice.polytech.si5.soa.a.dao;
 
-import fr.unice.polytech.si5.soa.a.entities.Command;
+import fr.unice.polytech.si5.soa.a.entities.Order;
 
 /**
  * Class name	IOrderTaker
@@ -10,9 +10,9 @@ import fr.unice.polytech.si5.soa.a.entities.Command;
  */
 public interface IOrderTakerDao {
 	/**
-	 * Add a {@link Command} into the database
-	 * @param commandToAdd command to add
+	 * Add a {@link Order} into the database
+	 * @param orderToAdd command to add
 	 * @return the saved command
 	 */
-	Command addCommand(Command commandToAdd);
+	Order addOrder(Order orderToAdd);
 }

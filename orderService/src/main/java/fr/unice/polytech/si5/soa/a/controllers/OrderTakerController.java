@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.unice.polytech.si5.soa.a.communication.CommandDTO;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 
@@ -32,15 +33,15 @@ public class OrderTakerController {
 			method = RequestMethod.POST,
 			consumes = {"application/JSON; charset=UTF-8"},
 			produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<CommandDTO> addUser(@RequestBody CommandDTO command) {
+	public ResponseEntity<?> addUser(@RequestBody OrderDTO order) {
 		try {
-			return ResponseEntity.ok(orderService.addCommand(command));
-		}catch(UnknowUserException e) {
+			return ResponseEntity.ok(orderService.addOrder(order));
+		}catch(UnknowUserException | UnknowMealException e) {
 			logger.info(e.getMessage(), e);
-			return ResponseEntity.status(404).body(null);
+			return ResponseEntity.status(404).body(e.getMessage());
 		}catch(EmptyDeliveryAddressException e) {
 			logger.info(e.getMessage(), e);
-			return ResponseEntity.status(400).body(null);
+			return ResponseEntity.status(400).body(e.getMessage());
 		}
 	}
 }

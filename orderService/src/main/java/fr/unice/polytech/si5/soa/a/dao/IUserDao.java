@@ -14,7 +14,7 @@ public interface IUserDao {
 	/**
 	 * Search an user in the database using his id
 	 * @param userId id to search
-	 * @return the user wrapped in an {@link Optional} if the user exist, Optional.empty() otherwise
+	 * @return the user wrapped in an {@link Optional} if the user exists, Optional.empty() otherwise
 	 */
 	Optional<User> findUserById(int userId);
 }

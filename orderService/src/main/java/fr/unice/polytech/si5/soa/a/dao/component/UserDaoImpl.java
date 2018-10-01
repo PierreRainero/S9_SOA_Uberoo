@@ -20,34 +20,34 @@ import fr.unice.polytech.si5.soa.a.entities.User;
  * @see 		IUserDao
  * Date			30/09/2018
  * @author		PierreRainero
-**/
+ **/
 @Primary
 @Repository
 @Transactional
 public class UserDaoImpl implements IUserDao {
-private static Logger logger = LogManager.getLogger(OrderTakerDaoImpl.class);
-	
+	private static Logger logger = LogManager.getLogger(OrderTakerDaoImpl.class);
+
 	@Autowired
 	private SessionFactory sessionFactory;
 
 	@Override
 	/**
-     * {@inheritDoc}
-     */
+	 * {@inheritDoc}
+	 */
 	public Optional<User> findUserById(int userId) {
 		Session session = sessionFactory.getCurrentSession();
 
 		Optional<User> result = Optional.empty();
 		try {
-			User action = (User) session.get(User.class, userId);
-			
-			if(action!=null){
-				result = Optional.of(action);
+			User user = (User) session.get(User.class, userId);
+
+			if(user!=null){
+				result = Optional.of(user);
 			}
 		} catch (SQLGrammarException e) {
 			logger.error("Cannot execute query : findUserById", e);
 		}
-		
+
 		return result;
 	}
 

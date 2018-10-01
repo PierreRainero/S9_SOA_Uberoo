@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
-import fr.unice.polytech.si5.soa.a.entities.Command;
+import fr.unice.polytech.si5.soa.a.entities.Order;
 
 /**
  * Class name	OrderTakerImpl
@@ -34,7 +34,7 @@ public class OrderTakerDaoImpl implements IOrderTakerDao {
 	/**
      * {@inheritDoc}
      */
-	public Command addCommand(Command commandToAdd) {
+	public Order addOrder(Order commandToAdd) {
 		Session session = sessionFactory.getCurrentSession();
 
 		try {

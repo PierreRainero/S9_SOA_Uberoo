@@ -19,7 +19,7 @@ import javax.persistence.Table;
 
 import com.sun.istack.internal.NotNull;
 
-import fr.unice.polytech.si5.soa.a.communication.CommandDTO;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
@@ -35,7 +35,7 @@ import lombok.ToString;
 @Table(name = "`COMMAND`")
 @EqualsAndHashCode(exclude={"id"})
 @ToString()
-public class Command implements Serializable {
+public class Order implements Serializable {
 	/**
 	 * Generated UID version
 	 */
@@ -61,23 +61,23 @@ public class Command implements Serializable {
 	/**
 	 * Default constructor
 	 */
-	public Command() {
+	public Order() {
 		// Default constructor for JPA
 	}
 	
 	/**
 	 * Normal construtor using Data Transfert Object
-	 * @param commandDatas DTO for {@link Command}
+	 * @param commandDatas DTO for {@link Order}
 	 */
-	public Command(CommandDTO commandDatas) {
+	public Order(OrderDTO commandDatas) {
 		this.deliveryAddress = commandDatas.getDeliveryAddress();
 	}
 	/**
 	 * Generate a Data Transfer Object from a business object
-	 * @return DTO for a {@link Command}
+	 * @return DTO for a {@link Order}
 	 */
-	public CommandDTO toDTO() {
-		return new CommandDTO(meals.stream().map(command -> command.toDTO()).collect(Collectors.toList()), transmitter.toDTO(), deliveryAddress);
+	public OrderDTO toDTO() {
+		return new OrderDTO(meals.stream().map(command -> command.toDTO()).collect(Collectors.toList()), transmitter.toDTO(), deliveryAddress);
 	}
 	
 	/**

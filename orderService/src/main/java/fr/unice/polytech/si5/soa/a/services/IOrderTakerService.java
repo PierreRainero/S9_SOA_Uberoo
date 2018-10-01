@@ -1,7 +1,8 @@
 package fr.unice.polytech.si5.soa.a.services;
 
-import fr.unice.polytech.si5.soa.a.communication.CommandDTO;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 
 /**
@@ -12,11 +13,12 @@ import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
  */
 public interface IOrderTakerService {
 	/**
-	 * Add a {@link CommandDTO} to the system
-	 * @param commandToAdd command to add
+	 * Add a {@link OrderDTO} to the system
+	 * @param orderToAdd command to add
 	 * @return the traited command
 	 * @throws UnknowUserException if the transmitter doesn't exist
 	 * @throws EmptyDeliveryAddressException if the delivery address is empty
+	 * @throws UnknowMealException if a meal doesn't exist
 	 */
-	CommandDTO addCommand(CommandDTO commandToAdd) throws UnknowUserException, EmptyDeliveryAddressException;
+	OrderDTO addOrder(OrderDTO orderToAdd) throws UnknowUserException, EmptyDeliveryAddressException, UnknowMealException;
 }
