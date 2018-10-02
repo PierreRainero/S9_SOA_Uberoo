@@ -1,15 +1,17 @@
 version: '3.3'
 
 services:
-  organiserClient:
-    image: "soa/wb/orderservice"
-    ports:
-      - "9555:8080"
   messageBus:
     image: "soa/bus"
     ports:
       - "5001:5000"
+
   database:
     image: "soa/database"
     ports:
       - "3307:3306"
+
+  organiserClient:
+    image: "soa/wb/orderservice"
+    ports:
+      - "9555:8080"

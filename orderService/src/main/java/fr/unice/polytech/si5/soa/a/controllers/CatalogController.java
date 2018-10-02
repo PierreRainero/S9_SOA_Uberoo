@@ -21,7 +21,7 @@ public class CatalogController {
 	@Autowired
 	private ICatalogService catalogService;
 	
-	@RequestMapping(value = "/",
+	@RequestMapping(value = "",
 			method = RequestMethod.GET,
 			produces = {"application/JSON; charset=UTF-8"})
 	public ResponseEntity<?> findMealsByTag(@RequestParam("tag") String tag) {

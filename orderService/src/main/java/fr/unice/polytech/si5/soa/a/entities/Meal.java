@@ -26,7 +26,7 @@ import lombok.ToString;
  */
 @Entity
 @Data
-@Table(name = "`Meal`")
+@Table(name = "`MEAL`")
 @EqualsAndHashCode(exclude={"id", "tags"})
 @ToString()
 public class Meal implements Serializable {

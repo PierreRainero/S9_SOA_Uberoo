@@ -29,7 +29,7 @@ public class OrderTakerController {
 	@Autowired
 	private IOrderTakerService orderService;
 
-	@RequestMapping(value = "/",
+	@RequestMapping(value = "",
 			method = RequestMethod.POST,
 			consumes = {"application/JSON; charset=UTF-8"},
 			produces = {"application/JSON; charset=UTF-8"})
