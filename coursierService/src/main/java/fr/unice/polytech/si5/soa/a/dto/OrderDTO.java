@@ -1,4 +1,4 @@
-package fr.unice.polytech.si5.soa.a.communication;
+package fr.unice.polytech.si5.soa.a.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
+import fr.unice.polytech.si5.soa.a.dto.OrderDTO;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;

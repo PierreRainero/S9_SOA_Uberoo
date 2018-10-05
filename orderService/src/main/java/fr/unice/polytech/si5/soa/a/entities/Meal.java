@@ -14,7 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.dto.MealDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
