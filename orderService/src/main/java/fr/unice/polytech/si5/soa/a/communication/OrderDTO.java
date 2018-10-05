@@ -1,9 +1,11 @@
 package fr.unice.polytech.si5.soa.a.communication;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -22,9 +24,12 @@ public class OrderDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 5044196469861617600L;
 	
+	private int id;
 	private List<MealDTO> meals = new ArrayList<>();
 	private UserDTO transmitter;
 	private String deliveryAddress;
+	private Duration eta;
+	private OrderState state;
 	
 	/**
 	 * Default constructor
@@ -37,9 +42,12 @@ public class OrderDTO implements Serializable {
 	 * Normal constructor 
 	 * @param meals list of meals (DTO)
 	 */
-	public OrderDTO(List<MealDTO> meals, UserDTO transmitter, String deliveryAddress) {
+	public OrderDTO(int id, List<MealDTO> meals, UserDTO transmitter, String deliveryAddress, Duration eta, OrderState state) {
+		this.id = id;
 		this.meals = meals;
 		this.transmitter = transmitter;
 		this.deliveryAddress = deliveryAddress;
+		this.eta = eta;
+		this.state = state;
 	}
 }

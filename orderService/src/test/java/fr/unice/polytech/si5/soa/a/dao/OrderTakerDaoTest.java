@@ -2,7 +2,10 @@ package fr.unice.polytech.si5.soa.a.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+import java.util.Optional;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -37,7 +40,7 @@ public class OrderTakerDaoTest {
 	private IOrderTakerDao orderDao;
 	
 	private Meal ramen;
-	private Order bobCommand;
+	private Order bobOrder;
 	private User bob;
 	
 	@BeforeEach
@@ -49,10 +52,10 @@ public class OrderTakerDaoTest {
 		bob.setFirstName("Bob");
 		bob.setLastName("Harington");
 		
-		bobCommand = new Order();
-		bobCommand.addMeal(ramen);
-		bobCommand.setDeliveryAddress("930 Route des Colles, 06410 Biot");
-		bobCommand.setTransmitter(bob);
+		bobOrder = new Order();
+		bobOrder.addMeal(ramen);
+		bobOrder.setDeliveryAddress("930 Route des Colles, 06410 Biot");
+		bobOrder.setTransmitter(bob);
 		
 		Session session = sessionFactory.openSession();
 		try {
@@ -73,8 +76,8 @@ public class OrderTakerDaoTest {
 	    try {
 	    	transaction = session.beginTransaction();
 	    	
-	    	if(bobCommand.getId() != 0) {
-	    		session.delete(bobCommand);
+	    	if(bobOrder.getId() != 0) {
+	    		session.delete(bobOrder);
 	    	}
 	    	
 			session.delete(ramen);
@@ -83,7 +86,7 @@ public class OrderTakerDaoTest {
 			session.flush();
 			transaction.commit();
 			
-			bobCommand = null;
+			bobOrder = null;
 			bob = null;
 			ramen = null;
 		} catch (SQLGrammarException e) {
@@ -95,10 +98,52 @@ public class OrderTakerDaoTest {
 	
 	@Test
 	public void addANewOrder() {
-		Order order = orderDao.addOrder(bobCommand);
+		Order order = orderDao.addOrder(bobOrder);
 		
 		assertNotNull(order);
 		assertNotEquals(0, order.getId());
 		assertEquals(1, order.getMeals().size());
+	}
+	
+	@Test
+	public void findAnOrderUsingHisId() {
+		Session session = sessionFactory.openSession();
+		try {
+			session.save(bobOrder);
+			session.beginTransaction().commit();
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+		} finally {
+			session.close();
+		}
+		
+		Optional<Order> order = orderDao.findOrderById(bobOrder.getId());
+		assertTrue(order.isPresent());
+		assertEquals(bobOrder.getId(), order.get().getId());
+	}
+	
+	@Test
+	public void updateAnOrder() {
+		Session session = sessionFactory.openSession();
+		try {
+			session.save(bobOrder);
+			session.beginTransaction().commit();
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+		} finally {
+			session.close();
+		}
+		
+		String oldAddress = bobOrder.getDeliveryAddress();
+		String newAddress = "221B Baker Street";
+		assertNotEquals(oldAddress, newAddress);
+		
+		session = sessionFactory.openSession();
+		session.evict(bobOrder);
+		
+		bobOrder.setDeliveryAddress(newAddress);
+		Order order = orderDao.updateOrder(bobOrder);
+		assertNotEquals(oldAddress, order.getDeliveryAddress());
+		assertEquals(newAddress, order.getDeliveryAddress());
 	}
 }

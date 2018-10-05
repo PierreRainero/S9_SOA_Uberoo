@@ -32,6 +32,7 @@ import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
@@ -49,6 +50,7 @@ public class OrderTakerControllerTest {
 	private final static String ERROR_UNKNOW_USER = "Can't find user with id = -1";
 	private final static String ERROR_EMPTY_ADDRESS = "Delivery address cannot be empty";
 	private final static String ERROR_UNKNOW_MEAL = "Can't find meal nammed \"superfétatoire\"";
+	private final static String ERROR_UNKNOW_ORDER = "Can't find order with id = -1";
 	private MockMvc mockMvc;
 	
 	@Qualifier("mock")
@@ -60,7 +62,7 @@ public class OrderTakerControllerTest {
     @InjectMocks
     private OrderTakerController orderTakerController;
     
-	private OrderDTO bobCommand;
+	private OrderDTO bobOrder;
     
     @BeforeEach
 	public void setUp() throws Exception {
@@ -81,16 +83,16 @@ public class OrderTakerControllerTest {
 		command.setDeliveryAddress("930 Route des Colles, 06410 Biot");
 		command.setTransmitter(bob);
 		
-		bobCommand = command.toDTO();
+		bobOrder = command.toDTO();
 	}
     
     @Test
     public void addCommandUsingHTTPPost() throws Exception {
-		when(orderServiceMock.addOrder(any(OrderDTO.class))).thenReturn(bobCommand);
+		when(orderServiceMock.addOrder(any(OrderDTO.class))).thenReturn(bobOrder);
 		
 		mockMvc.perform(post(BASE_URI)
                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-               .content(TestUtil.convertObjectToJsonBytes(bobCommand))
+               .content(TestUtil.convertObjectToJsonBytes(bobOrder))
         ).andExpect(status().isOk())
          .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
         
@@ -109,8 +111,9 @@ public class OrderTakerControllerTest {
 		
 		mockMvc.perform(post(BASE_URI)
                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-               .content(TestUtil.convertObjectToJsonBytes(bobCommand))
-        ).andExpect(status().isNotFound()).andExpect(content().string(ERROR_UNKNOW_USER));
+               .content(TestUtil.convertObjectToJsonBytes(bobOrder))
+        ).andExpect(status().isNotFound())
+		 .andExpect(content().string(ERROR_UNKNOW_USER));
         
         ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
         verify(orderServiceMock, times(1)).addOrder(captor.capture());
@@ -118,13 +121,14 @@ public class OrderTakerControllerTest {
 	}
     
     @Test
-    public void addCommandWithoutDeliveryAddressUsingHTTPPost() throws Exception {
+    public void addOrderWithoutDeliveryAddressUsingHTTPPost() throws Exception {
 		when(orderServiceMock.addOrder(any(OrderDTO.class))).thenThrow(new EmptyDeliveryAddressException(ERROR_EMPTY_ADDRESS));
 		
 		mockMvc.perform(post(BASE_URI)
                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-               .content(TestUtil.convertObjectToJsonBytes(bobCommand))
-        ).andExpect(status().isBadRequest()).andExpect(content().string(ERROR_EMPTY_ADDRESS));
+               .content(TestUtil.convertObjectToJsonBytes(bobOrder))
+        ).andExpect(status().isBadRequest())
+		 .andExpect(content().string(ERROR_EMPTY_ADDRESS));
         
         ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
         verify(orderServiceMock, times(1)).addOrder(captor.capture());
@@ -132,16 +136,45 @@ public class OrderTakerControllerTest {
 	}
     
     @Test
-    public void addCommandWithUnknowMealUsingHTTPPost() throws Exception {
+    public void addOrderWithUnknowMealUsingHTTPPost() throws Exception {
 		when(orderServiceMock.addOrder(any(OrderDTO.class))).thenThrow(new UnknowMealException(ERROR_UNKNOW_MEAL));
 		
 		mockMvc.perform(post(BASE_URI)
                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-               .content(TestUtil.convertObjectToJsonBytes(bobCommand))
-        ).andExpect(status().isNotFound()).andExpect(content().string(ERROR_UNKNOW_MEAL));
+               .content(TestUtil.convertObjectToJsonBytes(bobOrder))
+        ).andExpect(status().isNotFound())
+		 .andExpect(content().string(ERROR_UNKNOW_MEAL));
         
         ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
         verify(orderServiceMock, times(1)).addOrder(captor.capture());
         verifyNoMoreInteractions(orderServiceMock);
 	}
+    
+    @Test
+    public void updateOrderUsingHTTPPut() throws Exception {
+    	when(orderServiceMock.updateOrderState(any(OrderDTO.class))).thenReturn(bobOrder);
+    	mockMvc.perform(put(BASE_URI+"/1/")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(bobOrder))
+         ).andExpect(status().isOk())
+          .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+    	
+    	ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
+        verify(orderServiceMock, times(1)).updateOrderState(captor.capture());
+        verifyNoMoreInteractions(orderServiceMock);
+    }
+    
+    @Test
+    public void updateUnknowOrderUsingHTTPPut() throws Exception {
+    	when(orderServiceMock.updateOrderState(any(OrderDTO.class))).thenThrow(new UnknowOrderException(ERROR_UNKNOW_ORDER));
+    	mockMvc.perform(put(BASE_URI+"/1/")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(bobOrder))
+         ).andExpect(status().isNotFound())
+		  .andExpect(content().string(ERROR_UNKNOW_ORDER));
+    	
+    	ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
+        verify(orderServiceMock, times(1)).updateOrderState(captor.capture());
+        verifyNoMoreInteractions(orderServiceMock);
+    }
 }

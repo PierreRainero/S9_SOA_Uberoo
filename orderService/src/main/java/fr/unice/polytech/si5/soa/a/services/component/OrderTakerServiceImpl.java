@@ -13,10 +13,12 @@ import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.Order;
+import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 
@@ -56,6 +58,7 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 		order.setTransmitter(userWrapped.get());
 		
 		findMeals(order, orderToAdd.getMeals());
+		order.calculateEta();
 
 		return orderDao.addOrder(order).toDTO();
 	}
@@ -70,6 +73,28 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 			
 			order.addMeal(tmp.get());
 		}
+	}
+
+	@Override
+	/**
+     * {@inheritDoc}
+     */
+	public OrderDTO updateOrderState(OrderDTO orderToUpdate) throws UnknowOrderException {
+		Optional<Order> orderWrapped = orderDao.findOrderById(orderToUpdate.getId());
+		if(!orderWrapped.isPresent()) {
+			throw new UnknowOrderException("Can't find order with id = "+orderToUpdate.getId());
+		}
+		
+		Order order = orderWrapped.get();
+		order.setState(orderToUpdate.getState());
+		
+		order = orderDao.updateOrder(order);
+
+		if(order.getState().equals(OrderState.VALIDATED)) {
+			// TODO SEND MESSAGE TO BUS
+		}
+		
+		return order.toDTO();
 	}
 	
 }
