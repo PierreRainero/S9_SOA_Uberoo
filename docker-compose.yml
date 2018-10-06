@@ -1,17 +1,28 @@
-version: '3.3'
+version: "2.1"
 
 services:
   messageBus:
     image: "soa/bus"
     ports:
       - "5001:5000"
+    expose:
+      - "5001"
 
-  database:
-    image: "soa/database"
-    ports:
-      - "3307:3306"
-
-  organiserClient:
+  soa_database:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=teama
+      - MYSQL_DATABASE=uberoo
+    expose:
+      - "3306"
+  orderService:
     image: "soa/wb/orderservice"
     ports:
       - "9555:8080"
+    expose:
+      - "9555"
+    restart: always # if db is up too early, restart
+    depends_on:
+      - soa_database # wait for db to be up
+    links: 
+      - soa_database # for the hostname mapping

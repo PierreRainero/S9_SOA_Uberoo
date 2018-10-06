@@ -4,6 +4,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.NONE;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +12,9 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -47,7 +51,7 @@ public class Order implements Serializable {
 	@Setter(NONE)
 	private int id;
 	
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@Setter(NONE)
 	private List<Meal> meals = new ArrayList<>();
 	
@@ -57,7 +61,13 @@ public class Order implements Serializable {
 	
 	@Column(name = "deliveryAddress", nullable = false)
 	private String deliveryAddress;
-
+	
+	@Column(name = "eta")
+	private Duration eta;
+	
+	@Enumerated(EnumType.STRING)
+	private OrderState state = OrderState.WAITING;
+	
 	/**
 	 * Default constructor
 	 */
@@ -67,17 +77,19 @@ public class Order implements Serializable {
 	
 	/**
 	 * Normal construtor using Data Transfert Object
-	 * @param commandDatas DTO for {@link Order}
+	 * @param orderDatas DTO for {@link Order}
 	 */
-	public Order(OrderDTO commandDatas) {
-		this.deliveryAddress = commandDatas.getDeliveryAddress();
+	public Order(OrderDTO orderDatas) {
+		this.deliveryAddress = orderDatas.getDeliveryAddress();
+		this.eta = orderDatas.getEta();
+		this.state = orderDatas.getState();
 	}
 	/**
 	 * Generate a Data Transfer Object from a business object
 	 * @return DTO for a {@link Order}
 	 */
 	public OrderDTO toDTO() {
-		return new OrderDTO(meals.stream().map(meal -> meal.toDTO()).collect(Collectors.toList()), transmitter.toDTO(), deliveryAddress);
+		return new OrderDTO(id, meals.stream().map(meal -> meal.toDTO()).collect(Collectors.toList()), transmitter.toDTO(), deliveryAddress, eta, state);
 	}
 	
 	/**
@@ -94,5 +106,13 @@ public class Order implements Serializable {
 	 */
 	public void removeMeal(Meal meal) {
 		meals.remove(meal);
+	}
+	
+	/**
+	 * Calculate the Estimated Time of Arrival
+	 * MOCKED
+	 */
+	public void calculateEta() {
+		eta = Duration.ofMinutes(30);
 	}
 }

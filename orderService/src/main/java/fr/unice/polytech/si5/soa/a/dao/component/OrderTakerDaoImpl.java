@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.dao.component;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,6 +47,45 @@ public class OrderTakerDaoImpl implements IOrderTakerDao {
 		}
 
 		return commandToAdd;
+	}
+
+	@Override
+	/**
+     * {@inheritDoc}
+     */
+	public Order updateOrder(Order orderToUpdate) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Order result = null;
+		try {
+            result = (Order) session.merge(orderToUpdate);
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+			logger.error("Cannot execute query : updateOrder", e);
+		}
+
+		return result;
+	}
+
+	@Override
+	/**
+     * {@inheritDoc}
+     */
+	public Optional<Order> findOrderById(int orderId) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Optional<Order> result = Optional.empty();
+		try {
+			Order order = (Order) session.get(Order.class, orderId);
+
+			if(order!=null){
+				result = Optional.of(order);
+			}
+		} catch (SQLGrammarException e) {
+			logger.error("Cannot execute query : findOrderById", e);
+		}
+
+		return result;
 	}
 
 }
