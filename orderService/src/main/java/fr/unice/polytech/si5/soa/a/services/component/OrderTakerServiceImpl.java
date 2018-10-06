@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import fr.unice.polytech.si5.soa.a.dto.MealDTO;
-import fr.unice.polytech.si5.soa.a.dto.OrderDTO;
+import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;

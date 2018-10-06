@@ -23,7 +23,7 @@ import javax.persistence.Table;
 
 import org.springframework.lang.NonNull;
 
-import fr.unice.polytech.si5.soa.a.dto.OrderDTO;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;

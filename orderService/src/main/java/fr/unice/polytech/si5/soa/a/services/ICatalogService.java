@@ -2,7 +2,7 @@ package fr.unice.polytech.si5.soa.a.services;
 
 import java.util.List;
 
-import fr.unice.polytech.si5.soa.a.dto.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 
 /**
  * Class name	ICatalogService

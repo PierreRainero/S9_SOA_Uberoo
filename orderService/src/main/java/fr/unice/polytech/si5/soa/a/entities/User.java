@@ -16,7 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import fr.unice.polytech.si5.soa.a.dto.UserDTO;
+import fr.unice.polytech.si5.soa.a.communication.UserDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;

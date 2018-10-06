@@ -1,6 +1,6 @@
 package fr.unice.polytech.si5.soa.a.services;
 
-import fr.unice.polytech.si5.soa.a.dto.OrderDTO;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
