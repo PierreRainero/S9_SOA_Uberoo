@@ -7,10 +7,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,5 +30,16 @@ public class DeliveryController {
     @RequestMapping(value = "", method = RequestMethod.GET, produces = {"application/JSON; charset=UTF-8"})
     public ResponseEntity<List<Delivery>> findDeliveries() {
         return new ResponseEntity<>(deliveryService.findTobeDeliveredDeliveries(), HttpStatus.ACCEPTED);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "", method = RequestMethod.PUT, produces = {"application/JSON; charset=UTF-8"})
+    public ResponseEntity<Void> updateDeliveryToDelivered(@RequestParam(value = "idDelivery", required = true) Long idDelivery) {
+        try{
+            this.deliveryService.updateDeliveryToDelivered(idDelivery);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
