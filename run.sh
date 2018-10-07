@@ -18,7 +18,7 @@ curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"id\": -1,
 validated_order=$(sed -i 's/WAITING/VALIDATED/g' Temp/orderWithETA.txt)
 order_id=$(grep -Po '"id": *\K[^,]*' Temp/orderWithETA.txt | head -1)
 # Envoi au système
-curl -X PUT -H "Content-Type:application/JSON; charset=UTF-8" -d "$validated_order" "http://localhost:9555/orders/$order_id" > Temp/validatedOrder.txt
+curl -X PUT -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9555/orders/$order_id/" > Temp/validatedOrder.txt
 
 # 4- The restaurant can consult the list of meals to prepare, and start the cooking process;
 
@@ -26,3 +26,4 @@ curl -X PUT -H "Content-Type:application/JSON; charset=UTF-8" -d "$validated_ord
 
 # -- Clean context --
 docker exec soa_orderService_database mysql -uroot -pteama  -e "USE uberoo; DELETE FROM UBEROOORDER_MEAL; DELETE FROM UBEROOORDER; DELETE FROM Meal_tags; DELETE FROM MEAL; DELETE FROM USER;"
+read
