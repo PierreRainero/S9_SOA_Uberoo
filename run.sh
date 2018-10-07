@@ -24,13 +24,13 @@ order_id=$(grep -Po '"id": *\K[^,]*' Temp/orderWithETA.txt | head -1)
 curl -X PUT -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9555/orders/$order_id/" > Temp/validatedOrder.txt
 curl -X GET "http://localhost:5001/messages" > Temp/messagesInTheBus.txt
 
-echo "*******4- The restaurant can consult the list of meals to prepare, and start the cooking process"
-# Message Bus can't POST ????
+# Message Bus can't POST
 # Resto KO
+echo "*******4- The restaurant can consult the list of meals to prepare, and start the cooking process"
 curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9777/restaurants/orders/"
 
+# CoursierService KO
 echo "*******5- A coursier is assigned to my order, and deliver it on the campus"
-
 curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9666/deliveries"
 curl -X GET "http://localhost:9666/deliveries" > Temp/pendingDeliveries.txt
 
