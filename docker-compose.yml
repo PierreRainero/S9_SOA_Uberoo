@@ -34,3 +34,26 @@ services:
     depends_on:
       orderService_database: # wait for db to be up
         condition: service_healthy
+
+  coursierService:
+    container_name: soa_coursierService
+    image: "soa/wb/coursierservice"
+    ports:
+      - "9666:8080"
+    expose:
+      - "9666"
+    restart: always # if db is up too early, restart
+    depends_on:
+      - messageBus
+  restaurantService:
+    container_name: soa_restaurantService
+    image: "soa/wb/restaurantservice"
+    ports:
+      - "9777:8080"
+    expose:
+      - "9777"
+    restart: always # if db is up too early, restart
+    depends_on:
+      - messageBus
+
+        
