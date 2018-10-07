@@ -32,6 +32,7 @@ curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Tem
 echo "*******5- A coursier is assigned to my order, and deliver it on the campus"
 
 curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9666/deliveries"
+curl -X GET "http://localhost:9666/deliveries" > Temp/pendingDeliveries.txt
 
 # **********************************************************************
 read
