@@ -8,10 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/restaurants")
 public class RestaurantController {
 	private OrderServiceImpl orderService = new OrderServiceImpl();
 
-	@RequestMapping(value = "/restaurants/orders",
+	@RequestMapping(value = "/orders",
 					method = RequestMethod.GET,
 					produces = {"application/JSON; charset=UTF-8"})
 	public ResponseEntity<?> getRestaurantOrders() {
@@ -19,7 +20,7 @@ public class RestaurantController {
 		
 	}
 
-	@RequestMapping(value = "/restaurants/orders", 
+	@RequestMapping(value = "/orders", 
 					method = RequestMethod.POST,
 					consumes = {"application/JSON; charset=UTF-8"},
 					produces = {"application/JSON; charset=UTF-8"})
