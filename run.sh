@@ -17,15 +17,17 @@ bob_id=$(tail -1 Temp/bobId.txt)
 curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"id\": -1, \"meals\": [ { \"name\": \"Ramen\", \"tags\": [ \"Asian\" ] } ], \"transmitter\": { \"id\": \"$bob_id\", \"firstName\": \"Bob\", \"lastName\": \"\" }, \"deliveryAddress\": \"930 Route des Colles, 06410 Biot\", \"eta\": null, \"state\": \"WAITING\" }" "http://localhost:9555/orders" > Temp/orderWithETA.txt
 
 echo "*******3- The system estimates the ETA (e.g., 45 mins) for the food, and I decide to accept it"
-# Acception de l'ETA
+# Acception de l'ETA :
 validated_order=$(sed -i 's/WAITING/VALIDATED/g' Temp/orderWithETA.txt)
 order_id=$(grep -Po '"id": *\K[^,]*' Temp/orderWithETA.txt | head -1)
-# Envoi au système, le système poste un message dans le bus pour le restaurant
+# Envoi au système, le système poste un message dans le bus pour le restaurant :
 curl -X PUT -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9555/orders/$order_id/" > Temp/validatedOrder.txt
-echo "A message of the order just arrived in the message bus"
-echo "*********************TODO*********************"
+curl -X GET "http://localhost:5001/messages" > Temp/messagesInTheBus.txt
+
 echo "*******4- The restaurant can consult the list of meals to prepare, and start the cooking process"
-echo "*******5- The coursier does something..."
+
+echo "*******5- A coursier is assigned to my order, and deliver it on the campus"
+
 # **********************************************************************
 read
 echo "Cleaning context..."
