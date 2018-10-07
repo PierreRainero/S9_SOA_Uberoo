@@ -5,14 +5,14 @@ public class Order {
     private int restoId;
     private String [] items;
 
-    public Order(int restoId, String[] items) {
-        this.restoId = restoId;
+    public Order(String[] items) {
+        //this.restoId = restoId;
         this.items = items;
     }
 
     public Order() {
         String [] items = {};
-        new Order(0, items);
+        new Order(items);
     }
 
     public int getRestoId() {
@@ -25,8 +25,7 @@ public class Order {
 
     @Override
     public String toString() {
-        String out = "Resto id: " + this.restoId + "\n" +
-                "Items :\n";
+        String out = "Items :\n";
         for (String i : this.items) {
             out += i+"\n";
         }
