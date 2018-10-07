@@ -14,27 +14,20 @@ public class RestaurantController {
     private StatRepository statRepository;
 
 
-    @GetMapping(value="/restaurant")
+    /*@GetMapping(value="/restaurants")
     public String restaurant() {
         return "Hello World !!";
     }
 
-    @GetMapping(value = "/restaurant/{id}")
+    @GetMapping(value = "/restaurants/{id}")
     public String getRestaurantById(@PathVariable int id) {
         return "Vous avez demandé le restaurant " + id;
-    }
+    }*/
 
-    @GetMapping(value = "/restaurant/{id}/orders")
+    @GetMapping(value = "/orders")
     public Order getRestaurantOrders(@PathVariable int id) {
         String [] items = {"coca", "kebab"};
-        Order o = new Order(13, items);
+        Order o = new Order(0, items);
         return o;
     }
-
-    @PostMapping(value= "/restaurant/{id}/addOrder")
-    public int addOrder(@PathVariable int id)
-    {
-        return 400;
-    }
-
 }
