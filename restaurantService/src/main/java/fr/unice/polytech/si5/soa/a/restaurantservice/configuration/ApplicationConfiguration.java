@@ -19,9 +19,7 @@ import java.util.Properties;
 // Components to used :
 @ComponentScans(value = { 
 		@ComponentScan("fr.unice.polytech.si5.soa.a.restaurantservice.dao"),
-		@ComponentScan("fr.unice.polytech.si5.soa.a.restaurantservice.dao.component"),
-		@ComponentScan("fr.unice.polytech.si5.soa.a.restaurantservice.services"),
-		@ComponentScan("fr.unice.polytech.si5.soa.a.restaurantservice.services.component")
+		@ComponentScan("fr.unice.polytech.si5.soa.a.restaurantservice.services")
 })
 public class ApplicationConfiguration {
 	@Autowired

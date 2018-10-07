@@ -22,11 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import fr.unice.polytech.si5.soa.a.restaurantservice.dao.IOrderDao;
 import fr.unice.polytech.si5.soa.a.restaurantservice.model.OrderToPrepare;
 
-/**
- * Class name	TestConfiguration
- * Date			29/09/2018
- * @author		PierreRainero
- */
+
 @Configuration
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement

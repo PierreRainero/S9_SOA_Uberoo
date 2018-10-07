@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DeliveryServiceImpl implements IDeliveryService {
-
     @Autowired
     private SessionFactory sessionFactory;
 
