@@ -2,7 +2,7 @@
 echo "Creating context..."
 docker exec soa_orderService_database mysql -uroot -pteama -e "USE uberoo; INSERT INTO MEAL (name) VALUES ('Ramen'); INSERT INTO Meal_tags VALUES ((SELECT id FROM MEAL WHERE name = 'Ramen'), 'Asian'); INSERT INTO USER (firstName, lastName) VALUES ('Bob', '');"
 docker exec soa_orderService_database mysql -uroot -pteama -e "USE uberoo; SELECT id FROM USER WHERE firstName='Bob';" > Temp/bobId.txt
-curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"route\":\"http://localhost:9777/restaurants/new_order/\"}" "http://localhost:5001/subscribe" # Subscription of the restaurant service to the bus
+curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"route\":\"http://localhost:9777/restaurants/orders/\"}" "http://localhost:5001/subscribe" # Subscription of the restaurant service to the bus
 curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"route\":\"http://localhost:9666/deliveries\"}" "http://localhost:5001/subscribe" # Subscription of the coursier service to the bus
 
 # ************** Scenario **************
