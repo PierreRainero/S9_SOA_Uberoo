@@ -60,6 +60,18 @@ services:
     depends_on:
       coursierService_database: # wait for db to be up
         condition: service_healthy
+
+  restaurantService_database: # database for coursierService
+    container_name: soa_restaurantService_database
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=teama
+      - MYSQL_DATABASE=uberoo
+    expose:
+      - "3306"
+    healthcheck: # condition to consider the bd is ready
+      test: 'mysqladmin ping --silent'
+
   restaurantService:
     container_name: soa_restaurantService
     image: "soa/wb/restaurantservice"
@@ -68,5 +80,9 @@ services:
     expose:
     - "9777"
     restart: always # if db is up too early, restart
+    links: # for the hostname mapping
+      - restaurantService_database 
+      - messageBus
     depends_on:
-    - messageBus
+      restaurantService_database: # wait for db to be up
+        condition: service_healthy
