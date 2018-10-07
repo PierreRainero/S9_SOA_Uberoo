@@ -99,7 +99,7 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 
 		if(order.getState().equals(OrderState.VALIDATED)) {
 			NewOrder message = new NewOrder(result);
-			restTemplate.postForObject("http://messageBus:5001/message", message, Message.class);
+			restTemplate.postForObject("http://messageBus:5000/message", message, Message.class);
 		}
 
 		return result;
