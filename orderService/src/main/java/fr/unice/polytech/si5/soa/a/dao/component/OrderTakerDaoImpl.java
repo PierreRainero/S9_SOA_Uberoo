@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
-import fr.unice.polytech.si5.soa.a.entities.Order;
+import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 
 /**
  * Class name	OrderTakerImpl
@@ -36,7 +36,7 @@ public class OrderTakerDaoImpl implements IOrderTakerDao {
 	/**
      * {@inheritDoc}
      */
-	public Order addOrder(Order commandToAdd) {
+	public UberooOrder addOrder(UberooOrder commandToAdd) {
 		Session session = sessionFactory.getCurrentSession();
 
 		try {
@@ -53,12 +53,12 @@ public class OrderTakerDaoImpl implements IOrderTakerDao {
 	/**
      * {@inheritDoc}
      */
-	public Order updateOrder(Order orderToUpdate) {
+	public UberooOrder updateOrder(UberooOrder orderToUpdate) {
 		Session session = sessionFactory.getCurrentSession();
 
-		Order result = null;
+		UberooOrder result = null;
 		try {
-            result = (Order) session.merge(orderToUpdate);
+            result = (UberooOrder) session.merge(orderToUpdate);
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
 			logger.error("Cannot execute query : updateOrder", e);
@@ -71,12 +71,12 @@ public class OrderTakerDaoImpl implements IOrderTakerDao {
 	/**
      * {@inheritDoc}
      */
-	public Optional<Order> findOrderById(int orderId) {
+	public Optional<UberooOrder> findOrderById(int orderId) {
 		Session session = sessionFactory.getCurrentSession();
 
-		Optional<Order> result = Optional.empty();
+		Optional<UberooOrder> result = Optional.empty();
 		try {
-			Order order = (Order) session.get(Order.class, orderId);
+			UberooOrder order = (UberooOrder) session.get(UberooOrder.class, orderId);
 
 			if(order!=null){
 				result = Optional.of(order);
