@@ -16,23 +16,30 @@ import java.util.Map;
 @Service("OrderService")
 public class OrderService {
 
-    private Map<Integer, List<Order>> ordersByResto; // int: restoId      Order[]: this resto orders
+    //private Map<Integer, List<Order>> ordersByResto; // int: restoId      Order[]: this resto orders
+    private List<Order> orders;
 
     public OrderService() {
-        ordersByResto = new HashMap<>();
+        //ordersByResto = new HashMap<>();
+        orders = new ArrayList<>();
     }
 
-    public List<Order> findOrdersByRestoId(int id) {
+    /*public List<Order> findOrdersByRestoId(int id) {
         return ordersByResto.get(id);
-    }
+    }*/
 
-    public String addOrder(int id, Order o) {
-        if (!ordersByResto.containsKey(id))
+    public void addOrder(Order o) {
+        /*if (!ordersByResto.containsKey(id))
         {
             ordersByResto.put(id, new ArrayList<>());
         }
         ordersByResto.get(id).add(o);
-        return "ok";
+        return "ok";*/
+        orders.add(o);
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
 }
