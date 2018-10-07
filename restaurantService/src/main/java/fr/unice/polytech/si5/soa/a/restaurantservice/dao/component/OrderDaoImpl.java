@@ -11,10 +11,16 @@ import org.hibernate.SessionFactory;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.unice.polytech.si5.soa.a.restaurantservice.dao.IOrderDao;
 import fr.unice.polytech.si5.soa.a.restaurantservice.model.OrderToPrepare;
 
+@Primary
+@Repository
+@Transactional
 public class OrderDaoImpl implements IOrderDao {
 	@Autowired
 	private SessionFactory sessionFactory;

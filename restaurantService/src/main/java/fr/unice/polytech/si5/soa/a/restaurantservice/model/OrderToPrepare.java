@@ -4,7 +4,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.NONE;
 
 import java.io.Serializable;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 

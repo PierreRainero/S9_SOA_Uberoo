@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:db.properties")
 @EnableTransactionManagement
 // Components to used :
 @ComponentScans(value = { 

@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-
 
 @Primary
 @Service("OrderService")
@@ -19,12 +17,12 @@ public class OrderServiceImpl implements IOrderService {
 	private IOrderDao orderdao;
 
 	@Override
-	public String addOrder(OrderToPrepare orderToAdd) {
+	public boolean addOrder(OrderToPrepare orderToAdd) {
 		OrderToPrepare otp = orderdao.addOrder(orderToAdd);
 		if(otp!=null && otp.getId()>0) {
-			return "ok";
+			return true;
 		}else {
-			return "ko";
+			return false;
 		}
 	}
 
