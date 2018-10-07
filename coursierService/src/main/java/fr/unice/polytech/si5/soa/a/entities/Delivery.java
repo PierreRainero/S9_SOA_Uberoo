@@ -3,7 +3,7 @@ package fr.unice.polytech.si5.soa.a.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.voodoodyne.jackson.jsog.JSOGGenerator;
-import org.springframework.lang.NonNull;
+import fr.unice.polytech.si5.soa.a.dto.OrderDTO;
 
 import javax.persistence.*;
 
@@ -24,11 +24,14 @@ public class Delivery {
     @Column(name = "id")
     private Long id;
 
-    @Column(name="id_order")
-    private Long idOrder;
+//    @Column(name="id_order")
+//    private Long idOrder;
 
     @Column(name = "to_be_delivered")
     private Boolean toBeDelivered;
+
+    @Column(name = "uberooorder")
+    private OrderDTO orderDTO;
 
     public Boolean getToBeDelivered() {
         return toBeDelivered;
@@ -38,11 +41,19 @@ public class Delivery {
         this.toBeDelivered = toBeDelivered;
     }
 
-    public Long getIdOrder() {
-        return idOrder;
+    public OrderDTO getOrderDTO() {
+        return orderDTO;
     }
 
-    public void setIdOrder(Long idOrder) {
-        this.idOrder = idOrder;
+    public void setOrderDTO(OrderDTO orderDTO) {
+        this.orderDTO = orderDTO;
     }
+
+//    public Long getIdOrder() {
+//        return idOrder;
+//    }
+//
+//    public void setIdOrder(Long idOrder) {
+//        this.idOrder = idOrder;
+//    }
 }

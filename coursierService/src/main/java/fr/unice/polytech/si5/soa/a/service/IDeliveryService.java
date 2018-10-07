@@ -13,4 +13,6 @@ public interface IDeliveryService {
     List<Delivery> findTobeDeliveredDeliveries();
 
     void updateDeliveryToDelivered(Long idDelivery) throws Exception;
+
+	void createDelivery(Delivery delivery);
 }

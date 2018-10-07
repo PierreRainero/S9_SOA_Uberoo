@@ -1,5 +1,6 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
+import fr.unice.polytech.si5.soa.a.dto.OrderDTO;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.service.IDeliveryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,23 +24,36 @@ import java.util.List;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class DeliveryController {
 
-    @Autowired
-    private IDeliveryService deliveryService;
+	static int delivery_counter = 0;
 
-    @CrossOrigin
-    @RequestMapping(value = "", method = RequestMethod.GET, produces = {"application/JSON; charset=UTF-8"})
-    public ResponseEntity<List<Delivery>> findDeliveries() {
-        return new ResponseEntity<>(deliveryService.findTobeDeliveredDeliveries(), HttpStatus.ACCEPTED);
-    }
+	@Autowired
+	private IDeliveryService deliveryService;
 
-    @CrossOrigin
-    @RequestMapping(value = "", method = RequestMethod.PUT, produces = {"application/JSON; charset=UTF-8"})
-    public ResponseEntity<Void> updateDeliveryToDelivered(@RequestParam(value = "idDelivery", required = true) Long idDelivery) {
-        try{
-            this.deliveryService.updateDeliveryToDelivered(idDelivery);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+	@CrossOrigin
+	@RequestMapping(value = "", method = RequestMethod.GET, produces = {"application/JSON; charset=UTF-8"})
+	public ResponseEntity<List<Delivery>> findDeliveries() {
+		return new ResponseEntity<>(deliveryService.findTobeDeliveredDeliveries(), HttpStatus.ACCEPTED);
+	}
+
+	@CrossOrigin
+	@RequestMapping(value = "", method = RequestMethod.PUT, produces = {"application/JSON; charset=UTF-8"})
+	public ResponseEntity<Void> updateDeliveryToDelivered(@RequestParam(value = "idDelivery", required = true) Long idDelivery) {
+		try {
+			this.deliveryService.updateDeliveryToDelivered(idDelivery);
+			return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@CrossOrigin
+	@RequestMapping(value = "", method = RequestMethod.POST, consumes = {"application/JSON; charset=UTF-8"}, produces = {"application/JSON; charset=UTF-8"})
+	public ResponseEntity<Void> receiveOrder(@RequestBody OrderDTO orderDTO) {
+		System.out.println("RECEIVED********** " + orderDTO.toString());
+		Delivery delivery = new Delivery();
+		delivery.setOrderDTO(orderDTO);
+		delivery.setToBeDelivered(true);
+		deliveryService.createDelivery(delivery);
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+	}
 }

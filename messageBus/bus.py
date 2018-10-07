@@ -74,6 +74,7 @@ def send_all_messages(subscribers_routes_data, messages_data):
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         for subscriber in subscribers_routes_data:
             for message in messages_data:
+                print("Sending post to "+subscriber+" "+jsonify(message))
                 r = requests.post(subscriber, data=jsonify(message), headers=headers)
     return
 

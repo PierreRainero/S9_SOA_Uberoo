@@ -1,15 +1,21 @@
 package fr.unice.polytech.si5.soa.a.service.implementation;
 
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
-import fr.unice.polytech.si5.soa.a.repositories.DeliveryRepository;
 import fr.unice.polytech.si5.soa.a.service.IDeliveryService;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the delivery service.
@@ -19,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeliveryServiceImpl implements IDeliveryService {
 
     @Autowired
-    private DeliveryRepository deliveryRepository;
+    private SessionFactory sessionFactory;
 
     /**
      * @return all the deliveries that have not been delivered yet.
@@ -27,7 +33,14 @@ public class DeliveryServiceImpl implements IDeliveryService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Delivery> findTobeDeliveredDeliveries() {
-        return this.deliveryRepository.findAll().stream().filter(Delivery::getToBeDelivered).collect(Collectors.toList());
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Delivery> criteria = builder.createQuery(Delivery.class);
+        Root<Delivery> root = criteria.from(Delivery.class);
+
+        criteria.select(root);
+        Query<Delivery> query = session.createQuery(criteria);
+        return query.getResultList().stream().filter(Delivery::getToBeDelivered).collect(Collectors.toList());
     }
 
     /**
@@ -38,13 +51,29 @@ public class DeliveryServiceImpl implements IDeliveryService {
      */
     @Override
     public void updateDeliveryToDelivered(Long idDelivery) throws Exception {
-        Optional<Delivery> optionalDelivery = this.deliveryRepository.findById(idDelivery);
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Delivery> criteria = builder.createQuery(Delivery.class);
+        Root<Delivery> root = criteria.from(Delivery.class);
+        criteria.select(root).where(builder.equal(root.get("id"),idDelivery));
+        Query<Delivery> query = session.createQuery(criteria);
+        Optional<Delivery> optionalDelivery = Optional.of(query.getSingleResult());
         if (optionalDelivery.isPresent()){
             Delivery delivery = optionalDelivery.get();
             delivery.setToBeDelivered(true);
-            deliveryRepository.save(delivery);
+            session.merge(delivery);
         }else{
             throw new Exception("Delivery not found.");
+        }
+    }
+
+    @Override
+    public void createDelivery(Delivery delivery) {
+        Session session = sessionFactory.getCurrentSession();
+        try {
+            session.save(delivery);
+        } catch (SQLGrammarException e) {
+            session.getTransaction().rollback();
         }
     }
 }
