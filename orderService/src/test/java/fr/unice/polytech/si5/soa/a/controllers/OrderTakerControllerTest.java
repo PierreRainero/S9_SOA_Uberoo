@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
-import fr.unice.polytech.si5.soa.a.entities.Order;
+import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
@@ -78,7 +78,7 @@ public class OrderTakerControllerTest {
 		bob.setFirstName("Bob");
 		bob.setLastName("Harington");
 		
-		Order command  = new Order();
+		UberooOrder command  = new UberooOrder();
 		command.addMeal(ramen);
 		command.setDeliveryAddress("930 Route des Colles, 06410 Biot");
 		command.setTransmitter(bob);
@@ -89,7 +89,7 @@ public class OrderTakerControllerTest {
     @Test
     public void addCommandUsingHTTPPost() throws Exception {
 		when(orderServiceMock.addOrder(any(OrderDTO.class))).thenReturn(bobOrder);
-		
+
 		mockMvc.perform(post(BASE_URI)
                .contentType(TestUtil.APPLICATION_JSON_UTF8)
                .content(TestUtil.convertObjectToJsonBytes(bobOrder))

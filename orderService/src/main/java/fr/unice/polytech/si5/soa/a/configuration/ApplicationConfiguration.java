@@ -1,7 +1,7 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.entities.Meal;
-import fr.unice.polytech.si5.soa.a.entities.Order;
+import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -53,7 +54,7 @@ public class ApplicationConfiguration {
 		props.put("hibernate.dialect", env.getProperty("db.dialect"));
 
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(Order.class, Meal.class, User.class);
+		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class);
 		return factoryBean;
 	}
 
@@ -62,5 +63,10 @@ public class ApplicationConfiguration {
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
 		transactionManager.setSessionFactory(getSessionFactory().getObject());
 		return transactionManager;
+	}
+	
+	@Bean
+	public RestTemplate restTemplate() {
+	    return new RestTemplate();
 	}
 }

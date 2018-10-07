@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
-import fr.unice.polytech.si5.soa.a.entities.Order;
+import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.User;
 
@@ -40,7 +40,7 @@ public class OrderTakerDaoTest {
 	private IOrderTakerDao orderDao;
 	
 	private Meal ramen;
-	private Order bobOrder;
+	private UberooOrder bobOrder;
 	private User bob;
 	
 	@BeforeEach
@@ -52,7 +52,7 @@ public class OrderTakerDaoTest {
 		bob.setFirstName("Bob");
 		bob.setLastName("Harington");
 		
-		bobOrder = new Order();
+		bobOrder = new UberooOrder();
 		bobOrder.addMeal(ramen);
 		bobOrder.setDeliveryAddress("930 Route des Colles, 06410 Biot");
 		bobOrder.setTransmitter(bob);
@@ -98,7 +98,7 @@ public class OrderTakerDaoTest {
 	
 	@Test
 	public void addANewOrder() {
-		Order order = orderDao.addOrder(bobOrder);
+		UberooOrder order = orderDao.addOrder(bobOrder);
 		
 		assertNotNull(order);
 		assertNotEquals(0, order.getId());
@@ -117,7 +117,7 @@ public class OrderTakerDaoTest {
 			session.close();
 		}
 		
-		Optional<Order> order = orderDao.findOrderById(bobOrder.getId());
+		Optional<UberooOrder> order = orderDao.findOrderById(bobOrder.getId());
 		assertTrue(order.isPresent());
 		assertEquals(bobOrder.getId(), order.get().getId());
 	}
@@ -142,7 +142,7 @@ public class OrderTakerDaoTest {
 		session.evict(bobOrder);
 		
 		bobOrder.setDeliveryAddress(newAddress);
-		Order order = orderDao.updateOrder(bobOrder);
+		UberooOrder order = orderDao.updateOrder(bobOrder);
 		assertNotEquals(oldAddress, order.getDeliveryAddress());
 		assertEquals(newAddress, order.getDeliveryAddress());
 	}

@@ -36,10 +36,10 @@ import lombok.ToString;
  */
 @Entity
 @Data
-@Table(name = "`ORDER`")
+@Table(name = "`UBEROOORDER`")
 @EqualsAndHashCode(exclude={"id"})
 @ToString()
-public class Order implements Serializable {
+public class UberooOrder implements Serializable {
 	/**
 	 * Generated UID version
 	 */
@@ -71,22 +71,22 @@ public class Order implements Serializable {
 	/**
 	 * Default constructor
 	 */
-	public Order() {
+	public UberooOrder() {
 		// Default constructor for JPA
 	}
 	
 	/**
 	 * Normal construtor using Data Transfert Object
-	 * @param orderDatas DTO for {@link Order}
+	 * @param orderDatas DTO for {@link UberooOrder}
 	 */
-	public Order(OrderDTO orderDatas) {
+	public UberooOrder(OrderDTO orderDatas) {
 		this.deliveryAddress = orderDatas.getDeliveryAddress();
 		this.eta = orderDatas.getEta();
 		this.state = orderDatas.getState();
 	}
 	/**
 	 * Generate a Data Transfer Object from a business object
-	 * @return DTO for a {@link Order}
+	 * @return DTO for a {@link UberooOrder}
 	 */
 	public OrderDTO toDTO() {
 		return new OrderDTO(id, meals.stream().map(meal -> meal.toDTO()).collect(Collectors.toList()), transmitter.toDTO(), deliveryAddress, eta, state);

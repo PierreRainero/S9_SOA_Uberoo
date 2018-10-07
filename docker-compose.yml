@@ -2,6 +2,7 @@ version: "2.1"
 
 services:
   messageBus:
+    container_name: soa_messageBus
     image: "soa/bus"
     ports:
       - "5001:5000"
@@ -9,6 +10,7 @@ services:
       - "5001"
 
   orderService_database: # database for orderService
+    container_name: soa_orderService_database
     image: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=teama
@@ -19,14 +21,16 @@ services:
       test: 'mysqladmin ping --silent'
 
   orderService:
+    container_name: soa_orderService
     image: "soa/wb/orderservice"
     ports:
       - "9555:8080"
     expose:
       - "9555"
     restart: always # if db is up too early, restart
-    links: 
-      - orderService_database # for the hostname mapping
+    links: # for the hostname mapping
+      - orderService_database 
+      - messageBus
     depends_on:
       orderService_database: # wait for db to be up
         condition: service_healthy
