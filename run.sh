@@ -31,8 +31,6 @@ curl -X GET --silent "http://localhost:5001/messages" > Temp/messagesInTheBus.tx
 echo "Press any key to continue..."
 read
 
-sleep 3
-
 echo "*******4- The restaurant can consult the list of meals to prepare, and start the cooking process"
 curl -X GET --silent "http://localhost:9777/restaurants/orders/" > Temp/pendingOrders.txt
 echo "Press any key to continue..."
