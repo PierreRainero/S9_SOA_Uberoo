@@ -27,11 +27,10 @@ curl -X GET "http://localhost:5001/messages" > Temp/messagesInTheBus.txt
 # Message Bus can't POST
 # Resto KO
 echo "*******4- The restaurant can consult the list of meals to prepare, and start the cooking process"
-curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9777/restaurants/orders/"
+curl -X GET "http://localhost:9777/restaurants/orders/" > Temp/pendingOrders.txt
 
 # CoursierService KO
 echo "*******5- A coursier is assigned to my order, and deliver it on the campus"
-curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9666/deliveries"
 curl -X GET "http://localhost:9666/deliveries" > Temp/pendingDeliveries.txt
 
 # **********************************************************************

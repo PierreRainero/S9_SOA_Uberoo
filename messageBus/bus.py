@@ -1,8 +1,11 @@
 import _thread
-import json
+import sys
 import uuid
+from random import randint
+
 import requests
-from flask import Flask, jsonify, request, abort
+import time
+from flask import Flask, jsonify, request, abort, json
 from flask.json import JSONEncoder
 
 
@@ -35,9 +38,11 @@ class CommandMessage(object):
 def get_messages():
     return jsonify(messages)
 
+
 @app.route('/subscribers', methods=["GET"])
 def get_subscribers():
     return jsonify(subscribers_routes)
+
 
 @app.route('/subscribe', methods=["POST"])
 def subscribe():
@@ -69,7 +74,10 @@ def post_message():
     command_message.food = request.json["food"]
     messages.append(command_message)
     _thread.start_new_thread(send_all_messages, (subscribers_routes, messages,))
-    return jsonify(), 200
+    # for subscriber in subscribers_routes:
+    #     for message in messages:
+    #         execute_post(subscriber, message)
+    return jsonify({"status": "ok"}), 200
 
 
 def send_all_messages(subscribers_routes_data, messages_data):
@@ -77,9 +85,17 @@ def send_all_messages(subscribers_routes_data, messages_data):
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         for subscriber in subscribers_routes_data:
             for message in messages_data:
-                print("Sending post to "+str(subscriber)+" "+str(message))
-                r = requests.post(subscriber, data=jsonify(message), headers=headers)
-    return
+                i = randint(1, 3)
+                print("Sending post to " + str(subscriber) + " in "+str(i)+"s", file=sys.stderr)
+                time.sleep(i)
+                requests.post(str(subscriber), data=json.dumps(message), headers=headers)
+                # print("POST sent")
+
+
+# def execute_post(subscriber, message):
+#     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+#     print("Sending post to " + str(subscriber), file=sys.stderr)
+#     requests.post(str(subscriber), data=json.dumps(message), headers=headers)
 
 
 if __name__ == '__main__':
