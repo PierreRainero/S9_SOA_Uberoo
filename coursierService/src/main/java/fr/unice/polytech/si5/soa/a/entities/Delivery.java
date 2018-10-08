@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Class name	Meal
+ * Class name	Delivery
  * Date			08/10/2018
  * @author		PierreRainero
  */

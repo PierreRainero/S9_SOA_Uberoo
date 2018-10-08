@@ -18,80 +18,82 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
-import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
+import fr.unice.polytech.si5.soa.a.entities.OrderState;
+import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
 
 /**
- * Class name	DeliveryDaoImpl
- * @see			IDeliveryDao
+ * Class name	OrderDaoImpl
+ * @see			IOrderDao
  * Date			08/10/2018
  * @author		PierreRainero
  */
 @Primary
 @Repository
 @Transactional
-public class DeliveryDaoImpl implements IDeliveryDao {
-	private static Logger logger = LogManager.getLogger(DeliveryDaoImpl.class);
+public class OrderDaoImpl implements IOrderDao {
+	private static Logger logger = LogManager.getLogger(OrderDaoImpl.class);
 	
 	@Autowired
 	private SessionFactory sessionFactory;
-
+	
 	@Override
-	public Delivery addDelivery(Delivery deliveryToAdd) {
+	public RestaurantOrder addOrder(RestaurantOrder orderToAdd) {
 		Session session = sessionFactory.getCurrentSession();
 
 		try {
-			session.save(deliveryToAdd);
+			session.save(orderToAdd);
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
-			logger.error("Cannot execute query : addDelivery", e);
+			logger.error("Cannot execute query : addOrder", e);
 		}
 
-		return deliveryToAdd;
+		return orderToAdd;
 	}
 
 	@Override
-	public Delivery updateDelivery(Delivery deliveryToUpdate) {
+	public RestaurantOrder updateOrder(RestaurantOrder orderToUpdate) {
 		Session session = sessionFactory.getCurrentSession();
 
-		Delivery result = null;
+		RestaurantOrder result = null;
 		try {
-            result = (Delivery) session.merge(deliveryToUpdate);
+            result = (RestaurantOrder) session.merge(orderToUpdate);
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
-			logger.error("Cannot execute query : updateDelivery", e);
+			logger.error("Cannot execute query : updateOrder", e);
 		}
 
 		return result;
 	}
 
 	@Override
-	public Optional<Delivery> findDeliveryById(int id) {
+	public Optional<RestaurantOrder> findOrderById(int id) {
 		Session session = sessionFactory.getCurrentSession();
 
-		Optional<Delivery> result = Optional.empty();
+		Optional<RestaurantOrder> result = Optional.empty();
 		try {
-			Delivery delivery = (Delivery) session.get(Delivery.class, id);
+			RestaurantOrder order = (RestaurantOrder) session.get(RestaurantOrder.class, id);
 
-			if(delivery!=null){
-				result = Optional.of(delivery);
+			if(order!=null){
+				result = Optional.of(order);
 			}
 		} catch (SQLGrammarException e) {
-			logger.error("Cannot execute query : findDeliveryById", e);
+			logger.error("Cannot execute query : findOrderById", e);
 		}
 
 		return result;
 	}
 
 	@Override
-	public List<Delivery> getDeliveriesToDo() {
+	public List<RestaurantOrder> getOrdersToDo() {
 		Session session = sessionFactory.getCurrentSession();
 		CriteriaBuilder builder = session.getCriteriaBuilder();
-		CriteriaQuery<Delivery> criteria = builder.createQuery(Delivery.class);
-		Root<Delivery> root =  criteria.from(Delivery.class);
-		criteria.select(root).where(builder.equal(root.get("state"), false));
-		Query<Delivery> query = session.createQuery(criteria);
+		CriteriaQuery<RestaurantOrder> criteria = builder.createQuery(RestaurantOrder.class);
+		Root<RestaurantOrder> root =  criteria.from(RestaurantOrder.class);
+		criteria.select(root).where(builder.equal(root.get("state"), OrderState.TO_PREPARE));
+		Query<RestaurantOrder> query = session.createQuery(criteria);
 		
 		return query.getResultList();
 	}
+
 }

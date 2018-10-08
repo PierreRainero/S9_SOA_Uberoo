@@ -13,7 +13,7 @@ import java.util.Properties;
 
 /**
  * Class name	WebApplicationConfiguration
- * Date			30/09/2018
+ * Date			08/10/2018
  * @author		PierreRainero
  */
 @Configuration

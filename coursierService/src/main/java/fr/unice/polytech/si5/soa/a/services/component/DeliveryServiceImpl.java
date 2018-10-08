@@ -14,6 +14,12 @@ import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowDeliveryException;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 
+/**
+ * Class name	DeliveryServiceImpl
+ * @see			IDeliveryService
+ * Date			08/10/2018
+ * @author		PierreRainero
+ */
 @Primary
 @Service("DeliveryService")
 public class DeliveryServiceImpl implements IDeliveryService {

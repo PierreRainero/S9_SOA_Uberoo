@@ -5,6 +5,11 @@ import java.util.Optional;
 
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 
+/**
+ * Class name	IDeliveryDao
+ * Date			08/10/2018
+ * @author		PierreRainero
+ */
 public interface IDeliveryDao {
 	Delivery addDelivery(Delivery deliveryToAdd);
 	Delivery updateDelivery(Delivery deliveryToUpdate);
