@@ -6,9 +6,8 @@ import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfig
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
 @SpringBootApplication(exclude = {JpaRepositoriesAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class RestaurantApplication {
-
+public class RestaurantServiceApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(RestaurantApplication.class, args);
+		SpringApplication.run(RestaurantServiceApplication.class, args);
 	}
 }
