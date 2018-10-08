@@ -1,59 +1,62 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
-import fr.unice.polytech.si5.soa.a.dto.OrderDTO;
-import fr.unice.polytech.si5.soa.a.entities.Delivery;
-import fr.unice.polytech.si5.soa.a.service.IDeliveryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.communication.NewOrder;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowDeliveryException;
+import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 
 /**
- * Class name	DeliveryController
- * Date			03/10/2018
- *
- * @author AlexisDeslandes
+ * Class name	OrderTakerController
+ * Date			29/09/2018
+ * @author		PierreRainero
  */
 @RestController
 @RequestMapping("/deliveries")
-@Transactional()
-@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class DeliveryController {
-
-	static int delivery_counter = 0;
-
+	private static Logger logger = LogManager.getLogger(DeliveryController.class);
+	
 	@Autowired
 	private IDeliveryService deliveryService;
 
-	@CrossOrigin
-	@RequestMapping(value = "", method = RequestMethod.GET, produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<List<Delivery>> findDeliveries() {
-		return new ResponseEntity<>(deliveryService.findTobeDeliveredDeliveries(), HttpStatus.ACCEPTED);
+	@RequestMapping(value = "",
+			method = RequestMethod.POST,
+			consumes = {"application/JSON; charset=UTF-8"},
+			produces = {"application/JSON; charset=UTF-8"})
+	public ResponseEntity<?> addOrder(@RequestBody NewOrder order) {
+		DeliveryDTO delivery = order.createDelivery();
+		
+		return ResponseEntity.ok(deliveryService.addDelivery(delivery));
 	}
-
-	@CrossOrigin
-	@RequestMapping(value = "", method = RequestMethod.PUT, produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<Void> updateDeliveryToDelivered(@RequestParam(value = "idDelivery", required = true) Long idDelivery) {
+	
+	@RequestMapping(value = "/{deliveryId}/",
+			method = RequestMethod.PUT,
+			consumes = {"application/JSON; charset=UTF-8"},
+			produces = {"application/JSON; charset=UTF-8"})
+	public ResponseEntity<?> updateOrderState(@PathVariable("deliveryId") String id, @RequestBody DeliveryDTO delivery) {
 		try {
-			this.deliveryService.updateDeliveryToDelivered(idDelivery);
-			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return ResponseEntity.ok(deliveryService.updateDelivery(delivery));
+		}catch(UnknowDeliveryException e) {
+			logger.error(e.getMessage(), e);
+			return ResponseEntity.status(404).body(e.getMessage());
 		}
 	}
-
-	@CrossOrigin
-	@RequestMapping(value = "", method = RequestMethod.POST, consumes = {"application/JSON; charset=UTF-8"}, produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<Void> receiveOrder(@RequestBody OrderDTO orderDTO) {
-		System.out.println("RECEIVED********** " + orderDTO.toString());
-		Delivery delivery = new Delivery();
-		delivery.setOrderDTO(orderDTO);
-		delivery.setToBeDelivered(true);
-		deliveryService.createDelivery(delivery);
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+	
+	@RequestMapping(value = "",
+			method = RequestMethod.GET,
+			produces = {"application/JSON; charset=UTF-8"})
+	public ResponseEntity<?> findMealsByTag(@RequestParam("tag") String tag) {
+		return ResponseEntity.ok(deliveryService.getDeliveriesToDo());
 	}
 }

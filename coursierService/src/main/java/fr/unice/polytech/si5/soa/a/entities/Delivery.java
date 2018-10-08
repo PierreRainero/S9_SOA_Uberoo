@@ -1,59 +1,57 @@
 package fr.unice.polytech.si5.soa.a.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.voodoodyne.jackson.jsog.JSOGGenerator;
-import fr.unice.polytech.si5.soa.a.dto.OrderDTO;
+import static javax.persistence.GenerationType.IDENTITY;
 
-import javax.persistence.*;
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
- * Class representing a delivery in the system.
- * @author Alexis Deslandes
+ * Class name	Meal
+ * Date			08/10/2018
+ * @author		PierreRainero
  */
 @Entity
-@Table(name="delivery")
-@JsonIdentityInfo(generator = JSOGGenerator.class)
-@JsonIgnoreProperties
-public class Delivery {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long id;
-
-//    @Column(name="id_order")
-//    private Long idOrder;
-
-    @Column(name = "to_be_delivered")
-    private Boolean toBeDelivered;
-
-    @Column(name = "uberooorder")
-    private OrderDTO orderDTO;
-
-    public Boolean getToBeDelivered() {
-        return toBeDelivered;
-    }
-
-    public void setToBeDelivered(Boolean toBeDelivered) {
-        this.toBeDelivered = toBeDelivered;
-    }
-
-    public OrderDTO getOrderDTO() {
-        return orderDTO;
-    }
-
-    public void setOrderDTO(OrderDTO orderDTO) {
-        this.orderDTO = orderDTO;
-    }
-
-//    public Long getIdOrder() {
-//        return idOrder;
-//    }
-//
-//    public void setIdOrder(Long idOrder) {
-//        this.idOrder = idOrder;
-//    }
+@Data
+@Table(name = "`DELIVERY`")
+@EqualsAndHashCode(exclude={"id"})
+@ToString()
+public class Delivery implements Serializable {
+	/**
+	 * Generated UID version
+	 */
+	private static final long serialVersionUID = 8262931988309989234L;
+	
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	@Column(name = "id")
+	private int id;
+	
+	@Column(name = "deliveryAddress", nullable = false)
+	private String deliveryAddress;
+	
+	@Column(name = "state", nullable = false)
+	public boolean state = false;
+	
+	public Delivery() {
+		// Default constructor for JPA
+	}
+	
+	public Delivery(DeliveryDTO data) {
+		this.deliveryAddress = data.getDeliveryAddress();
+		this.state = data.isState();
+	}
+	
+	public DeliveryDTO toDTO() {
+		return new DeliveryDTO(id, deliveryAddress, state);
+	}
 }

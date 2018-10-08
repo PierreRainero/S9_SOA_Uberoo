@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 
 @SpringBootApplication(exclude = {JpaRepositoriesAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public class CoursierServiceApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(CoursierServiceApplication.class, args);
-    }
-
+	public static void main(String[] args) {
+		SpringApplication.run(CoursierServiceApplication.class, args);
+	}
 }
