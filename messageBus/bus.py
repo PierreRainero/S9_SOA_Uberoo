@@ -82,18 +82,18 @@ def post_message():
 
 def send_all_messages(subscribers_routes_data, messages_data):
     with app.app_context():
-        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
         for subscriber in subscribers_routes_data:
             for message in messages_data:
                 i = randint(1, 3)
                 print("Sending post to " + str(subscriber) + " in "+str(i)+"s", file=sys.stderr)
                 time.sleep(i)
                 requests.post(str(subscriber), data=json.dumps(message), headers=headers)
-                # print("POST sent")
+                print("POST sent",file=sys.stderr)
 
 
 # def execute_post(subscriber, message):
-#     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+#     headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
 #     print("Sending post to " + str(subscriber), file=sys.stderr)
 #     requests.post(str(subscriber), data=json.dumps(message), headers=headers)
 

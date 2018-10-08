@@ -35,7 +35,7 @@ services:
       orderService_database: # wait for db to be up
         condition: service_healthy
 
-  coursierService_database: # database for coursierService
+  coursierService_database: # database for coursierservice
     container_name: soa_coursierService_database
     image: mysql
     environment:
@@ -46,7 +46,7 @@ services:
     healthcheck: # condition to consider the bd is ready
       test: 'mysqladmin ping --silent'
 
-  coursierService:
+  coursierservice:
     container_name: soa_coursierService
     image: "soa/wb/coursierservice"
     ports:
@@ -61,7 +61,7 @@ services:
       coursierService_database: # wait for db to be up
         condition: service_healthy
 
-  restaurantService_database: # database for coursierService
+  restaurantService_database: # database for coursierservice
     container_name: soa_restaurantService_database
     image: mysql
     environment:
@@ -72,7 +72,7 @@ services:
     healthcheck: # condition to consider the bd is ready
       test: 'mysqladmin ping --silent'
 
-  restaurantService:
+  restaurantservice:
     container_name: soa_restaurantService
     image: "soa/wb/restaurantservice"
     ports:
