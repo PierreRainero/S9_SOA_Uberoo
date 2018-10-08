@@ -56,7 +56,7 @@ public class DeliveryController {
 	@RequestMapping(value = "",
 			method = RequestMethod.GET,
 			produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<?> findMealsByTag(@RequestParam("tag") String tag) {
+	public ResponseEntity<?> getDeliveriesToDo() {
 		return ResponseEntity.ok(deliveryService.getDeliveriesToDo());
 	}
 }
