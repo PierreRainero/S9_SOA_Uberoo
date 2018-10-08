@@ -3,7 +3,7 @@ echo "Creating context..."
 docker exec soa_orderService_database mysql -uroot -pteama -e "USE uberoo; INSERT INTO MEAL (name) VALUES ('Ramen'); INSERT INTO Meal_tags VALUES ((SELECT id FROM MEAL WHERE name = 'Ramen'), 'Asian'); INSERT INTO USER (firstName, lastName) VALUES ('Bob', '');"
 docker exec soa_orderService_database mysql -uroot -pteama -e "USE uberoo; SELECT id FROM USER WHERE firstName='Bob';" > Temp/bobId.txt
 curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"route\":\"http://restaurantService:8080/restaurants/orders/\"}" "http://localhost:5001/subscribe" # Subscription of the restaurant service to the bus
-curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"route\":\"http://coursierService:8080/deliveries\"}" "http://localhost:5001/subscribe" # Subscription of the coursier service to the bus
+curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"route\":\"http://coursierService:8080/deliveries/\"}" "http://localhost:5001/subscribe" # Subscription of the coursier service to the bus
 
 # ************** Scenario **************
 echo "*******1- As Bob, a hungry student, I browse the food catalogue offered by Uberoo"
@@ -24,9 +24,15 @@ order_id=$(grep -Po '"id": *\K[^,]*' Temp/orderWithETA.txt | head -1)
 curl -X PUT -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9555/orders/$order_id/" > Temp/validatedOrder.txt
 curl -X GET "http://localhost:5001/messages" > Temp/messagesInTheBus.txt
 
+# Message Bus can't POST
+# Resto KO
 echo "*******4- The restaurant can consult the list of meals to prepare, and start the cooking process"
+curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9777/restaurants/orders/"
 
+# CoursierService KO
 echo "*******5- A coursier is assigned to my order, and deliver it on the campus"
+curl -X POST -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9666/deliveries"
+curl -X GET "http://localhost:9666/deliveries" > Temp/pendingDeliveries.txt
 
 # **********************************************************************
 read

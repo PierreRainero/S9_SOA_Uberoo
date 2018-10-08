@@ -32,9 +32,12 @@ class CommandMessage(object):
 
 
 @app.route('/messages', methods=["GET"])
-def hello_world():
+def get_messages():
     return jsonify(messages)
 
+@app.route('/subscribers', methods=["GET"])
+def get_subscribers():
+    return jsonify(subscribers_routes)
 
 @app.route('/subscribe', methods=["POST"])
 def subscribe():
@@ -74,6 +77,7 @@ def send_all_messages(subscribers_routes_data, messages_data):
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         for subscriber in subscribers_routes_data:
             for message in messages_data:
+                print("Sending post to "+str(subscriber)+" "+str(message))
                 r = requests.post(subscriber, data=jsonify(message), headers=headers)
     return
 
