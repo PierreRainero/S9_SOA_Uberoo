@@ -1,30 +1,31 @@
-package fr.unice.polytech.si5.soa.a.config;
+package fr.unice.polytech.si5.soa.a.configuration;
 
-import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
-import javax.sql.DataSource;
-import java.util.Properties;
+import fr.unice.polytech.si5.soa.a.entities.Delivery;
 
-/**
- * Class name	ApplicationConfiguration
- * Date			29/09/2018
- * @author		PierreRainero
- */
 @Configuration
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
 // Components to used :
-@ComponentScans(value = {
-		@ComponentScan("fr.unice.polytech.si5.soa.a.dto"),
-		@ComponentScan("fr.unice.polytech.si5.soa.a.service")
+@ComponentScans(value = { 
+		@ComponentScan("fr.unice.polytech.si5.soa.a.dao"),
+		@ComponentScan("fr.unice.polytech.si5.soa.a.services")
 })
 public class ApplicationConfiguration {
 	@Autowired
@@ -62,9 +63,9 @@ public class ApplicationConfiguration {
 		transactionManager.setSessionFactory(getSessionFactory().getObject());
 		return transactionManager;
 	}
-
+	
 	@Bean
 	public RestTemplate restTemplate() {
-		return new RestTemplate();
+	    return new RestTemplate();
 	}
 }
