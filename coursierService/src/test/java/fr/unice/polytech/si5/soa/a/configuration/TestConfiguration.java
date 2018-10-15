@@ -29,7 +29,7 @@ public class TestConfiguration {
     private Environment env;
 
     @Bean
-    public DataSource getDataSource(){
+    public DataSource getDataSource() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName(env.getProperty("hsqldb.driver"));
         dataSource.setUrl(env.getProperty("hsqldb.url"));
@@ -42,11 +42,13 @@ public class TestConfiguration {
     public LocalSessionFactoryBean getSessionFactory() {
         LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
         factoryBean.setDataSource(getDataSource());
+
         Properties props = new Properties();
         props.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
         props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
         props.put("hibernate.hbm2ddl.auto", env.getProperty("hsqldb.hbm2ddl.auto"));
         props.put("hibernate.dialect", env.getProperty("hsqldb.dialect"));
+
         factoryBean.setHibernateProperties(props);
         factoryBean.setAnnotatedClasses(Delivery.class);
         return factoryBean;
@@ -59,21 +61,14 @@ public class TestConfiguration {
         return transactionManager;
     }
 
-    @Qualifier
     @Bean
-    public IDeliveryDao iDeliveryDao(){
-        return Mockito.mock(IDeliveryDao.class);
-    }
-
-    @Qualifier
-    @Bean
-    public IDeliveryService iDeliveryService(){
-        return Mockito.mock(IDeliveryService.class);
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
     @Qualifier("mock")
     @Bean
-    public RestTemplate restTemplate() {
-        return Mockito.mock(RestTemplate.class);
+    public IDeliveryDao iDeliveryDao() {
+        return Mockito.mock(IDeliveryDao.class);
     }
 }
