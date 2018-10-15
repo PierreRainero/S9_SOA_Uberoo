@@ -1,13 +1,13 @@
 package fr.unice.polytech.si5.soa.a.services;
 
-import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
-import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
-import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
-import fr.unice.polytech.si5.soa.a.entities.Delivery;
-import fr.unice.polytech.si5.soa.a.services.component.DeliveryServiceImpl;
-import org.junit.Test;
+
+
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,10 +19,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
+import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
+import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.services.component.DeliveryServiceImpl;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -37,11 +38,6 @@ public class DeliveryServiceTest {
     private IDeliveryDao iDeliveryDaoMock;
 
     @Autowired
-    @Qualifier("mock")
-    @Mock
-    private RestTemplate restTemplate;
-
-    @Autowired
     @InjectMocks
     private DeliveryServiceImpl deliveryService;
 
@@ -52,7 +48,7 @@ public class DeliveryServiceTest {
     public void setUp(){
         MockitoAnnotations.initMocks(this);
         Mockito.reset(iDeliveryDaoMock);
-        Mockito.reset(restTemplate);
+        
         deliveryTodo = new Delivery();
         deliveryDone = new Delivery();
         deliveryDone.state = true;

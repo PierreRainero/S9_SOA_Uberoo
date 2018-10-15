@@ -18,36 +18,37 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@PropertySource(":classpath:db.properties")
+@PropertySource("classpath:db.properties")
 @EnableTransactionManagement
-@ComponentScans(value={
-        @ComponentScan("fr.unice.polytech.si5.soa.a.dao"),
-        @ComponentScan("fr.unice.polytech.si5.soa.a.services")
+// Components to used
+@ComponentScans(value = { 
+		@ComponentScan("fr.unice.polytech.si5.soa.a.dao"),
+		@ComponentScan("fr.unice.polytech.si5.soa.a.services")
 })
 public class TestConfiguration {
-    @Autowired
-    private Environment env;
+	@Autowired
+	private Environment env;
 
-    @Bean
-    public DataSource getDataSource() {
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(env.getProperty("hsqldb.driver"));
-        dataSource.setUrl(env.getProperty("hsqldb.url"));
-        dataSource.setUsername(env.getProperty("hsqldb.username"));
-        dataSource.setPassword(env.getProperty("hsqldb.password"));
-        return dataSource;
-    }
+	@Bean
+	public DataSource getDataSource() {
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName(env.getProperty("hsqldb.driver"));
+		dataSource.setUrl(env.getProperty("hsqldb.url"));
+		dataSource.setUsername(env.getProperty("hsqldb.username"));
+		dataSource.setPassword(env.getProperty("hsqldb.password"));
+		return dataSource;
+	}
 
-    @Bean
-    public LocalSessionFactoryBean getSessionFactory() {
-        LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
-        factoryBean.setDataSource(getDataSource());
+	@Bean
+	public LocalSessionFactoryBean getSessionFactory() {
+		LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
+		factoryBean.setDataSource(getDataSource());
 
-        Properties props = new Properties();
-        props.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
-        props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-        props.put("hibernate.hbm2ddl.auto", env.getProperty("hsqldb.hbm2ddl.auto"));
-        props.put("hibernate.dialect", env.getProperty("hsqldb.dialect"));
+		Properties props = new Properties();
+		props.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
+		props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
+		props.put("hibernate.hbm2ddl.auto", env.getProperty("hsqldb.hbm2ddl.auto"));
+		props.put("hibernate.dialect", env.getProperty("hsqldb.dialect"));
 
         factoryBean.setHibernateProperties(props);
         factoryBean.setAnnotatedClasses(Delivery.class);
