@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,4 +74,10 @@ public class TestConfiguration {
     public IDeliveryDao iDeliveryDao() {
         return Mockito.mock(IDeliveryDao.class);
     }
+
+	@Qualifier("mock")
+	@Bean
+	public IDeliveryService iDeliveryService(){
+		return Mockito.mock(IDeliveryService.class);
+	}
 }
