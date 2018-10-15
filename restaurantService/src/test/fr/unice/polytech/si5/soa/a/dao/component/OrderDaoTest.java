@@ -97,6 +97,36 @@ class OrderDaoTest {
 
     @Test
     void updateOrder() {
+        meals = new ArrayList<>();
+        meals.add("Pizza");
+        RestaurantOrder pizzaOrder = new RestaurantOrder();
+        pizzaOrder.setId(0);
+        pizzaOrder.setState(OrderState.FINISHED);
+        pizzaOrder.setMeals(meals);
+
+        Session session = sessionFactory.openSession();
+
+        try {
+            session.save(pizzaOrder);
+            session.beginTransaction().commit();
+        } catch (SQLGrammarException e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+
+        List<String> formerMeals = pizzaOrder.getMeals();
+        List<String> newMeals = new ArrayList<>();
+        newMeals.add("Pizza");
+        newMeals.add("Coca");
+
+        session = sessionFactory.openSession();
+        session.evict(pizzaOrder);
+
+        pizzaOrder.setMeals(newMeals);
+        RestaurantOrder order = orderDao.updateOrder(pizzaOrder);
+        assertNotEquals(formerMeals, order.getMeals());
+        assertEquals(newMeals, order.getMeals());
 
     }
 
