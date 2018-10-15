@@ -36,4 +36,17 @@ public class RestaurantOrderDTO implements Serializable {
 		this.meals = meals;
 		this.state = state;
 	}
+
+	public int getId() {
+		return id;
+	}
+
+
+	public OrderState getState() {
+		return state;
+	}
+
+	public List<String> getMeals() {
+		return meals;
+	}
 }

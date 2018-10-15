@@ -60,4 +60,11 @@ public class RestaurantOrder implements Serializable {
 	public RestaurantOrderDTO toDTO() {
 		return new RestaurantOrderDTO(id, meals, state);
 	}
+
+	public void setState(OrderState newState) {
+		this.state = newState;
+	}
+
+
+
 }
