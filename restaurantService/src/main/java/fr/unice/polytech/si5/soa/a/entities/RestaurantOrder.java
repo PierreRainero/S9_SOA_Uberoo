@@ -61,10 +61,6 @@ public class RestaurantOrder implements Serializable {
 		return new RestaurantOrderDTO(id, meals, state);
 	}
 
-	public void setState(OrderState newState) {
-		this.state = newState;
-	}
-
 
 
 }
