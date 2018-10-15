@@ -1,11 +1,7 @@
 package fr.unice.polytech.si5.soa.a.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Optional;
-
+import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
+import fr.unice.polytech.si5.soa.a.entities.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -14,13 +10,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
-import fr.unice.polytech.si5.soa.a.entities.User;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
 
 /**
  * Class name	OrderTakerDaoTest

@@ -1,14 +1,6 @@
 version: "2.1"
 
 services:
-  messageBus:
-    container_name: soa_messageBus
-    image: "soa/bus"
-    ports:
-      - "5001:5000"
-    expose:
-      - "5001"
-
   orderService_database: # database for orderService
     container_name: soa_orderService_database
     image: mysql
@@ -18,7 +10,7 @@ services:
     expose:
       - "3306"
     healthcheck: # condition to consider the bd is ready
-      test: 'mysqladmin ping --silent'
+      test: "mysqladmin ping --silent"
 
   orderService:
     container_name: soa_orderService
@@ -29,8 +21,8 @@ services:
       - "9555"
     restart: always # if db is up too early, restart
     links: # for the hostname mapping
-      - orderService_database 
-      - messageBus
+      - orderService_database
+      - kafka
     depends_on:
       orderService_database: # wait for db to be up
         condition: service_healthy
@@ -44,18 +36,18 @@ services:
     expose:
       - "3306"
     healthcheck: # condition to consider the bd is ready
-      test: 'mysqladmin ping --silent'
+      test: "mysqladmin ping --silent"
 
   coursierservice:
     container_name: soa_coursierService
     image: "soa/wb/coursierservice"
     ports:
-      - "9666:8080"
+      - "9888:8080"
     links: # for the hostname mapping
       - coursierService_database
-      - messageBus
+      - kafka
     expose:
-      - "9666"
+      - "9888"
     restart: always # if db is up too early, restart
     depends_on:
       coursierService_database: # wait for db to be up
@@ -70,19 +62,47 @@ services:
     expose:
       - "3306"
     healthcheck: # condition to consider the bd is ready
-      test: 'mysqladmin ping --silent'
+      test: "mysqladmin ping --silent"
 
   restaurantservice:
     container_name: soa_restaurantService
     image: "soa/wb/restaurantservice"
     ports:
-    - "9777:8080"
+      - "9777:8080"
     expose:
-    - "9777"
+      - "9777"
     restart: always # if db is up too early, restart
     links: # for the hostname mapping
-      - restaurantService_database 
-      - messageBus
+      - restaurantService_database
+      - kafka
     depends_on:
       restaurantService_database: # wait for db to be up
         condition: service_healthy
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - 2181:2181
+
+  kafka:
+    image: wurstmeister/kafka
+    links:
+      - zookeeper:zk
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: "kafka"
+      KAFKA_ADVERTISED_PORT: "9092"
+      KAFKA_CREATE_TOPICS: "topic:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: "zk:2181"
+
+# Add to containers talking to Kafka:
+# links:
+#     - kafka
+#
+# Test:
+# docker-compose up
+# docker exec -it <container_kafka_id> bash
+# kafka-console-producer.sh --broker-list localhost:9092 --topic topic
+# <Write some messages, then CTRL-C>
+# kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topic --from-beginning
+# Your messages are being read WOW

@@ -3,34 +3,47 @@ package fr.unice.polytech.si5.soa.a.configuration;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
+import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
  * Class name	ApplicationConfiguration
  * Date			29/09/2018
- * @author		PierreRainero
+ *
+ * @author PierreRainero
  */
 @Configuration
-@PropertySource("classpath:db.properties")
+@PropertySources({
+		@PropertySource("classpath:db.properties"),
+		@PropertySource("classpath:application.properties")
+})
 @EnableTransactionManagement
 // Components to used :
-@ComponentScans(value = { 
+@ComponentScans(value = {
 		@ComponentScan("fr.unice.polytech.si5.soa.a.dao"),
 		@ComponentScan("fr.unice.polytech.si5.soa.a.services")
 })
 public class ApplicationConfiguration {
 	@Autowired
 	private Environment env;
+
 
 	@Bean
 	public DataSource getDataSource() {
@@ -59,14 +72,34 @@ public class ApplicationConfiguration {
 	}
 
 	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+
+	@Bean
 	public HibernateTransactionManager getTransactionManager() {
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
 		transactionManager.setSessionFactory(getSessionFactory().getObject());
 		return transactionManager;
 	}
-	
+
 	@Bean
-	public RestTemplate restTemplate() {
-	    return new RestTemplate();
+	@Primary
+	public MessageProducer messageProducer() {
+		return new MessageProducer();
+	}
+
+	@Bean
+	public ProducerFactory<String, String> producerFactory() {
+		Map<String, Object> configProps = new HashMap<>();
+		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
+		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		return new DefaultKafkaProducerFactory<>(configProps);
+	}
+
+	@Bean
+	public KafkaTemplate<String, String> kafkaTemplate() {
+		return new KafkaTemplate<>(producerFactory());
 	}
 }

@@ -8,15 +8,15 @@ import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
-import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
+import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
+import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.component.OrderTakerServiceImpl;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,10 +41,11 @@ import static org.mockito.Mockito.*;
 /**
  * Class name	OrderTakerServiceTest
  * Date			30/09/2018
- * @author		PierreRainero
+ *
+ * @author PierreRainero
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { TestConfiguration.class })
+@ContextConfiguration(classes = {TestConfiguration.class})
 public class OrderTakerServiceTest {
 	@Autowired
 	@Qualifier("mock")
@@ -60,11 +61,15 @@ public class OrderTakerServiceTest {
 	@Qualifier("mock")
 	@Mock
 	private ICatalogDao catalogDaoMock;
-	
+
 	@Autowired
 	@Qualifier("mock")
 	@Mock
-    private RestTemplate restTemplate;
+	private RestTemplate restTemplate;
+
+	@Autowired
+	@Mock
+	private MessageProducer messageProducerMock;
 
 	@Autowired
 	@InjectMocks
@@ -81,6 +86,7 @@ public class OrderTakerServiceTest {
 		Mockito.reset(userDaoMock);
 		Mockito.reset(catalogDaoMock);
 		Mockito.reset(restTemplate);
+		Mockito.reset(messageProducerMock);
 
 		ramen = new Meal();
 		ramen.setName("Ramen soup");
@@ -120,7 +126,7 @@ public class OrderTakerServiceTest {
 		when(userDaoMock.findUserById(anyInt())).thenReturn(Optional.empty());
 		when(catalogDaoMock.findMealByName(anyString())).thenReturn(Optional.of(ramen));
 
-		assertThrows(UnknowUserException.class,()->{
+		assertThrows(UnknowUserException.class, () -> {
 			orderService.addOrder(bobOrder.toDTO());
 		});
 	}
@@ -132,54 +138,56 @@ public class OrderTakerServiceTest {
 		when(userDaoMock.findUserById(anyInt())).thenReturn(Optional.of(bob));
 		when(catalogDaoMock.findMealByName(anyString())).thenReturn(Optional.of(ramen));
 
-		assertThrows(EmptyDeliveryAddressException.class,()->{
+		assertThrows(EmptyDeliveryAddressException.class, () -> {
 			orderService.addOrder(bobOrder.toDTO());
 		});
 	}
-	
+
 	@Test
 	public void addANewOrderWithNonExistingMeal() throws Exception {
 		when(orderDaoMock.addOrder(any(UberooOrder.class))).thenReturn(bobOrder);
 		when(userDaoMock.findUserById(anyInt())).thenReturn(Optional.of(bob));
 		when(catalogDaoMock.findMealByName(anyString())).thenReturn(Optional.empty());
 
-		assertThrows(UnknowMealException.class,()->{
+		assertThrows(UnknowMealException.class, () -> {
 			orderService.addOrder(bobOrder.toDTO());
 		});
 	}
-	
+
 	@Test
 	public void validateAnOrder() throws Exception {
 		when(orderDaoMock.findOrderById(anyInt())).thenReturn(Optional.of(bobOrder));
 		when(orderDaoMock.updateOrder(any(UberooOrder.class))).thenReturn(bobOrder);
 		when(restTemplate.postForObject(anyString(), any(NewOrder.class), Mockito.eq(Message.class))).thenReturn(new Message());
+		MessageProducer spy = Mockito.spy(messageProducerMock);
+		doNothing().when(spy).sendMessage(anyString());
 
 		bobOrder.setState(OrderState.VALIDATED);
 		OrderDTO order = orderService.updateOrderState(bobOrder.toDTO());
-		
+
 		assertEquals(bobOrder.getDeliveryAddress(), order.getDeliveryAddress());
 		assertEquals(OrderState.VALIDATED, order.getState());
 	}
-	
+
 	@Test
 	public void refuseAnOrder() throws Exception {
 		when(orderDaoMock.findOrderById(anyInt())).thenReturn(Optional.of(bobOrder));
 		when(orderDaoMock.updateOrder(any(UberooOrder.class))).thenReturn(bobOrder);
 		assertEquals(OrderState.WAITING, bobOrder.getState());
-		
+
 		bobOrder.setState(OrderState.REFUSED);
 		OrderDTO order = orderService.updateOrderState(bobOrder.toDTO());
-		
+
 		assertEquals(bobOrder.getDeliveryAddress(), order.getDeliveryAddress());
 		assertEquals(OrderState.REFUSED, order.getState());
 	}
-	
+
 	@Test
 	public void updateNonExistingOrder() throws Exception {
 		when(orderDaoMock.findOrderById(anyInt())).thenReturn(Optional.empty());
 		when(orderDaoMock.updateOrder(any(UberooOrder.class))).thenReturn(bobOrder);
-		
-		assertThrows(UnknowOrderException.class,()->{
+
+		assertThrows(UnknowOrderException.class, () -> {
 			orderService.updateOrderState(bobOrder.toDTO());
 		});
 	}
