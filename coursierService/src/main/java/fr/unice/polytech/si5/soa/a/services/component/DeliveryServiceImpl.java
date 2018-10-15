@@ -45,6 +45,6 @@ public class DeliveryServiceImpl implements IDeliveryService {
 
     @Override
     public List<DeliveryDTO> getDeliveriesToDo() {
-        return deliveryDao.getDeliveriesToDo().stream().map(delivery -> delivery.toDTO()).collect(Collectors.toList());
+        return deliveryDao.getDeliveriesToDo().stream().map(Delivery::toDTO).collect(Collectors.toList());
     }
 }
