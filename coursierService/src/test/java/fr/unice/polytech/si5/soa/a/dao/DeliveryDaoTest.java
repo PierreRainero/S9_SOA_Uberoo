@@ -86,7 +86,7 @@ public class DeliveryDaoTest {
     @Test
     public void updateDelivery(){
         deliveryToDo.state = true;
-        deliveryDao.updateDelivery(deliveryToDo);   //not sure
+        deliveryDao.updateDelivery(deliveryToDo);
         assertTrue(deliveryDao.getDeliveriesToDo().stream().allMatch(delivery -> delivery.state));
     }
 

@@ -27,7 +27,7 @@ import java.util.Properties;
 })
 public class TestConfiguration {
 	@Autowired
-	private Environment env;
+	private Environment env;deliveryDao
 
 	@Bean
 	public DataSource getDataSource() {
@@ -62,6 +62,8 @@ public class TestConfiguration {
         return transactionManager;
     }
 
+
+    @Qualifier("mock")
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
