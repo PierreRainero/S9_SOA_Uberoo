@@ -18,14 +18,13 @@ import org.hibernate.SessionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { TestConfiguration.class })
+@ContextConfiguration(classes = {TestConfiguration.class})
 class OrderDaoTest {
 
     private static final String ASIAN_CATEGORY = "Asian";
@@ -98,13 +97,41 @@ class OrderDaoTest {
 
     @Test
     void updateOrder() {
+
     }
 
     @Test
     void findOrderById() {
+        Optional<RestaurantOrder> order = orderDao.findOrderById(tacosOrder.getId());
+        assertTrue(order.isPresent());
+        assertEquals(tacosOrder.getId(), order.get().getId());
     }
 
     @Test
     void getOrdersToDo() {
+        meals = new ArrayList<>();
+        meals.add("Pizza");
+        RestaurantOrder pizzaOrder = new RestaurantOrder();
+        pizzaOrder.setId(0);
+        pizzaOrder.setState(OrderState.FINISHED);
+        pizzaOrder.setMeals(meals);
+
+        Session session = sessionFactory.openSession();
+
+        try {
+            session.save(pizzaOrder);
+            session.beginTransaction().commit();
+        } catch (SQLGrammarException e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+
+        List<RestaurantOrder> orders = orderDao.getOrdersToDo();
+
+        assertEquals(1, orders.size());
+        assertEquals(tacosOrder.getId(), orders.get(0).getId());
+        assertEquals(tacosOrder.getState(), orders.get(0).getState());
+
     }
 }
