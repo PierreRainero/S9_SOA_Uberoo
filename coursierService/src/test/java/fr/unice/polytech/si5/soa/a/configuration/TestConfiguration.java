@@ -2,7 +2,6 @@ package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
-import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ import java.util.Properties;
 })
 public class TestConfiguration {
 	@Autowired
-	private Environment env;deliveryDao
+	private Environment env;
 
 	@Bean
 	public DataSource getDataSource() {
