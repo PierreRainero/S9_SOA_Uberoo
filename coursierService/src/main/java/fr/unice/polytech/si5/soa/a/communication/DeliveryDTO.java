@@ -12,7 +12,7 @@ import lombok.ToString;
  * @author		PierreRainero
  */
 @Data
-@EqualsAndHashCode()
+@EqualsAndHashCode(exclude={"id"})
 @ToString()
 public class DeliveryDTO implements Serializable {
 	/**
