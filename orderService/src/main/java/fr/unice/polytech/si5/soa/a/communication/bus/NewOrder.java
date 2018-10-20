@@ -1,8 +1,10 @@
-package fr.unice.polytech.si5.soa.a.communication;
+package fr.unice.polytech.si5.soa.a.communication.bus;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

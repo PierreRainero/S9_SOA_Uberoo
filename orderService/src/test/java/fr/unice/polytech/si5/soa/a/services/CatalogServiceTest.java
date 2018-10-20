@@ -3,8 +3,10 @@ package fr.unice.polytech.si5.soa.a.services;
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
+import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.component.CatalogServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,9 +23,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 /**
@@ -42,6 +48,11 @@ public class CatalogServiceTest {
 	private ICatalogDao catalogDaoMock;
 	
 	@Autowired
+	@Qualifier("mock")
+	@Mock
+	private IRestaurantDao restaurantDaoMock;
+	
+	@Autowired
 	@InjectMocks
 	private CatalogServiceImpl catalogService;
 	
@@ -52,6 +63,7 @@ public class CatalogServiceTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		Mockito.reset(catalogDaoMock);
+		Mockito.reset(restaurantDaoMock);
 
 		asianRestaurant = new Restaurant();
 		asianRestaurant.setName("Lion d'or");
@@ -76,5 +88,28 @@ public class CatalogServiceTest {
 		
 		List<MealDTO> resultAsDTO = catalogService.findMealsByTag(ASIAN_CATEGORY);
 		assertEquals(1, resultAsDTO.size());
+	}
+	
+	@Test
+	public void findMealsForExistingRestaurant() throws Exception {
+		List<Meal> expectedMock = new ArrayList<>();
+		expectedMock.add(ramen);
+		when(restaurantDaoMock.findRestaurantById(anyInt())).thenReturn(Optional.of(asianRestaurant));
+		when(catalogDaoMock.findMealsByRestaurant(any(Restaurant.class))).thenReturn(expectedMock);
+		
+		List<MealDTO> resultAsDTO = catalogService.findMealsByRestaurant(asianRestaurant.getId());
+		assertEquals(1, resultAsDTO.size());
+	}
+	
+	@Test
+	public void findMealsForNonExistingRestaurant() {
+		List<Meal> expectedMock = new ArrayList<>();
+		expectedMock.add(ramen);
+		when(restaurantDaoMock.findRestaurantById(anyInt())).thenReturn(Optional.empty());
+		when(catalogDaoMock.findMealsByRestaurant(any(Restaurant.class))).thenReturn(expectedMock);
+		
+		assertThrows(UnknowRestaurantException.class, () -> {
+			catalogService.findMealsByRestaurant(asianRestaurant.getId());
+		});
 	}
 }

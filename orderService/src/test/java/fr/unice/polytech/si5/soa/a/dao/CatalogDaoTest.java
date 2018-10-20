@@ -164,4 +164,35 @@ public class CatalogDaoTest {
 		assertTrue(result.contains(ramenFromLion));
 		assertTrue(result.contains(ramenFromDragon));
 	}
+	
+	@Test
+	public void findMealsForARestaurant() {
+		List<Meal> result = catalogDao.findMealsByRestaurant(lionRestaurant);
+		assertEquals(1, result.size());
+		
+		sushis.setRestaurant(lionRestaurant);
+		Session session = sessionFactory.openSession();
+		try {
+			session.save(sushis);
+			session.beginTransaction().commit();
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+		} finally {
+			session.close();
+		}
+		result = catalogDao.findMealsByRestaurant(lionRestaurant);
+		assertEquals(2, result.size());
+		
+		session = sessionFactory.openSession();
+		try {
+			session.save(dragonRestaurant);
+			session.beginTransaction().commit();
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+		} finally {
+			session.close();
+		}
+		result = catalogDao.findMealsByRestaurant(dragonRestaurant);
+		assertEquals(0, result.size());
+	}
 }

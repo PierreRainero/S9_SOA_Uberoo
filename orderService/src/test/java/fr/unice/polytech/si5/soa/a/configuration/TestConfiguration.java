@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
+import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
@@ -10,6 +11,8 @@ import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.ICatalogService;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
+import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
+
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -123,6 +126,12 @@ public class TestConfiguration {
 	public ICatalogDao iCatalogDao() {
 		return Mockito.mock(ICatalogDao.class);
 	}
+	
+	@Qualifier("mock")
+	@Bean
+	public IRestaurantDao iRestaurantDao() {
+		return Mockito.mock(IRestaurantDao.class);
+	}
 
 	@Qualifier("mock")
 	@Bean
@@ -134,6 +143,12 @@ public class TestConfiguration {
 	@Bean
 	public ICatalogService iCatalogService() {
 		return Mockito.mock(ICatalogService.class);
+	}
+	
+	@Qualifier("mock")
+	@Bean
+	public IRestaurantService iRestaurantService() {
+		return Mockito.mock(IRestaurantService.class);
 	}
 
 	@Qualifier("mock")

@@ -1,8 +1,13 @@
 package fr.unice.polytech.si5.soa.a.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -90,5 +95,58 @@ public class RestaurantDaoTest {
 		assertNotNull(restaurant);
 		assertNotEquals(0, restaurant.getId());
 		assertEquals(italianRestaurant.getName(), restaurant.getName());
+	}
+	
+	@Test
+	public void searchExistingRestaurantByName() {
+		Restaurant dragonRestaurant = new Restaurant();
+		dragonRestaurant.setName("Dragon d'or");
+		dragonRestaurant.setRestaurantAddress("26 rue des nems");
+		Session session = sessionFactory.openSession();
+		try {
+			session.save(dragonRestaurant);
+			session.beginTransaction().commit();
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+		} finally {
+			session.close();
+		}
+		
+		List<Restaurant> result = restaurantDao.findRestaurantByName(asianRestaurant.getName());
+		assertEquals(1, result.size());
+		
+		result = restaurantDao.findRestaurantByName("or");
+		assertEquals(2, result.size());
+		
+		session = sessionFactory.openSession();
+		try {
+			session.delete(dragonRestaurant);
+			session.beginTransaction().commit();
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+		} finally {
+			session.close();
+		}
+	}
+	
+	@Test
+	public void searchNonExistingRestaurant() {
+		List<Restaurant> result = restaurantDao.findRestaurantByName("Mc Donald");
+		assertTrue(result.isEmpty());
+	}
+	
+	@Test
+	public void findExistingRestaurantById() {
+		Optional<Restaurant> result = restaurantDao.findRestaurantById(asianRestaurant.getId());
+		assertTrue(result.isPresent());
+		
+		Restaurant restaurant = result.get();
+		assertEquals(asianRestaurant.getName(), restaurant.getName());
+	}
+	
+	@Test
+	public void findNonExistingRestaurant() {
+		Optional<Restaurant> result = restaurantDao.findRestaurantById(-1);
+		assertFalse(result.isPresent());
 	}
 }
