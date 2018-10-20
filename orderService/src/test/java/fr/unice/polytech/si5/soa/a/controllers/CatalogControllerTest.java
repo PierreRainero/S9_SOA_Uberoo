@@ -33,6 +33,7 @@ import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.services.ICatalogService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
 
@@ -58,9 +59,9 @@ public class CatalogControllerTest {
     @InjectMocks
     private CatalogController catalogController;
 	
+	private Restaurant asianRestaurant;
 	private Meal ramen;
 	
-    
     @BeforeEach
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
@@ -68,9 +69,14 @@ public class CatalogControllerTest {
 		Mockito.reset(catalogServiceMock);
 		mockMvc = MockMvcBuilders.standaloneSetup(catalogController).build();
 		
+		asianRestaurant = new Restaurant();
+		asianRestaurant.setName("Lion d'or");
+		asianRestaurant.setRestaurantAddress("22 rue des nems");
+		
 		ramen = new Meal();
 		ramen.setName("Ramen soup");
 		ramen.addTag(ASIAN_CATEGORY);
+		ramen.setRestaurant(asianRestaurant);
 	}
     
     @Test

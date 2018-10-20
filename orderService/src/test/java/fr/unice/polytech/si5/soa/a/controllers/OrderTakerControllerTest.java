@@ -29,6 +29,7 @@ import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
@@ -71,8 +72,13 @@ public class OrderTakerControllerTest {
 		Mockito.reset(orderServiceMock);
 		mockMvc = MockMvcBuilders.standaloneSetup(orderTakerController).build();
 		
+		Restaurant asianRestaurant = new Restaurant();
+		asianRestaurant.setName("Lion d'or");
+		asianRestaurant.setRestaurantAddress("22 rue des nems");
+		
 		Meal ramen = new Meal();
 		ramen.setName("Ramen soup");
+		ramen.setRestaurant(asianRestaurant);
 		
 		User bob = new User();
 		bob.setFirstName("Bob");

@@ -1,7 +1,6 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
-import fr.unice.polytech.si5.soa.a.communication.Message;
 import fr.unice.polytech.si5.soa.a.communication.NewOrder;
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
@@ -43,9 +42,6 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 
 	@Autowired
 	private ICatalogDao catalogDao;
-
-	@Autowired
-	private RestTemplate restTemplate;
 
 	@Autowired
 	private MessageProducer producer;
@@ -102,10 +98,12 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 		OrderDTO result = order.toDTO();
 
 		if (order.getState().equals(OrderState.VALIDATED)) {
-			NewOrder message = new NewOrder(result);
-			producer.sendMessage("IM A TEST");
-/* 			restTemplate.postForObject("http://messageBus:5000/message", message, Message.class);
- */		}
+			// @TODO Send message to kafka bus
+			/*
+			 NewOrder message = new NewOrder(result);
+			 producer.sendMessage(result);
+			*/
+		}
 
 		return result;
 	}

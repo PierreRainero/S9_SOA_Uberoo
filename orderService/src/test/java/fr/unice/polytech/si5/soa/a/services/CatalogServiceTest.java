@@ -4,6 +4,7 @@ import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.services.component.CatalogServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +45,7 @@ public class CatalogServiceTest {
 	@InjectMocks
 	private CatalogServiceImpl catalogService;
 	
+	private Restaurant asianRestaurant;
 	private Meal ramen;
 	
 	@BeforeEach
@@ -51,9 +53,14 @@ public class CatalogServiceTest {
 		MockitoAnnotations.initMocks(this);
 		Mockito.reset(catalogDaoMock);
 
+		asianRestaurant = new Restaurant();
+		asianRestaurant.setName("Lion d'or");
+		asianRestaurant.setRestaurantAddress("22 rue des nems");
+		
 		ramen = new Meal();
 		ramen.setName("Ramen soup");
 		ramen.addTag(ASIAN_CATEGORY);
+		ramen.setRestaurant(asianRestaurant);
 	}
 	
 	@AfterEach

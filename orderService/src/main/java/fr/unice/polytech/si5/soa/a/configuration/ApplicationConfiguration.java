@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
@@ -67,7 +68,7 @@ public class ApplicationConfiguration {
 		props.put("hibernate.dialect", env.getProperty("db.dialect"));
 
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class);
+		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class);
 		return factoryBean;
 	}
 

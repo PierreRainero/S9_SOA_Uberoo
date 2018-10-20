@@ -4,6 +4,7 @@ import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
@@ -74,7 +75,7 @@ public class TestConfiguration {
 
 		// Entities
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class);
+		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class);
 		return factoryBean;
 	}
 
