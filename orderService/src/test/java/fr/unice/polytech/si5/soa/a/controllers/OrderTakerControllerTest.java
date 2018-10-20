@@ -86,6 +86,7 @@ public class OrderTakerControllerTest {
 		
 		UberooOrder command  = new UberooOrder();
 		command.addMeal(ramen);
+		command.setRestaurant(asianRestaurant);
 		command.setDeliveryAddress("930 Route des Colles, 06410 Biot");
 		command.setTransmitter(bob);
 		

@@ -31,7 +31,7 @@ import lombok.ToString;
 @Entity
 @Data
 @Table(name = "`RESTAURANT`")
-@EqualsAndHashCode(exclude={"id", "meals"})
+@EqualsAndHashCode(exclude={"id", "meals", "orders"})
 @ToString()
 public class Restaurant implements Serializable {
 	/**
@@ -54,6 +54,11 @@ public class Restaurant implements Serializable {
 	@Setter(NONE)
 	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "restaurant")
 	@ToString.Exclude
+	private List<UberooOrder> orders = new ArrayList<>();
+	
+	@Setter(NONE)
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "restaurant")
+	@ToString.Exclude
 	private List<Meal> meals = new ArrayList<>();
 	
 	/**
@@ -61,6 +66,15 @@ public class Restaurant implements Serializable {
 	 */
 	public Restaurant() {
 		// Default constructor for JPA
+	}
+	
+	/**
+	 * Normal construtor using Data Transfert Object
+	 * @param restaurantDatas DTO for {@link RestaurantDTO}
+	 */
+	public Restaurant(RestaurantDTO restaurantDatas) {
+		this.name = restaurantDatas.getName();
+		this.restaurantAddress = restaurantDatas.getRestaurantAddress();
 	}
 	
 	/**
@@ -86,4 +100,21 @@ public class Restaurant implements Serializable {
 	public void removeMeal(Meal mealToRemove) {
 		meals.remove(mealToRemove);
 	}
+	
+	/**
+	 * Add an order to the restaurant
+	 * @param orderToAdd order to add
+	 */
+	public void addOrder(UberooOrder orderToAdd) {
+		orders.add(orderToAdd);
+	}
+	
+	/**
+	 * Remove an order to the restaurant
+	 * @param orderToRemove order to remove
+	 */
+	public void removeOrder(UberooOrder orderToRemove) {
+		orders.remove(orderToRemove);
+	}
+		
 }

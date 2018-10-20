@@ -104,6 +104,7 @@ public class OrderTakerServiceTest {
 
 		bobOrder = new UberooOrder();
 		bobOrder.addMeal(ramen);
+		bobOrder.setRestaurant(asianRestaurant);
 		bobOrder.setDeliveryAddress("930 Route des Colles, 06410 Biot");
 		bobOrder.setTransmitter(bob);
 	}
