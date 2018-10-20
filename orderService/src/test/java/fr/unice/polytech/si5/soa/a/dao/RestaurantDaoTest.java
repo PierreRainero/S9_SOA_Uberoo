@@ -84,7 +84,7 @@ public class RestaurantDaoTest {
 	}
 	
 	@Test
-	public void addANewRestaurant() throws Exception {
+	public void addANewRestaurant() {
 		Restaurant restaurant = restaurantDao.addRestaurant(italianRestaurant);
 		
 		assertNotNull(restaurant);
