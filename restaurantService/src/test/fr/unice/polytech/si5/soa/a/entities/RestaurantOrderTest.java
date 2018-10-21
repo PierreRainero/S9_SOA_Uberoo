@@ -21,8 +21,8 @@ class RestaurantOrderTest {
 
     @Test
     void toDTO() {
-        List<String> meals = new ArrayList<>();
-        meals.add("Coca");
+        List<Meal> meals = new ArrayList<>();
+        meals.add(new Meal(new Ingredient("Coca", 2)));
         order.setMeals(meals);
         order.setState(OrderState.TO_PREPARE);
         order.setId(0);

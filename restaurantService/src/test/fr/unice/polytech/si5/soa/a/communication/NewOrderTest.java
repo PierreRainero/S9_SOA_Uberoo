@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.communication;
 
+import fr.unice.polytech.si5.soa.a.entities.Ingredient;
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,11 +24,11 @@ class NewOrderTest {
 
     @Test
     void createRestaurantOrder() {
-        List<String> food = new ArrayList<>();
-        food.add("Kebab");
-        order.setFood(food);
+        List<Meal> meals= new ArrayList<>();
+        meals.add(new Meal(new Ingredient("Kebab", 5)));
+        order.setMeals(meals);
         order.setAddress("475 rue Evariste Galois");
-        assertEquals(order.createRestaurantOrder(), new RestaurantOrderDTO(-1, food, OrderState.TO_PREPARE));
+        assertEquals(order.createRestaurantOrder(), new RestaurantOrderDTO(-1, meals, OrderState.TO_PREPARE));
     }
 
 }

@@ -43,7 +43,7 @@ public class RestaurantOrder implements Serializable {
 	private int id;
 	
 	@ElementCollection(fetch = FetchType.EAGER)
-	private List<String> meals = new ArrayList<>();
+	private List<Meal> meals = new ArrayList<>();
 	
 	@Enumerated(EnumType.STRING)
 	private OrderState state = OrderState.TO_PREPARE;
@@ -51,11 +51,25 @@ public class RestaurantOrder implements Serializable {
 	public RestaurantOrder() {
 		// Default constructor for JPA
 	}
+
+	public RestaurantOrder(List<Meal> meals) {
+		this.meals = meals;
+	}
 	
 	public RestaurantOrder(RestaurantOrderDTO data) {
 		this.meals = data.getMeals();
 		this.state = data.getState();
 	}
+
+	public RestaurantOrder(Meal singleMeal) {
+	    this.meals = new ArrayList<>();
+	    this.meals.add(singleMeal);
+    }
+
+    public RestaurantOrder(Ingredient singleIngredient) {
+	    this.meals = new ArrayList<>();
+	    this.meals.add(new Meal(singleIngredient));
+    }
 	
 	public RestaurantOrderDTO toDTO() {
 		return new RestaurantOrderDTO(id, meals, state);

@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
+import fr.unice.polytech.si5.soa.a.entities.Ingredient;
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.services.IOrderService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,8 +64,8 @@ class OrderControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(orderController).build();
 
         asianOrder = new RestaurantOrderDTO();
-        List<String> meals = asianOrder.getMeals();
-        meals.add("Ramen");
+        List<Meal> meals = asianOrder.getMeals();
+        meals.add(new Meal(new Ingredient("Ramen", 6)));
     }
 
 
@@ -73,9 +75,9 @@ class OrderControllerTest {
         NewOrder asianOrderMsg = new NewOrder();
         asianOrderMsg.setType("NEW_ORDER");
         asianOrderMsg.setAddress("");
-        List<String> meals = new ArrayList<>();
-        meals.add("Ramen");
-        asianOrderMsg.setFood(meals);
+        List<Meal> meals = new ArrayList<>();
+        meals.add(new Meal(new Ingredient("Ramen")));
+        asianOrderMsg.setMeals(meals);
 
         mockMvc.perform(post(BASE_URI)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -90,7 +92,7 @@ class OrderControllerTest {
         RestaurantOrderDTO transmittedOrder = captor.getValue();
         assertNotNull(transmittedOrder);
         assertEquals(1, transmittedOrder.getMeals().size());
-        assertEquals("Ramen", transmittedOrder.getMeals().get(0));
+        assertEquals("Ramen", transmittedOrder.getMeals().get(0).getIngredients().get(0).getName());
     }
 
     @Test
