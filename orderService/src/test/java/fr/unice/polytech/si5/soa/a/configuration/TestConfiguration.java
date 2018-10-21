@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
+import fr.unice.polytech.si5.soa.a.communication.bus.Message;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
@@ -8,7 +10,6 @@ import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
-import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.ICatalogService;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
@@ -24,6 +25,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -96,18 +98,18 @@ public class TestConfiguration {
 	}
 
 	@Bean
-	public ProducerFactory<String, String> producerFactory() {
-		Map<String, Object> configProps = new HashMap<>();
-		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		return new DefaultKafkaProducerFactory<>(configProps);
-	}
-
-	@Bean
-	public KafkaTemplate<String, String> kafkaTemplate() {
-		return new KafkaTemplate<>(producerFactory());
-	}
+    public ProducerFactory<String, Message> messageProducerFactory() {
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        return new DefaultKafkaProducerFactory<>(configProps);
+    }
+    
+    @Bean
+    public KafkaTemplate<String, Message> messageKafkaTemplate() {
+        return new KafkaTemplate<>(messageProducerFactory());
+    }
 
 	@Qualifier("mock")
 	@Bean

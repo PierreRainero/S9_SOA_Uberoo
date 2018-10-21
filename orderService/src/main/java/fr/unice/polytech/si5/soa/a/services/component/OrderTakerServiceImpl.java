@@ -2,13 +2,14 @@ package fr.unice.polytech.si5.soa.a.services.component;
 
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.communication.bus.NewOrder;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.*;
 import fr.unice.polytech.si5.soa.a.exceptions.*;
-import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -99,11 +100,9 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 		OrderDTO result = order.toDTO();
 
 		if (order.getState().equals(OrderState.VALIDATED)) {
-			// @TODO Send message to kafka bus
-			/*
 			 NewOrder message = new NewOrder(result);
-			 producer.sendMessage(result);
-			*/
+			 producer.sendMessage(message);
+			
 		}
 
 		return result;

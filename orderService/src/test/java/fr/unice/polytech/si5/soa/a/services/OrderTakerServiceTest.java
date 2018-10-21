@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.services;
 
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.Message;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.communication.bus.NewOrder;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
@@ -13,7 +14,6 @@ import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
-import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.component.OrderTakerServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -172,7 +172,7 @@ public class OrderTakerServiceTest {
 		when(orderDaoMock.updateOrder(any(UberooOrder.class))).thenReturn(bobOrder);
 		when(restTemplate.postForObject(anyString(), any(NewOrder.class), Mockito.eq(Message.class))).thenReturn(new Message());
 		MessageProducer spy = Mockito.spy(messageProducerMock);
-		doNothing().when(spy).sendMessage(anyString());
+		doNothing().when(spy).sendMessage(any(Message.class));
 
 		bobOrder.setState(OrderState.VALIDATED);
 		OrderDTO order = orderService.updateOrderState(bobOrder.toDTO());
