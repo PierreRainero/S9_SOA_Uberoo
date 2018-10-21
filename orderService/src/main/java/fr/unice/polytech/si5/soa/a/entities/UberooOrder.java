@@ -44,37 +44,41 @@ public class UberooOrder implements Serializable {
 	 * Generated UID version
 	 */
 	private static final long serialVersionUID = 6853129339978021134L;
-	
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id")
 	@Setter(NONE)
 	private int id;
-	
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	@Setter(NONE)
 	private List<Meal> meals = new ArrayList<>();
-	
+
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@NonNull
 	private User transmitter;
-	
+
 	@Column(name = "deliveryAddress", nullable = false)
 	private String deliveryAddress;
-	
+
 	@Column(name = "eta")
 	private Duration eta;
-	
+
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@NonNull
+	private Restaurant restaurant;
+
 	@Enumerated(EnumType.STRING)
 	private OrderState state = OrderState.WAITING;
-	
+
 	/**
 	 * Default constructor
 	 */
 	public UberooOrder() {
 		// Default constructor for JPA
 	}
-	
+
 	/**
 	 * Normal construtor using Data Transfert Object
 	 * @param orderDatas DTO for {@link UberooOrder}
@@ -84,14 +88,22 @@ public class UberooOrder implements Serializable {
 		this.eta = orderDatas.getEta();
 		this.state = orderDatas.getState();
 	}
+
 	/**
 	 * Generate a Data Transfer Object from a business object
 	 * @return DTO for a {@link UberooOrder}
 	 */
 	public OrderDTO toDTO() {
-		return new OrderDTO(id, meals.stream().map(meal -> meal.toDTO()).collect(Collectors.toList()), transmitter.toDTO(), deliveryAddress, eta, state);
+		return new OrderDTO(
+				id,
+				meals.stream().map(meal -> meal.toDTO()).collect(Collectors.toList()),
+				transmitter.toDTO(),
+				deliveryAddress,
+				eta,
+				state,
+				restaurant.toDTO());
 	}
-	
+
 	/**
 	 * Add a meal to the order list
 	 * @param meal meal to add
@@ -99,7 +111,7 @@ public class UberooOrder implements Serializable {
 	public void addMeal(Meal meal) {
 		meals.add(meal);
 	}
-	
+
 	/**
 	 * Remove a meal of the order list
 	 * @param meal meal to remove
@@ -107,7 +119,7 @@ public class UberooOrder implements Serializable {
 	public void removeMeal(Meal meal) {
 		meals.remove(meal);
 	}
-	
+
 	/**
 	 * Calculate the Estimated Time of Arrival
 	 * MOCKED

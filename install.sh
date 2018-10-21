@@ -1,10 +1,10 @@
 #!/bin/bash
 
-echo "*******Building Docker image for the message bus*******"
-cd ./messageBus
-./compile.sh
+#echo "*******Building Docker image for the message bus*******"
+#cd ./messageBus
+#./compile.sh
 echo "*******Building Docker image for the order service*******"
-cd ../orderService
+cd orderService
 ./compile.sh
 echo "*******Building Docker image for the restaurant service*******"
 cd ../restaurantService

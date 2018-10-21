@@ -1,1 +1,0 @@
-[{"id":1,"deliveryAddress":"930 Route des Colles, 06410 Biot","state":false}]

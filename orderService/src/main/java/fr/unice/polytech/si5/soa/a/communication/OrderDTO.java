@@ -30,6 +30,7 @@ public class OrderDTO implements Serializable {
 	private String deliveryAddress;
 	private Duration eta;
 	private OrderState state;
+	private RestaurantDTO restaurant;
 	
 	/**
 	 * Default constructor
@@ -42,12 +43,13 @@ public class OrderDTO implements Serializable {
 	 * Normal constructor 
 	 * @param meals list of meals (DTO)
 	 */
-	public OrderDTO(int id, List<MealDTO> meals, UserDTO transmitter, String deliveryAddress, Duration eta, OrderState state) {
+	public OrderDTO(int id, List<MealDTO> meals, UserDTO transmitter, String deliveryAddress, Duration eta, OrderState state, RestaurantDTO restaurant) {
 		this.id = id;
 		this.meals = meals;
 		this.transmitter = transmitter;
 		this.deliveryAddress = deliveryAddress;
 		this.eta = eta;
 		this.state = state;
+		this.restaurant = restaurant;
 	}
 }
