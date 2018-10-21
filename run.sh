@@ -1,9 +1,7 @@
 # -- Context ---
 echo "--- Creating context... ---"
-docker exec soa_orderService_database mysql -uroot -pteama -e "USE uberoo; INSERT INTO MEAL (name) VALUES ('Ramen'); INSERT INTO Meal_tags VALUES ((SELECT id FROM MEAL WHERE name = 'Ramen'), 'Asian'); INSERT INTO USER (firstName, lastName) VALUES ('Bob', '');"
-docker exec soa_orderService_database mysql -uroot -pteama -e "USE uberoo; SELECT id FROM USER WHERE firstName='Bob';" > Temp/bobId.txt
-curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"route\":\"http://restaurantservice:8080/restaurants/orders/\"}" "http://localhost:5001/subscribe" # Subscription of the restaurant service to the bus
-curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"route\":\"http://coursierservice:8080/deliveries/\"}" "http://localhost:5001/subscribe" # Subscription of the coursier service to the bus
+docker exec soa_database mysql -uroot -pteama -e "USE uberoo_orderService; INSERT INTO MEAL (name) VALUES ('Ramen'); INSERT INTO Meal_tags VALUES ((SELECT id FROM MEAL WHERE name = 'Ramen'), 'Asian'); INSERT INTO USER (firstName, lastName) VALUES ('Bob', '');"
+docker exec soa_database mysql -uroot -pteama -e "USE uberoo_orderService; SELECT id FROM USER WHERE firstName='Bob';" > Temp/bobId.txt
 echo "--- Context created ---"
 
 # ************** Scenario **************
@@ -44,5 +42,5 @@ read
 # **********************************************************************
 echo "--- Cleaning context... ---"
 # -- Clean context --
-docker exec soa_orderService_database mysql -uroot -pteama  -e "USE uberoo; DELETE FROM UBEROOORDER_MEAL; DELETE FROM UBEROOORDER; DELETE FROM Meal_tags; DELETE FROM MEAL; DELETE FROM USER;"
+docker exec soa_database mysql -uroot -pteama  -e "USE uberoo_orderService; DELETE FROM UBEROOORDER_MEAL; DELETE FROM UBEROOORDER; DELETE FROM Meal_tags; DELETE FROM MEAL; DELETE FROM USER;"
 echo "--- Context cleaned ---"
