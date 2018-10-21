@@ -26,7 +26,7 @@ import fr.unice.polytech.si5.soa.a.services.ICatalogService;
 public class CatalogController {
 	private static Logger logger = LogManager.getLogger(CatalogController.class);
 	
-	private final static String BASE_URI = "/meals/";
+	private final static String BASE_URI = "/meals";
 	
 	@Autowired
 	private ICatalogService catalogService;

@@ -47,7 +47,7 @@ public class OrderTakerController {
 		}
 	}
 	
-	@RequestMapping(value = "/{orderId}/",
+	@RequestMapping(value = "/{orderId}",
 			method = RequestMethod.PUT,
 			consumes = {"application/JSON; charset=UTF-8"},
 			produces = {"application/JSON; charset=UTF-8"})
