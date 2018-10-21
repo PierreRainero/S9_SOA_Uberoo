@@ -57,11 +57,19 @@ services:
     depends_on:
       uberoo_database: # wait for db to be up
         condition: service_healthy
+  bankservice:
+    container_name: soa_bank
+    image: "soa/bank"
+    links: # for the hostname mapping
+      - kafka
+    restart: always
+    depends_on:
+      kafka:
+        condition: service_healthy
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
       - 2181:2181
-
   kafka:
     image: wurstmeister/kafka
     links:
@@ -73,6 +81,8 @@ services:
       KAFKA_ADVERTISED_PORT: "9092"
       KAFKA_CREATE_TOPICS: "topic:1:1"
       KAFKA_ZOOKEEPER_CONNECT: "zk:2181"
+    healthcheck:
+      test: "kafka-topics.sh --zookeeper zookeeper:2181 --list 2>&1 | grep \"topic\""
 
 # Add to containers talking to Kafka:
 # links:

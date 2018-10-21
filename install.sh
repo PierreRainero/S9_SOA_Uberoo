@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#echo "*******Building Docker image for the message bus*******"
-#cd ./messageBus
-#./compile.sh
+echo "*******Building Docker image for the bank service*******"
+cd ./bankService
+./compile.sh
 echo "*******Building Docker image for the order service*******"
 cd orderService
 ./compile.sh

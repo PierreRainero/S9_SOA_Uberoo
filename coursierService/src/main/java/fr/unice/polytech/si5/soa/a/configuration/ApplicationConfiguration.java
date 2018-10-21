@@ -114,7 +114,7 @@ public class ApplicationConfiguration {
 	@Bean
 	public ConcurrentKafkaListenerContainerFactory<String, String> topicKafkaListenerContainerFactory() {
 		ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(consumerFactory("restaurant"));
+		factory.setConsumerFactory(consumerFactory("coursier"));
 		return factory;
 	}
 }
