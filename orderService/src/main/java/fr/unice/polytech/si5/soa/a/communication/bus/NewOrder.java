@@ -1,8 +1,10 @@
-package fr.unice.polytech.si5.soa.a.communication;
+package fr.unice.polytech.si5.soa.a.communication.bus;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -16,8 +18,10 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper=true)
 @ToString()
 public class NewOrder extends Message {
-	public String address;
-	public List<String> food;
+	private String address;
+	private String restaurantName;
+	private String restaurantAddress;
+	private List<String> food;
 	
 	/**
 	 * Default constructor
@@ -41,5 +45,8 @@ public class NewOrder extends Message {
 		for(MealDTO meal : order.getMeals()) {
 			food.add(meal.getName());
 		}
+		
+		restaurantName = order.getRestaurant().getName();
+		restaurantAddress = order.getRestaurant().getRestaurantAddress();
 	}
 }

@@ -1,22 +1,28 @@
 package fr.unice.polytech.si5.soa.a.entities;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.NONE;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.springframework.lang.NonNull;
 
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -38,13 +44,18 @@ public class Meal implements Serializable {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id")
+	@Setter(NONE)
 	private int id;
 	
-	@Column(name = "name", nullable = false, unique=true)
+	@Column(name = "name", nullable = false)
 	private String name;
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> tags = new ArrayList<>();
+	
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@NonNull
+	private Restaurant restaurant;
 
 	/**
 	 * Default constructor
@@ -67,7 +78,7 @@ public class Meal implements Serializable {
 	 * @return DTO for a {@link Meal}
 	 */
 	public MealDTO toDTO() {
-		return new MealDTO(name, tags);
+		return new MealDTO(name, tags, restaurant.toDTO());
 	}
 	
 	/**

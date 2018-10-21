@@ -1,14 +1,15 @@
 package fr.unice.polytech.si5.soa.a.services;
 
-import fr.unice.polytech.si5.soa.a.communication.Message;
-import fr.unice.polytech.si5.soa.a.communication.NewOrder;
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.Message;
+import fr.unice.polytech.si5.soa.a.communication.bus.NewOrder;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
@@ -75,6 +76,7 @@ public class OrderTakerServiceTest {
 	@InjectMocks
 	private OrderTakerServiceImpl orderService;
 
+	private Restaurant asianRestaurant;
 	private Meal ramen;
 	private UberooOrder bobOrder;
 	private User bob;
@@ -87,9 +89,14 @@ public class OrderTakerServiceTest {
 		Mockito.reset(catalogDaoMock);
 		Mockito.reset(restTemplate);
 		Mockito.reset(messageProducerMock);
+		
+		asianRestaurant = new Restaurant();
+		asianRestaurant.setName("Lion d'or");
+		asianRestaurant.setRestaurantAddress("22 rue des nems");
 
 		ramen = new Meal();
 		ramen.setName("Ramen soup");
+		ramen.setRestaurant(asianRestaurant);
 
 		bob = new User();
 		bob.setFirstName("Bob");
@@ -97,6 +104,7 @@ public class OrderTakerServiceTest {
 
 		bobOrder = new UberooOrder();
 		bobOrder.addMeal(ramen);
+		bobOrder.setRestaurant(asianRestaurant);
 		bobOrder.setDeliveryAddress("930 Route des Colles, 06410 Biot");
 		bobOrder.setTransmitter(bob);
 	}

@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -33,6 +34,8 @@ import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.ICatalogService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
 
@@ -46,6 +49,8 @@ import fr.unice.polytech.si5.soa.a.util.TestUtil;
 @WebAppConfiguration
 public class CatalogControllerTest {
 	private final static String BASE_URI = "/meals/";
+	private final static String ERROR_UNKNOW_RESTAURANT = "Can't find restaurant with id = -1";
+	
 	private static final String ASIAN_CATEGORY = "Asian";
 	private MockMvc mockMvc;
 	
@@ -58,9 +63,9 @@ public class CatalogControllerTest {
     @InjectMocks
     private CatalogController catalogController;
 	
+	private Restaurant asianRestaurant;
 	private Meal ramen;
 	
-    
     @BeforeEach
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
@@ -68,9 +73,14 @@ public class CatalogControllerTest {
 		Mockito.reset(catalogServiceMock);
 		mockMvc = MockMvcBuilders.standaloneSetup(catalogController).build();
 		
+		asianRestaurant = new Restaurant();
+		asianRestaurant.setName("Lion d'or");
+		asianRestaurant.setRestaurantAddress("22 rue des nems");
+		
 		ramen = new Meal();
 		ramen.setName("Ramen soup");
 		ramen.addTag(ASIAN_CATEGORY);
+		ramen.setRestaurant(asianRestaurant);
 	}
     
     @Test
@@ -91,5 +101,40 @@ public class CatalogControllerTest {
         
         String tagToUse = captor.getValue();
         assertEquals(ASIAN_CATEGORY, tagToUse);
+	}
+    
+    @Test
+    public void searchMealsOfAsianRestaurantHTTPGet() throws Exception {
+    	List<MealDTO> expectedMock = new ArrayList<>();
+		expectedMock.add(ramen.toDTO());
+		when(catalogServiceMock.findMealsByRestaurant(anyInt())).thenReturn(expectedMock);
+		
+		mockMvc.perform(get("/restaurants/-1"+BASE_URI)
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        ).andExpect(status().isOk())
+         .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+        
+        ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
+        verify(catalogServiceMock, times(1)).findMealsByRestaurant(captor.capture());
+        verifyNoMoreInteractions(catalogServiceMock);
+        
+        Integer idToUse = captor.getValue();
+        assertEquals(new Integer(-1), idToUse);
+	}
+    
+    @Test
+    public void searchMealsOfNonExistingRestaurantHTTPGet() throws Exception {
+    	List<MealDTO> expectedMock = new ArrayList<>();
+		expectedMock.add(ramen.toDTO());
+		when(catalogServiceMock.findMealsByRestaurant(anyInt())).thenThrow(new UnknowRestaurantException(ERROR_UNKNOW_RESTAURANT));
+		
+		mockMvc.perform(get("/restaurants/-1"+BASE_URI)
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        ).andExpect(status().isNotFound())
+		 .andExpect(content().string(ERROR_UNKNOW_RESTAURANT));
+        
+        ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
+        verify(catalogServiceMock, times(1)).findMealsByRestaurant(captor.capture());
+        verifyNoMoreInteractions(catalogServiceMock);
 	}
 }

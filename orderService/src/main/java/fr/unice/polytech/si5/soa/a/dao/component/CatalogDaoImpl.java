@@ -17,12 +17,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
 /**
  * Class name	CatalogImpl
  * @see 		ICatalogDao
  * Date			01/10/2018
  * @author		PierreRainero
+ * 
+ * @version		1.1
+ * Date			21/10/2018
  **/
 @Primary
 @Repository
@@ -61,6 +65,22 @@ public class CatalogDaoImpl implements ICatalogDao {
 		Root<Meal> root =  criteria.from(Meal.class);
 		
 		criteria.select(root).where(builder.isMember(tag, root.get("tags")));
+		Query<Meal> query = session.createQuery(criteria);
+		
+		return query.getResultList();
+	}
+
+	@Override
+	/**
+     * {@inheritDoc}
+     */
+	public List<Meal> findMealsByRestaurant(Restaurant restaurant) {
+		Session session = sessionFactory.getCurrentSession();
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<Meal> criteria = builder.createQuery(Meal.class);
+		Root<Meal> root =  criteria.from(Meal.class);
+		
+		criteria.select(root).where(builder.equal(root.get("restaurant"), restaurant));
 		Query<Meal> query = session.createQuery(criteria);
 		
 		return query.getResultList();

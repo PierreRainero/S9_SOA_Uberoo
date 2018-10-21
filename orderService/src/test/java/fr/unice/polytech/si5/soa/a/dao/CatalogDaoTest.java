@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
 /**
  * Class name	CatalogDaoTest
@@ -38,14 +39,32 @@ public class CatalogDaoTest {
 	@Autowired
 	private ICatalogDao catalogDao;
 	
-	private Meal ramen;
+	private Restaurant dragonRestaurant;
+	private Restaurant lionRestaurant;
+	
+	private Meal ramenFromDragon;
+	private Meal ramenFromLion;
 	private Meal sushis;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
-		ramen = new Meal();
-		ramen.setName("Ramen soup");
-		ramen.addTag(ASIAN_CATEGORY);
+		dragonRestaurant = new Restaurant();
+		dragonRestaurant.setName("Dragon rouge");
+		dragonRestaurant.setRestaurantAddress("26 rue des nems");
+		
+		lionRestaurant = new Restaurant();
+		lionRestaurant.setName("Lion d'or");
+		lionRestaurant.setRestaurantAddress("22 rue des nems");
+		
+		ramenFromLion = new Meal();
+		ramenFromLion.setName("Ramen soup");
+		ramenFromLion.addTag(ASIAN_CATEGORY);
+		ramenFromLion.setRestaurant(lionRestaurant);
+		
+		ramenFromDragon = new Meal();
+		ramenFromDragon.setName("Ramen soup");
+		ramenFromDragon.addTag(ASIAN_CATEGORY);
+		ramenFromDragon.setRestaurant(dragonRestaurant);
 		
 		sushis = new Meal();
 		sushis.setName("Sushis");
@@ -53,7 +72,9 @@ public class CatalogDaoTest {
 		
 		Session session = sessionFactory.openSession();
 		try {
-			session.save(ramen);
+			session.save(dragonRestaurant);
+			session.save(lionRestaurant);
+			session.save(ramenFromLion);
 			session.save(sushis);
 			session.beginTransaction().commit();
 		} catch (SQLGrammarException e) {
@@ -70,13 +91,22 @@ public class CatalogDaoTest {
 	    try {
 	    	transaction = session.beginTransaction();
 	    	
-			session.delete(ramen);
+	    	if(ramenFromDragon.getId() != 0) {
+	    		session.delete(ramenFromDragon);
+	    	}
+	    	
+	    	session.delete(dragonRestaurant);
+			session.delete(lionRestaurant);
+	    	
+			session.delete(ramenFromLion);
 			session.delete(sushis);
 			
 			session.flush();
 			transaction.commit();
 
-			ramen = null;
+			dragonRestaurant = null;
+			lionRestaurant = null;
+			ramenFromLion = null;
 			sushis = null;
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
@@ -87,12 +117,12 @@ public class CatalogDaoTest {
 	
 	@Test
 	public void findExistingMealByName() {
-		Optional<Meal> mealWrapped = catalogDao.findMealByName(ramen.getName());
+		Optional<Meal> mealWrapped = catalogDao.findMealByName(ramenFromLion.getName());
 		
 		assertTrue(mealWrapped.isPresent());
 		
 		Meal meal = mealWrapped.get();
-		assertEquals(ramen.getName(), meal.getName());
+		assertEquals(ramenFromLion.getName(), meal.getName());
 	}
 	
 	@Test
@@ -114,5 +144,55 @@ public class CatalogDaoTest {
 	public void dontFindAnyMealByTag() {
 		List<Meal> result = catalogDao.findMealsByTag("superfétatoire");
 		assertTrue(result.isEmpty());
+	}
+	
+	@Test
+	public void findMealsFromDifferentRestaurants() {
+		Session session = sessionFactory.openSession();
+		try {
+			session.save(ramenFromDragon);
+			session.beginTransaction().commit();
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+		} finally {
+			session.close();
+		}
+		
+		List<Meal> result = catalogDao.findMealsByTag(ASIAN_CATEGORY);
+		assertFalse(result.isEmpty());
+		assertEquals(3, result.size());
+		assertTrue(result.contains(ramenFromLion));
+		assertTrue(result.contains(ramenFromDragon));
+	}
+	
+	@Test
+	public void findMealsForARestaurant() {
+		List<Meal> result = catalogDao.findMealsByRestaurant(lionRestaurant);
+		assertEquals(1, result.size());
+		
+		sushis.setRestaurant(lionRestaurant);
+		Session session = sessionFactory.openSession();
+		try {
+			session.save(sushis);
+			session.beginTransaction().commit();
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+		} finally {
+			session.close();
+		}
+		result = catalogDao.findMealsByRestaurant(lionRestaurant);
+		assertEquals(2, result.size());
+		
+		session = sessionFactory.openSession();
+		try {
+			session.save(dragonRestaurant);
+			session.beginTransaction().commit();
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+		} finally {
+			session.close();
+		}
+		result = catalogDao.findMealsByRestaurant(dragonRestaurant);
+		assertEquals(0, result.size());
 	}
 }

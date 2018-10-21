@@ -1,4 +1,4 @@
-package fr.unice.polytech.si5.soa.a.communication;
+package fr.unice.polytech.si5.soa.a.communication.bus;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

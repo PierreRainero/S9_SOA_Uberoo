@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Optional;
 
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
 /**
  * Class name	ICatalogDao
  * Date			01/10/2018
  * @author		PierreRainero
- *
+ * 
+ * @version		1.1
+ * Date			21/10/2018
  */
 public interface ICatalogDao {
 	/**
@@ -20,9 +23,16 @@ public interface ICatalogDao {
 	Optional<Meal> findMealByName(String name);
 	
 	/**
-	 * Search meals in the databse using a tag
+	 * Search meals in the database using a tag
 	 * @param tag tag to search
 	 * @return list of meals matching with the tag
 	 */
 	List<Meal> findMealsByTag(String tag);
+	
+	/**
+	 * Search all meals of a restaurants in the database
+	 * @param restaurant restaurant to search
+	 * @return list of restaurant's meals
+	 */
+	List<Meal> findMealsByRestaurant(Restaurant restaurant);
 }
