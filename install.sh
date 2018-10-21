@@ -4,7 +4,7 @@ echo "*******Building Docker image for the bank service*******"
 cd ./bankService
 ./compile.sh
 echo "*******Building Docker image for the order service*******"
-cd orderService
+cd ../orderService
 ./compile.sh
 echo "*******Building Docker image for the restaurant service*******"
 cd ../restaurantService
