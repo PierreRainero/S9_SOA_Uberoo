@@ -1,5 +1,6 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
+import fr.unice.polytech.si5.soa.a.exceptions.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,10 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
-import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 
 /**
@@ -42,6 +39,9 @@ public class OrderTakerController {
 			logger.info(e.getMessage(), e);
 			return ResponseEntity.status(404).body(e.getMessage());
 		}catch(EmptyDeliveryAddressException e) {
+			logger.info(e.getMessage(), e);
+			return ResponseEntity.status(400).body(e.getMessage());
+		} catch (UnknowRestaurantException e) {
 			logger.info(e.getMessage(), e);
 			return ResponseEntity.status(400).body(e.getMessage());
 		}

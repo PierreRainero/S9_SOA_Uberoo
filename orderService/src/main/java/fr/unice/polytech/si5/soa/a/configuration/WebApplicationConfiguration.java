@@ -35,7 +35,6 @@ public class WebApplicationConfiguration implements WebMvcConfigurer  {
     @Bean
     public SimpleMappingExceptionResolver exceptionResolver() {
         SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
-
         Properties exceptionMappings = new Properties();
 
         // Exceptions

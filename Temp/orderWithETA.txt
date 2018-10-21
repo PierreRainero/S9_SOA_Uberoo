@@ -1,1 +1,1 @@
-{"timestamp":1540119620232,"status":500,"error":"Internal Server Error","message":"No message available","path":"/orders"}
+{"id":1,"meals":[{"name":"Ramen","tags":["Asian"],"restaurant":{"id":1,"name":"Asiakeo","restaurantAddress":"690 Route de Grasse, 06600 Antibes"}}],"transmitter":{"id":1,"lastName":"","firstName":"Bob"},"deliveryAddress":"930 Route des Colles, 06410 Biot","eta":1800.000000000,"state":"VALIDATED","restaurant":{"id":1,"name":"Asiakeo","restaurantAddress":"690 Route de Grasse, 06600 Antibes"}}

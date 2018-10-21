@@ -1,10 +1,7 @@
 package fr.unice.polytech.si5.soa.a.services;
 
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
-import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
+import fr.unice.polytech.si5.soa.a.exceptions.*;
 
 /**
  * Class name	IOrderTakerService
@@ -21,7 +18,7 @@ public interface IOrderTakerService {
 	 * @throws EmptyDeliveryAddressException if the delivery address is empty
 	 * @throws UnknowMealException if a meal doesn't exist
 	 */
-	OrderDTO addOrder(OrderDTO orderToAdd) throws UnknowUserException, EmptyDeliveryAddressException, UnknowMealException;
+	OrderDTO addOrder(OrderDTO orderToAdd) throws UnknowUserException, EmptyDeliveryAddressException, UnknowMealException, UnknowRestaurantException;
 	
 	/**
 	 * Change the state of a {@link OrderDTO}

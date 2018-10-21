@@ -4,15 +4,10 @@ import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
+import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
-import fr.unice.polytech.si5.soa.a.entities.Meal;
-import fr.unice.polytech.si5.soa.a.entities.OrderState;
-import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
-import fr.unice.polytech.si5.soa.a.entities.User;
-import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
+import fr.unice.polytech.si5.soa.a.entities.*;
+import fr.unice.polytech.si5.soa.a.exceptions.*;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +37,16 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 	private ICatalogDao catalogDao;
 
 	@Autowired
+	private IRestaurantDao restaurantDao;
+
+	@Autowired
 	private MessageProducer producer;
 
 	@Override
 	/**
 	 * {@inheritDoc}
 	 */
-	public OrderDTO addOrder(OrderDTO orderToAdd) throws UnknowUserException, EmptyDeliveryAddressException, UnknowMealException {
+	public OrderDTO addOrder(OrderDTO orderToAdd) throws UnknowUserException, EmptyDeliveryAddressException, UnknowMealException, UnknowRestaurantException {
 		UberooOrder order = new UberooOrder(orderToAdd);
 
 		if (order.getDeliveryAddress() == null || order.getDeliveryAddress().isEmpty()) {
@@ -61,6 +59,11 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 		}
 		order.setTransmitter(userWrapped.get());
 
+		Optional<Restaurant> restaurantWrapped = restaurantDao.findRestaurantById(orderToAdd.getRestaurant().getId());
+		if(!restaurantWrapped.isPresent()){
+			throw new UnknowRestaurantException("Can't find restaurant with id = "+orderToAdd.getRestaurant().getId());
+		}
+		order.setRestaurant(restaurantWrapped.get());
 		findMeals(order, orderToAdd.getMeals());
 		order.calculateEta();
 

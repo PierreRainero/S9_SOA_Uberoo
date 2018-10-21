@@ -16,8 +16,7 @@ echo "*******2- I decide to go for an asian meal, ordering a ramen soup"
 # Information complémentaire (identifiant de l'utilisateur) non nécessaire au scénario mais nécessaire pour le système :
 bob_id=$(tail -1 Temp/bobId.txt)
 # Envoi de la commande au système et récupération de l'ETA
-# TODO: Edit from here
-curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"id\": -1, \"meals\": [ { \"name\": \"Ramen\", \"tags\": [ \"Asian\" ] } ], \"transmitter\": { \"id\": \"$bob_id\", \"firstName\": \"Bob\", \"lastName\": \"\" }, \"deliveryAddress\": \"930 Route des Colles, 06410 Biot\", \"eta\": null, \"state\": \"WAITING\" }" "http://localhost:9555/orders" > Temp/orderWithETA.txt
+curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"id\": -1, \"meals\": [ {\"name\":\"Ramen\",\"tags\":[\"Asian\"],\"restaurant\":{\"id\":1,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"}} ], \"transmitter\": { \"id\": \"$bob_id\", \"firstName\": \"Bob\", \"lastName\": \"\" }, \"deliveryAddress\": \"930 Route des Colles, 06410 Biot\", \"eta\": null, \"state\": \"WAITING\", \"restaurant\":{\"id\":1,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"} }" "http://localhost:9555/orders" > Temp/orderWithETA.txt
 echo "Press any key to continue..."
 read
 
@@ -27,7 +26,6 @@ sed -i 's/WAITING/VALIDATED/g' Temp/orderWithETA.txt
 order_id=$(grep -Po '"id": *\K[^,]*' Temp/orderWithETA.txt | head -1)
 # Envoi au système, le système poste un message dans le bus pour le restaurant :
 curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 Temp/orderWithETA.txt)" "http://localhost:9555/orders/$order_id" > Temp/validatedOrder.txt
-curl -X GET --silent "http://localhost:5001/messages" > Temp/messagesInTheBus.txt
 echo "Press any key to continue..."
 read
 

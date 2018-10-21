@@ -1,33 +1,21 @@
 package fr.unice.polytech.si5.soa.a.entities;
 
-import static javax.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.NONE;
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
+import lombok.ToString;
+import org.springframework.lang.NonNull;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.springframework.lang.NonNull;
-
-import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-import lombok.ToString;
+import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.NONE;
 
 /**
  * Class name	Order

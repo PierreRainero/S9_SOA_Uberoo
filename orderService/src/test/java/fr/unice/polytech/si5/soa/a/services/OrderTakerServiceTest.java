@@ -6,12 +6,9 @@ import fr.unice.polytech.si5.soa.a.communication.bus.NewOrder;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
+import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
-import fr.unice.polytech.si5.soa.a.entities.Meal;
-import fr.unice.polytech.si5.soa.a.entities.OrderState;
-import fr.unice.polytech.si5.soa.a.entities.Restaurant;
-import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
-import fr.unice.polytech.si5.soa.a.entities.User;
+import fr.unice.polytech.si5.soa.a.entities.*;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
@@ -62,6 +59,11 @@ public class OrderTakerServiceTest {
 	@Qualifier("mock")
 	@Mock
 	private ICatalogDao catalogDaoMock;
+
+	@Autowired
+	@Qualifier("mock")
+	@Mock
+	private IRestaurantDao restaurantDaoMock;
 
 	@Autowired
 	@Qualifier("mock")
@@ -120,6 +122,7 @@ public class OrderTakerServiceTest {
 		when(orderDaoMock.addOrder(any(UberooOrder.class))).thenReturn(bobOrder);
 		when(userDaoMock.findUserById(anyInt())).thenReturn(Optional.of(bob));
 		when(catalogDaoMock.findMealByName(anyString())).thenReturn(Optional.of(ramen));
+		when(restaurantDaoMock.findRestaurantById(anyInt())).thenReturn(Optional.of(asianRestaurant));
 
 		OrderDTO orderDTO = orderService.addOrder(bobOrder.toDTO());
 
@@ -156,6 +159,7 @@ public class OrderTakerServiceTest {
 		when(orderDaoMock.addOrder(any(UberooOrder.class))).thenReturn(bobOrder);
 		when(userDaoMock.findUserById(anyInt())).thenReturn(Optional.of(bob));
 		when(catalogDaoMock.findMealByName(anyString())).thenReturn(Optional.empty());
+		when(restaurantDaoMock.findRestaurantById(anyInt())).thenReturn(Optional.of(asianRestaurant));
 
 		assertThrows(UnknowMealException.class, () -> {
 			orderService.addOrder(bobOrder.toDTO());
