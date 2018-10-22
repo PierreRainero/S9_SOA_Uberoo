@@ -14,6 +14,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper=true)
 @ToString()
 public class ProcessPayment extends Message {
+	private int id;
 	private String account;
 	private double amount;
 
@@ -34,6 +35,7 @@ public class ProcessPayment extends Message {
 	public ProcessPayment(PaymentDTO payment) {
 		type = "PROCESS_PAYMENT";
 		
+		this.id = payment.getId();
 		this.account = payment.getAccount();
 		this.amount = payment.getAmount();
 	}
