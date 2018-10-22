@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -89,5 +90,24 @@ public class RestaurantControllerTest {
         
         String restaurantName = captor.getValue();
         assertEquals(asianRestaurant.getName(), restaurantName);
+	}
+	
+	@Test
+    public void searchRestaurantWitoutNameUsingHTTPGet() throws Exception {
+		List<RestaurantDTO> expectedMock = new ArrayList<>();
+		expectedMock.add(asianRestaurant.toDTO());
+		when(restaurantServiceMock.findRestaurantByName(anyString())).thenReturn(expectedMock);
+		
+		mockMvc.perform(get(BASE_URI)
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        ).andExpect(status().isOk())
+         .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+		
+		ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(restaurantServiceMock, times(1)).findRestaurantByName(captor.capture());
+        verifyNoMoreInteractions(restaurantServiceMock);
+        
+        String restaurantName = captor.getValue();
+        assertTrue(restaurantName.isEmpty());
 	}
 }

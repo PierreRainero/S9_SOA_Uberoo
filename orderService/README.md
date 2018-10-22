@@ -35,4 +35,4 @@ Java 1.8 (JEE) avec les frameworks Spring et Hibernate.
 `{"address":"410 ch de chez moi","food":["plat1","plat2"],"type":"NEW_ORDER","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`
 
 **PROCESS_PAYMENT** :  
-`{"type":"PROCESS_PAYMENT","account":"numero de compte","amont":10.0}`
+`{"type":"PROCESS_PAYMENT","account":"numero de compte","amount":10.0,"id":-1}`

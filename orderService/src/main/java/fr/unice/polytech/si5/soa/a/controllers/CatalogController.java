@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +36,12 @@ public class CatalogController {
 	@RequestMapping(value = BASE_URI,
 			method = RequestMethod.GET,
 			produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<?> findMealsByTag(@RequestParam("tag") String tag) {
-		return ResponseEntity.ok(catalogService.findMealsByTag(tag));
+	public ResponseEntity<?> findMealsByTag(@RequestParam("tag") Optional<String> tag) {
+		if(!tag.isPresent()) {
+			return ResponseEntity.ok(catalogService.findMealsByTag(""));
+		}else {
+			return ResponseEntity.ok(catalogService.findMealsByTag(tag.get()));
+		}
 	}
 	
 	@RequestMapping(value = "/restaurants/{restaurantId}"+BASE_URI,

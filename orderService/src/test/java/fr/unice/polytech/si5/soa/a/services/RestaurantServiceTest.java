@@ -64,4 +64,14 @@ public class RestaurantServiceTest {
 		List<RestaurantDTO> result = restaurantService.findRestaurantByName(asianRestaurant.getName());
 		assertEquals(1, result.size());
 	}
+	
+	@Test
+	public void searchRestaurantWithoutName() {
+		List<Restaurant> expectedMock = new ArrayList<>();
+		expectedMock.add(asianRestaurant);
+		when(restaurantDaoMock.listRestaurants()).thenReturn(expectedMock);
+		
+		List<RestaurantDTO> result = restaurantService.findRestaurantByName("");
+		assertEquals(1, result.size());
+	}
 }

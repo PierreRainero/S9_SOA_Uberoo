@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
 /**
@@ -88,6 +89,22 @@ public class RestaurantDaoImpl implements IRestaurantDao{
 		}
 
 		return result;
+	}
+
+	@Override
+	/**
+     * {@inheritDoc}
+     */
+	public List<Restaurant> listRestaurants() {
+		Session session = sessionFactory.getCurrentSession();
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<Restaurant> criteria = builder.createQuery(Restaurant.class);
+		Root<Restaurant> root =  criteria.from(Restaurant.class);
+		
+		criteria.select(root);
+		Query<Restaurant> query = session.createQuery(criteria);
+		
+		return query.getResultList();
 	}
 
 }

@@ -32,4 +32,10 @@ public interface IRestaurantDao {
 	 * @return list of restaurants matching with the name
 	 */
 	List<Restaurant> findRestaurantByName(String name);
+	
+	/**
+	 * List every existing restaurants
+	 * @return list of restaurants
+	 */
+	List<Restaurant> listRestaurants();
 }

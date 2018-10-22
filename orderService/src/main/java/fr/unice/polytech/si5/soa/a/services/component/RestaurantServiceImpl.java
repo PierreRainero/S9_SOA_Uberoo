@@ -28,7 +28,11 @@ public class RestaurantServiceImpl implements IRestaurantService {
 	 * {@inheritDoc}
 	 */
 	public List<RestaurantDTO> findRestaurantByName(String name) {
-		return restaurantDao.findRestaurantByName(name).stream().map(restaurant -> restaurant.toDTO()).collect(Collectors.toList());
+		if(name.isEmpty()) {
+			return restaurantDao.listRestaurants().stream().map(restaurant -> restaurant.toDTO()).collect(Collectors.toList());
+		}else {
+			return restaurantDao.findRestaurantByName(name).stream().map(restaurant -> restaurant.toDTO()).collect(Collectors.toList());
+		}
 	}
 
 }
