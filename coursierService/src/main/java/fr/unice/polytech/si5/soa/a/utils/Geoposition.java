@@ -18,11 +18,12 @@ public class Geoposition {
         return Math.sqrt(distance);
     }
 
-    /*
+/*
 
     public static void main(String[] args) {
-        System.out.println(distance(0, 0.05, 0, 0.05));     >10 km
+        System.out.println(distance(0, 0.05, 0, 0.05)); //    >10 km
     }
-
     */
+
+
 }

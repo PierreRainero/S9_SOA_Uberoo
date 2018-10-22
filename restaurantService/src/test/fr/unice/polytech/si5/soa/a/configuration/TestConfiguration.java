@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
+import fr.unice.polytech.si5.soa.a.entities.Ingredient;
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
 import fr.unice.polytech.si5.soa.a.services.IOrderService;
 import org.springframework.context.annotation.Configuration;
@@ -61,7 +63,7 @@ public class TestConfiguration {
 
 		// Entities
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(RestaurantOrder.class);
+		factoryBean.setAnnotatedClasses(RestaurantOrder.class, Meal.class, Ingredient.class);
 		return factoryBean;
 	}
 

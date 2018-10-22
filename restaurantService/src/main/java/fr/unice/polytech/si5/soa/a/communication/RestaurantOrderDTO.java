@@ -25,17 +25,24 @@ public class RestaurantOrderDTO implements Serializable {
 	private static final long serialVersionUID = 2917537927445063668L;
 
 	private int id;
-	private List<Meal> meals = new ArrayList<>();
+	private List<MealDTO> meals = new ArrayList<>();
 	private OrderState state = OrderState.TO_PREPARE;
 	
 	public RestaurantOrderDTO() {
 		// Default constructor for Jackson databinding
 	}
 	
-	public RestaurantOrderDTO(int id, List<Meal> meals, OrderState state) {
+	public RestaurantOrderDTO(int id, List<MealDTO> meals, OrderState state) {
 		this.id = id;
 		this.meals = meals;
 		this.state = state;
 	}
 
+	public void addMeal(MealDTO meal){
+        meals.add(meal);
+    }
+
+    public void removeMeal(MealDTO meal){
+        meals.remove(meal);
+    }
 }

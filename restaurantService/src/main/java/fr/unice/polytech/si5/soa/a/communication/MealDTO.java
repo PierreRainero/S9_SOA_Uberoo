@@ -15,15 +15,18 @@ import java.util.List;
 public class MealDTO implements Serializable {
 
     private int id;
-    private List<Ingredient> ingredients = new ArrayList<>();
+    private String name;
+    private double price;
+    private List<IngredientDTO> ingredients = new ArrayList<>();
 
     public MealDTO() {
         // Default constructor for Jackson databinding
     }
 
-    public MealDTO(int id, List<Ingredient> ingredients) {
+    public MealDTO(int id, String name, double price, List<IngredientDTO> ingredients) {
         this.id = id;
         this.ingredients = ingredients;
+        this.price = price;
     }
 
 }

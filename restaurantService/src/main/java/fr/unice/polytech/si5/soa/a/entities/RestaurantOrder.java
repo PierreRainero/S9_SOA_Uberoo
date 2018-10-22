@@ -1,24 +1,19 @@
 package fr.unice.polytech.si5.soa.a.entities;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.NONE;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -40,41 +35,32 @@ public class RestaurantOrder implements Serializable {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id")
+	@Setter(NONE)
 	private int id;
-	
-	@ElementCollection(fetch = FetchType.EAGER)
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	private List<Meal> meals = new ArrayList<>();
-	
+
 	@Enumerated(EnumType.STRING)
 	private OrderState state = OrderState.TO_PREPARE;
 	
 	public RestaurantOrder() {
 		// Default constructor for JPA
 	}
-
-	public RestaurantOrder(List<Meal> meals) {
-		this.meals = meals;
-	}
 	
 	public RestaurantOrder(RestaurantOrderDTO data) {
-		this.meals = data.getMeals();
 		this.state = data.getState();
 	}
-
-	public RestaurantOrder(Meal singleMeal) {
-	    this.meals = new ArrayList<>();
-	    this.meals.add(singleMeal);
-    }
-
-    public RestaurantOrder(Ingredient singleIngredient) {
-	    this.meals = new ArrayList<>();
-	    this.meals.add(new Meal(singleIngredient));
-    }
 	
 	public RestaurantOrderDTO toDTO() {
-		return new RestaurantOrderDTO(id, meals, state);
+		return new RestaurantOrderDTO(id, meals.stream().map(meal -> meal.toDTO()).collect(Collectors.toList()), state);
 	}
 
+	public void addMeal(Meal meal){
+        meals.add(meal);
+    }
 
-
+    public void removeMeal(Meal meal){
+        meals.remove(meal);
+    }
 }

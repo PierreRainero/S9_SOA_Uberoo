@@ -28,7 +28,7 @@ public class OrderController {
 	@Autowired
 	private IOrderService orderService;
 	
-	@RequestMapping(value = "",
+	/*@RequestMapping(value = "",
 			method = RequestMethod.POST,
 			consumes = {"application/JSON; charset=UTF-8"},
 			produces = {"application/JSON; charset=UTF-8"})
@@ -36,7 +36,7 @@ public class OrderController {
 		RestaurantOrderDTO delivery = order.createRestaurantOrder();
 		
 		return ResponseEntity.ok(orderService.addOrder(delivery));
-	}
+	}*/
 	
 	@RequestMapping(value = "/{orderId}/",
 			method = RequestMethod.PUT,
