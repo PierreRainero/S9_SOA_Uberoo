@@ -85,4 +85,20 @@ public class CatalogDaoImpl implements ICatalogDao {
 		
 		return query.getResultList();
 	}
+
+	@Override
+	/**
+     * {@inheritDoc}
+     */
+	public List<Meal> listMeals() {
+		Session session = sessionFactory.getCurrentSession();
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<Meal> criteria = builder.createQuery(Meal.class);
+		Root<Meal> root =  criteria.from(Meal.class);
+		
+		criteria.select(root);
+		Query<Meal> query = session.createQuery(criteria);
+		
+		return query.getResultList();
+	}
 }

@@ -23,6 +23,12 @@ public interface ICatalogDao {
 	Optional<Meal> findMealByName(String name);
 	
 	/**
+	 * List every existing meals
+	 * @return list of meals
+	 */
+	List<Meal> listMeals();
+	
+	/**
 	 * Search meals in the database using a tag
 	 * @param tag tag to search
 	 * @return list of meals matching with the tag

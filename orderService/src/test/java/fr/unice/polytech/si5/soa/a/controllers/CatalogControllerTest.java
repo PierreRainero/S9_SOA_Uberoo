@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
@@ -101,6 +102,25 @@ public class CatalogControllerTest {
         
         String tagToUse = captor.getValue();
         assertEquals(ASIAN_CATEGORY, tagToUse);
+	}
+    
+    @Test
+    public void searchMealWithoutTagHTTPGet() throws Exception {
+    	List<MealDTO> expectedMock = new ArrayList<>();
+		expectedMock.add(ramen.toDTO());
+		when(catalogServiceMock.findMealsByTag(anyString())).thenReturn(expectedMock);
+		
+		mockMvc.perform(get(BASE_URI)
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        ).andExpect(status().isOk())
+         .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+		
+		ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(catalogServiceMock, times(1)).findMealsByTag(captor.capture());
+        verifyNoMoreInteractions(catalogServiceMock);
+        
+        String tagToUse = captor.getValue();
+        assertTrue(tagToUse.isEmpty());
 	}
     
     @Test

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,6 +90,8 @@ public class CatalogDaoTest {
 	
 	@AfterEach
 	public void cleanUp() throws Exception {
+		List<Meal> result = catalogDao.listMeals();
+		
 		Session session = sessionFactory.openSession();
 	    Transaction transaction = null;
 	    try {
@@ -97,6 +100,7 @@ public class CatalogDaoTest {
 	    	if(ramenFromDragon.getId() != 0) {
 	    		session.delete(ramenFromDragon);
 	    	}
+	    	
 	    	
 	    	session.delete(dragonRestaurant);
 			session.delete(lionRestaurant);
@@ -109,6 +113,7 @@ public class CatalogDaoTest {
 
 			dragonRestaurant = null;
 			lionRestaurant = null;
+			ramenFromDragon = null;
 			ramenFromLion = null;
 			sushis = null;
 		} catch (SQLGrammarException e) {
@@ -176,7 +181,7 @@ public class CatalogDaoTest {
 		sushis.setRestaurant(lionRestaurant);
 		Session session = sessionFactory.openSession();
 		try {
-			session.save(sushis);
+			session.merge(sushis);
 			session.beginTransaction().commit();
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
@@ -186,16 +191,25 @@ public class CatalogDaoTest {
 		result = catalogDao.findMealsByRestaurant(lionRestaurant);
 		assertEquals(2, result.size());
 		
-		session = sessionFactory.openSession();
+		result = catalogDao.findMealsByRestaurant(dragonRestaurant);
+		assertEquals(0, result.size());
+	}
+	
+	@Test
+	public void listEveryMeal() {
+		ramenFromDragon.removeTag(ASIAN_CATEGORY);
+		ramenFromDragon.addTag("Something else");
+		Session session = sessionFactory.openSession();
 		try {
-			session.save(dragonRestaurant);
+			session.save(ramenFromDragon);
 			session.beginTransaction().commit();
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
 		} finally {
 			session.close();
 		}
-		result = catalogDao.findMealsByRestaurant(dragonRestaurant);
-		assertEquals(0, result.size());
+		
+		List<Meal> result = catalogDao.listMeals();
+		assertEquals(3, result.size());
 	}
 }
