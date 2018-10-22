@@ -2,7 +2,6 @@ package fr.unice.polytech.si5.soa.a.dao.component;
 
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
-import fr.unice.polytech.si5.soa.a.entities.Ingredient;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
@@ -38,38 +37,37 @@ class OrderDaoTest {
     private IOrderDao orderDao;
 
     private RestaurantOrder tacosOrder, ramenOrder;
-    private List<Meal> meals;
-    private List<Ingredient> ingredients;
+    private Meal tacos;
+    private Meal buritos;
+    private Meal ramen;
 
     @BeforeEach
     void setup() throws Exception {
-        ingredients = new ArrayList<>();
-        Ingredient tacos = new Ingredient("Tacos", 6.50);
-        ingredients.add(tacos);
-        meals = new ArrayList<>();
-        Meal tacosMeal = new Meal();
-        tacosMeal.setIngredients(ingredients);
-        meals.add(tacosMeal);
-        tacosOrder = new RestaurantOrder();
-        tacosOrder.setId(0);
-        tacosOrder.setState(OrderState.TO_PREPARE);
-        tacosOrder.setMeals(meals);
+        tacos = new Meal();
+        tacos.setName("Tacos");
+        tacos.setPrice(8);
 
-        Ingredient ramen = new Ingredient("Ramen", 4);
-        ingredients.add(ramen);
-        Meal ramenMeal = new Meal();
-        ramenMeal.setIngredients(ingredients);
-        meals.clear();
-        meals.add(ramenMeal);
+        buritos = new Meal();
+        buritos.setName("Buritos");
+        buritos.setPrice(7.5);
+
+        ramen = new Meal();
+        ramen.setName("Ramen soup");
+        ramen.setPrice(10);
+
+        tacosOrder = new RestaurantOrder();
+        tacosOrder.addMeal(tacos);
+        tacosOrder.addMeal(buritos);
 
         ramenOrder = new RestaurantOrder();
-        ramenOrder.setId(0);
-        ramenOrder.setState(OrderState.TO_PREPARE);
-        ramenOrder.setMeals(meals);
+        ramenOrder.addMeal(ramen);
 
         Session session = sessionFactory.openSession();
 
         try {
+            session.save(tacos);
+            session.save(buritos);
+            session.save(ramen);
             session.save(tacosOrder);
             session.beginTransaction().commit();
         } catch (SQLGrammarException e) {
@@ -86,11 +84,22 @@ class OrderDaoTest {
         try {
             transaction = session.beginTransaction();
 
+            if(ramenOrder.getId()!=0){
+                session.delete(ramenOrder);
+            }
+
+            session.delete(tacos);
+            session.delete(buritos);
+            session.delete(ramen);
             session.delete(tacosOrder);
 
             session.flush();
             transaction.commit();
 
+            tacos = null;
+            buritos = null;
+            ramen = null;
+            ramenOrder = null;
             tacosOrder = null;
         } catch (SQLGrammarException e) {
             session.getTransaction().rollback();
@@ -110,47 +119,53 @@ class OrderDaoTest {
 
     @Test
     void updateOrder() {
-        meals.clear();
-        Meal pizzaMeal = new Meal();
-        Ingredient pizza = new Ingredient("Pizza", 9);
-        ingredients.clear();
-        ingredients.add(pizza);
-        pizzaMeal.setIngredients(ingredients);
-        meals.add(pizzaMeal);
-
-        RestaurantOrder pizzaOrder = new RestaurantOrder();
-        pizzaOrder.setId(0);
-        pizzaOrder.setState(OrderState.FINISHED);
-        pizzaOrder.setMeals(meals);
-
+        Meal pizza = new Meal();
+        pizza.setName("Pizza");
+        pizza.setPrice(12);
         Session session = sessionFactory.openSession();
-
         try {
-            session.save(pizzaOrder);
+            session.save(pizza);
             session.beginTransaction().commit();
         } catch (SQLGrammarException e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-
-        List<Meal> formerMeals = pizzaOrder.getMeals();
-
-        Ingredient ramen = new Ingredient("Ramen", 4);
-        ingredients.add(ramen);
-        Meal ramenMeal = new Meal();
-        ramenMeal.setIngredients(ingredients);
-        meals.clear();
-        meals.add(ramenMeal);
-
+        assertEquals(2, tacosOrder.getMeals().size());
         session = sessionFactory.openSession();
-        session.evict(pizzaOrder);
+        session.evict(tacosOrder);
 
-        pizzaOrder.setMeals(meals);
-        RestaurantOrder order = orderDao.updateOrder(pizzaOrder);
-        assertNotEquals(formerMeals, order.getMeals());
-        assertEquals(meals, order.getMeals());
+        tacosOrder.addMeal(pizza);
 
+        RestaurantOrder order = orderDao.updateOrder(tacosOrder);
+        assertEquals(3, order.getMeals().size());
+
+        // Clean context :
+        tacosOrder.removeMeal(pizza);
+        session = sessionFactory.openSession();
+        try {
+            session.merge(tacosOrder);
+            session.beginTransaction().commit();
+        } catch (SQLGrammarException e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        session = sessionFactory.openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            session.delete(pizza);
+
+            session.flush();
+            transaction.commit();
+
+            pizza = null;
+        } catch (SQLGrammarException e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
     }
 
     @Test
@@ -160,19 +175,15 @@ class OrderDaoTest {
         assertEquals(tacosOrder.getId(), order.get().getId());
     }
 
-    /*@Test
+    @Test
     void getOrdersToDo() {
-        meals = new ArrayList<>();
-        meals.add("Pizza");
-        RestaurantOrder pizzaOrder = new RestaurantOrder();
-        pizzaOrder.setId(0);
-        pizzaOrder.setState(OrderState.FINISHED);
-        pizzaOrder.setMeals(meals);
+        List<RestaurantOrder> orders = orderDao.getOrdersToDo();
+        assertEquals(1, orders.size());
 
+        tacosOrder.setState(OrderState.FINISHED);
         Session session = sessionFactory.openSession();
-
         try {
-            session.save(pizzaOrder);
+            session.merge(tacosOrder);
             session.beginTransaction().commit();
         } catch (SQLGrammarException e) {
             session.getTransaction().rollback();
@@ -180,16 +191,7 @@ class OrderDaoTest {
             session.close();
         }
 
-        List<RestaurantOrder> orders = orderDao.getOrdersToDo();
-
-        for (int i = 0; i < orders.size(); i++) {
-            System.err.println(orders.get(i));
-
-        }
-
-        assertEquals(1, orders.size());
-        assertEquals(tacosOrder.getId(), orders.get(0).getId());
-        assertEquals(tacosOrder.getState(), orders.get(0).getState());
-
-    }*/
+        orders = orderDao.getOrdersToDo();
+        assertEquals(0, orders.size());
+    }
 }
