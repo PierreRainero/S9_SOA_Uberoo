@@ -46,12 +46,12 @@ public class MealServiceImpl implements IMealService {
 
 
 	@Override
-	public MealDTO addMeal(MealDTO meal, RestaurantDTO restaurant) throws UnknowRestaurantException {
+	public MealDTO addMeal(MealDTO meal, int restaurantId) throws UnknowRestaurantException {
 		Meal mealToInsert = new Meal(meal);
 		
-		Optional<Restaurant> restaurantWrapped = restaurantDao.findRestaurantById(restaurant.getId());
+		Optional<Restaurant> restaurantWrapped = restaurantDao.findRestaurantById(restaurantId);
 		if(!restaurantWrapped.isPresent()) {
-			throw new UnknowRestaurantException("Can't find restaurant with id = "+restaurant.getId());
+			throw new UnknowRestaurantException("Can't find restaurant with id = "+restaurantId);
 		}
 		mealToInsert.setRestaurant(restaurantWrapped.get());
 		

@@ -4,6 +4,7 @@ import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
 import org.hibernate.Transaction;
 import org.hibernate.exception.SQLGrammarException;
@@ -36,6 +37,8 @@ class OrderDaoTest {
     @Autowired
     private IOrderDao orderDao;
 
+    private Restaurant tacosRestaurant;
+    private Restaurant asianRestaurant;
     private RestaurantOrder tacosOrder, ramenOrder;
     private Meal tacos;
     private Meal buritos;
@@ -43,21 +46,33 @@ class OrderDaoTest {
 
     @BeforeEach
     void setup() throws Exception {
+    	tacosRestaurant = new Restaurant();
+    	tacosRestaurant.setName("Enroule moi");
+    	tacosRestaurant.setRestaurantAddress("88 rue des frites");
+    	
+    	asianRestaurant = new Restaurant();
+    	asianRestaurant.setName("RizRiz");
+    	asianRestaurant.setRestaurantAddress("47 avenue des bols");
+    	
         tacos = new Meal();
         tacos.setName("Tacos");
         tacos.setPrice(8);
+        tacos.setRestaurant(tacosRestaurant);
 
         buritos = new Meal();
         buritos.setName("Buritos");
         buritos.setPrice(7.5);
+        buritos.setRestaurant(tacosRestaurant);
 
         ramen = new Meal();
         ramen.setName("Ramen soup");
         ramen.setPrice(10);
+        ramen.setRestaurant(asianRestaurant);
 
         tacosOrder = new RestaurantOrder();
         tacosOrder.addMeal(tacos);
         tacosOrder.addMeal(buritos);
+        tacosOrder.setRestaurant(tacosRestaurant);
 
         ramenOrder = new RestaurantOrder();
         ramenOrder.addMeal(ramen);
@@ -65,6 +80,8 @@ class OrderDaoTest {
         Session session = sessionFactory.openSession();
 
         try {
+        	session.save(tacosRestaurant);
+        	session.save(asianRestaurant);
             session.save(tacos);
             session.save(buritos);
             session.save(ramen);
@@ -88,6 +105,8 @@ class OrderDaoTest {
                 session.delete(ramenOrder);
             }
 
+            session.delete(tacosRestaurant);
+        	session.delete(asianRestaurant);
             session.delete(tacos);
             session.delete(buritos);
             session.delete(ramen);
@@ -96,6 +115,8 @@ class OrderDaoTest {
             session.flush();
             transaction.commit();
 
+            tacosRestaurant = null;
+            asianRestaurant = null;
             tacos = null;
             buritos = null;
             ramen = null;
@@ -177,7 +198,7 @@ class OrderDaoTest {
 
     @Test
     void getOrdersToDo() {
-        List<RestaurantOrder> orders = orderDao.getOrdersToDo();
+        List<RestaurantOrder> orders = orderDao.getOrdersToDo(tacosRestaurant);
         assertEquals(1, orders.size());
 
         tacosOrder.setState(OrderState.FINISHED);
@@ -191,7 +212,7 @@ class OrderDaoTest {
             session.close();
         }
 
-        orders = orderDao.getOrdersToDo();
+        orders = orderDao.getOrdersToDo(tacosRestaurant);
         assertEquals(0, orders.size());
     }
 }

@@ -52,6 +52,11 @@ public class OrderTakerController {
 			consumes = {"application/JSON; charset=UTF-8"},
 			produces = {"application/JSON; charset=UTF-8"})
 	public ResponseEntity<?> updateOrderState(@PathVariable("orderId") String id, @RequestBody OrderDTO order) {
+		int convertedId = Integer.parseInt(id);
+		if(convertedId != order.getId()) {
+			return ResponseEntity.status(400).body("Incorrect request according to the URI");
+		}
+		
 		try {
 			return ResponseEntity.ok(orderService.updateOrderState(order));
 		}catch(UnknowOrderException e) {

@@ -53,6 +53,7 @@ public class OrderTakerControllerTest {
 	private final static String ERROR_EMPTY_ADDRESS = "Delivery address cannot be empty";
 	private final static String ERROR_UNKNOW_MEAL = "Can't find meal nammed \"superfétatoire\"";
 	private final static String ERROR_UNKNOW_ORDER = "Can't find order with id = -1";
+	private final static String ERROR_INCORRECT_REQUEST = "Incorrect request according to the URI";
 	
 	private MockMvc mockMvc;
 	
@@ -93,6 +94,7 @@ public class OrderTakerControllerTest {
 		command.setTransmitter(bob);
 		
 		bobOrder = command.toDTO();
+		bobOrder.setId(1);
 	}
     
     @Test
@@ -184,6 +186,22 @@ public class OrderTakerControllerTest {
     	
     	ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
         verify(orderServiceMock, times(1)).updateOrderState(captor.capture());
+        verifyNoMoreInteractions(orderServiceMock);
+    }
+    
+    @Test
+    public void updateIncorrectOrderUsingHTTPPut() throws Exception {
+    	when(orderServiceMock.updateOrderState(any(OrderDTO.class))).thenReturn(bobOrder);
+    	bobOrder.setId(2);
+    	
+    	mockMvc.perform(put(BASE_URI+"/1/")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(bobOrder))
+         ).andExpect(status().isBadRequest())
+    	.andExpect(content().string(ERROR_INCORRECT_REQUEST));
+    	
+    	ArgumentCaptor<OrderDTO> captor = ArgumentCaptor.forClass(OrderDTO.class);
+        verify(orderServiceMock, times(0)).updateOrderState(captor.capture());
         verifyNoMoreInteractions(orderServiceMock);
     }
 }

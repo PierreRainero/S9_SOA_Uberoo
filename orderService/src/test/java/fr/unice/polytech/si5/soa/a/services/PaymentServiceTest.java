@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.communication.PaymentDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.Message;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
@@ -91,19 +90,10 @@ public class PaymentServiceTest {
 		MessageProducer spy = Mockito.spy(messageProducerMock);
 		doNothing().when(spy).sendMessage(any(Message.class));
 
-		PaymentDTO paymentDTO = paymentService.addPayment(payment.toDTO(), order.toDTO());
+		PaymentDTO paymentDTO = paymentService.addPayment(payment.toDTO(), order.getId());
 
 		assertNotNull(paymentDTO);
 		assertTrue(payment.getAmount() == paymentDTO.getAmount());
-	}
-
-	@Test
-	public void addNewPaymentWithoutOrder() {
-		when(paymentDaoMock.addPayment(any(Payment.class))).thenReturn(payment);
-
-		assertThrows(UnknowOrderException.class, () -> {
-			paymentService.addPayment(payment.toDTO(), null);
-		});
 	}
 
 	@Test
@@ -112,7 +102,7 @@ public class PaymentServiceTest {
 		when(paymentDaoMock.addPayment(any(Payment.class))).thenReturn(payment);
 
 		assertThrows(UnknowOrderException.class, () -> {
-			paymentService.addPayment(payment.toDTO(), new OrderDTO());
+			paymentService.addPayment(payment.toDTO(), -1);
 		});
 	}
 

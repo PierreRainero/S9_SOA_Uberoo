@@ -40,14 +40,10 @@ public class PaymentServiceImpl implements IPaymentService {
 	/**
 	 * {@inheritDoc}
 	 */
-	public PaymentDTO addPayment(PaymentDTO paymentToAdd, OrderDTO orderAssociated) throws UnknowOrderException {
-		if(orderAssociated == null) {
-			throw new UnknowOrderException("Order is not present");
-		}
-		
-		Optional<UberooOrder> orderWrapped = orderDao.findOrderById(orderAssociated.getId());
+	public PaymentDTO addPayment(PaymentDTO paymentToAdd, int orderIdAssociated) throws UnknowOrderException {		
+		Optional<UberooOrder> orderWrapped = orderDao.findOrderById(orderIdAssociated);
 		if (!orderWrapped.isPresent()) {
-			throw new UnknowOrderException("Can't find order with id = " + orderAssociated.getId());
+			throw new UnknowOrderException("Can't find order with id = " + orderIdAssociated);
 		}
 		
 		Payment payment = new Payment(paymentToAdd);

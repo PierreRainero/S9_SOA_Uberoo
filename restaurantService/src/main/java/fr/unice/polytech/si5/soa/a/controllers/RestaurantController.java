@@ -41,17 +41,9 @@ public class RestaurantController {
 			produces = {"application/JSON; charset=UTF-8"})
 	public ResponseEntity<?> addMeal(@PathVariable("restaurantId") String restaurantId, @RequestBody MealDTO meal) {
 		int convertedId = Integer.parseInt(restaurantId);
-		RestaurantDTO restaurant;
-		try {
-			restaurant = restaurantService.findRestaurantById(convertedId);
-		} catch (UnknowRestaurantException e) {
-			logger.error(e.getMessage(), e);
-			return ResponseEntity.status(404).body(e.getMessage());
-		}
-		
 		
 		try {
-			return ResponseEntity.ok(mealService.addMeal(meal, restaurant));
+			return ResponseEntity.ok(mealService.addMeal(meal, convertedId));
 		} catch (UnknowRestaurantException e) {
 			logger.error(e.getMessage(), e);
 			return ResponseEntity.status(404).body(e.getMessage());

@@ -3,6 +3,7 @@ package fr.unice.polytech.si5.soa.a.dao;
 import java.util.List;
 import java.util.Optional;
 
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
 
 /**
@@ -14,5 +15,5 @@ public interface IOrderDao {
 	RestaurantOrder addOrder(RestaurantOrder orderToAdd);
 	RestaurantOrder updateOrder(RestaurantOrder orderToUpdate);
 	Optional<RestaurantOrder> findOrderById(int id);
-	List<RestaurantOrder> getOrdersToDo();
+	List<RestaurantOrder> getOrdersToDo(Restaurant restaurantConcerned);
 }

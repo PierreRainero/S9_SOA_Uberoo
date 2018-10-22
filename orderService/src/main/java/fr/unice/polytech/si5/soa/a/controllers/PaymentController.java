@@ -31,9 +31,6 @@ public class PaymentController {
 	private final static String BASE_URI = "/payments";
 	
 	@Autowired
-	private IOrderTakerService orderTakerService;
-	
-	@Autowired
 	private IPaymentService paymentService;
 	
 	@RequestMapping(value = "/orders/{orderId}"+BASE_URI,
@@ -42,16 +39,9 @@ public class PaymentController {
 			produces = {"application/JSON; charset=UTF-8"})
 	public ResponseEntity<?> addPayment(@PathVariable("orderId") String id, @RequestBody PaymentDTO payment) {
 		int convertedId = Integer.parseInt(id);
-		OrderDTO order;
-		try {
-			order = orderTakerService.findOrderById(convertedId);
-		} catch (UnknowOrderException e) {
-			logger.error(e.getMessage(), e);
-			return ResponseEntity.status(404).body(e.getMessage());
-		}
 		
 		try {
-			return ResponseEntity.ok(paymentService.addPayment(payment, order));
+			return ResponseEntity.ok(paymentService.addPayment(payment, convertedId));
 		} catch (UnknowOrderException e) {
 			logger.error(e.getMessage(), e);
 			return ResponseEntity.status(404).body(e.getMessage());

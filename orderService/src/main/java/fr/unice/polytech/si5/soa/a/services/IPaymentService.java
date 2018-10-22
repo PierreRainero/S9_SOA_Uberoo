@@ -15,11 +15,11 @@ public interface IPaymentService {
 	/**
 	 * Add a new payment to treat
 	 * @param paymentToAdd payment to create
-	 * @param orderAssociated order associated to the payement
+	 * @param orderAssociated order associated to the payment
 	 * @return saved payment
 	 * @throws UnknowOrderException if the order doesn't exist
 	 */
-	PaymentDTO addPayment(PaymentDTO paymentToAdd, OrderDTO orderAssociated) throws UnknowOrderException ;
+	PaymentDTO addPayment(PaymentDTO paymentToAdd, int orderIdAssociated) throws UnknowOrderException ;
 	
 	/**
 	 * Search a payment in the system using his id

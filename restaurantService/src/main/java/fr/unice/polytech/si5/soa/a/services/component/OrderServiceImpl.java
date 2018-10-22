@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
@@ -43,11 +44,8 @@ public class OrderServiceImpl implements IOrderService {
 	public RestaurantOrderDTO addOrder(RestaurantOrderDTO orderToAdd) throws UnknowRestaurantException, UnknowMealException {
 		RestaurantOrder order = new RestaurantOrder(orderToAdd);
 		
-		Optional<Restaurant> restaurantWrapped = restaurantDao.findRestaurantById(orderToAdd.getRestaurant().getId());
-		if(!restaurantWrapped.isPresent()) {
-			throw new UnknowRestaurantException("Can't find restaurant with id = "+orderToAdd.getRestaurant().getId());
-		}
-		order.setRestaurant(restaurantWrapped.get());
+		Restaurant restaurant = getRestaurantById(orderToAdd.getRestaurant().getId());
+		order.setRestaurant(restaurant);
 		
 		for(MealDTO tmp : orderToAdd.getMeals()) {
 			Optional<Meal> mealRetrieved = mealDao.findMealById(tmp.getId());
@@ -74,8 +72,19 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public List<RestaurantOrderDTO> getOrdersToDo() {
-		return orderDao.getOrdersToDo().stream().map(order -> order.toDTO()).collect(Collectors.toList());
+	public List<RestaurantOrderDTO> getOrdersToDo(int restaurantId) throws UnknowRestaurantException {
+		Restaurant restaurantRetreived = getRestaurantById(restaurantId);
+		
+		return orderDao.getOrdersToDo(restaurantRetreived).stream().map(order -> order.toDTO()).collect(Collectors.toList());
+	}
+	
+	private Restaurant getRestaurantById(int id) throws UnknowRestaurantException {
+		Optional<Restaurant> restaurantWrapped = restaurantDao.findRestaurantById(id);
+		if(!restaurantWrapped.isPresent()) {
+			throw new UnknowRestaurantException("Can't find restaurant with id = "+id);
+		}
+		
+		return restaurantWrapped.get();
 	}
 
 }
