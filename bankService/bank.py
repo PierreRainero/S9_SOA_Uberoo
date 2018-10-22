@@ -21,7 +21,7 @@ class Consumer(multiprocessing.Process):
         while not self.stop_event.is_set():
             for message in consumer:
                 if message.value['type'] == "PROCESS_PAYMENT":
-                    print("Processing Payment for account number "+str(message.value['account'])+" of amount: "+str(message.value['amont'])+"\n",file=sys.stderr)
+                    print("Processing Payment for account number "+str(message.value['account'])+" of amount: "+str(message.value['amount'])+"\n",file=sys.stderr)
                 if self.stop_event.is_set():
                     break
 
