@@ -1,4 +1,4 @@
-package fr.unice.polytech.si5.soa.a.entities;
+package fr.unice.polytech.si5.soa.a.entities.states;
 
 /**
  * Class name	OrderState

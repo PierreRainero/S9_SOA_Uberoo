@@ -1,5 +1,6 @@
 package fr.unice.polytech.si5.soa.a.communication.bus;
 
+import fr.unice.polytech.si5.soa.a.communication.PaymentDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,7 +15,7 @@ import lombok.ToString;
 @ToString()
 public class ProcessPayment extends Message {
 	private String account;
-	private float amont;
+	private double amount;
 
 	/**
 	 * Default constructor
@@ -26,10 +27,14 @@ public class ProcessPayment extends Message {
 	/**
 	 * Normal constructor for an "PROCESS_PAYMENT" message
 	 */
-	public ProcessPayment(String accountToPay, float amont) {
+	/**
+	 * Normal constructor for an "PROCESS_PAYMENT" message
+	 * @param payment {@link PaymentDTO} to use to construct the message
+	 */
+	public ProcessPayment(PaymentDTO payment) {
 		type = "PROCESS_PAYMENT";
 		
-		this.account = accountToPay;
-		this.amont = amont;
+		this.account = payment.getAccount();
+		this.amount = payment.getAmount();
 	}
 }

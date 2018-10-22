@@ -9,6 +9,7 @@ import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.*;
+import fr.unice.polytech.si5.soa.a.entities.states.OrderState;
 import fr.unice.polytech.si5.soa.a.exceptions.*;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ import java.util.Optional;
 /**
  * Class name	OrderTakerServiceImpl
  *
- * @author PierreRainero
- * @see IOrderTakerService
+ * @author 		PierreRainero
+ * @see 		IOrderTakerService
  * Date			30/09/2018
  **/
 @Primary
@@ -102,9 +103,22 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 		if (order.getState().equals(OrderState.VALIDATED)) {
 			 NewOrder message = new NewOrder(result);
 			 producer.sendMessage(message);
-			
 		}
 
 		return result;
+	}
+
+	@Override
+	/**
+	 * {@inheritDoc}
+	 */
+	public OrderDTO findOrderById(int id) throws UnknowOrderException {
+		Optional<UberooOrder> orderWrapped = orderDao.findOrderById(id);
+		
+		if(!orderWrapped.isPresent()) {
+			throw new UnknowOrderException("Can't find order with id = " + id);
+		}
+		
+		return orderWrapped.get().toDTO();
 	}
 }

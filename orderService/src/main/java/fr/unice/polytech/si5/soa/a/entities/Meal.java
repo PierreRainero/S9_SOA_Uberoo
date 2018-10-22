@@ -56,6 +56,9 @@ public class Meal implements Serializable {
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@NonNull
 	private Restaurant restaurant;
+	
+	@Column(name = "price", nullable = false)
+	private double price;
 
 	/**
 	 * Default constructor
@@ -78,7 +81,7 @@ public class Meal implements Serializable {
 	 * @return DTO for a {@link Meal}
 	 */
 	public MealDTO toDTO() {
-		return new MealDTO(name, tags, restaurant.toDTO());
+		return new MealDTO(name, tags, restaurant.toDTO(), price);
 	}
 	
 	/**

@@ -25,6 +25,7 @@ public class MealDTO implements Serializable {
 	private String name;
 	private List<String> tags = new ArrayList<>();
 	private RestaurantDTO restaurant;
+	private double price;
 	
 	/**
 	 * Default constructor
@@ -39,9 +40,10 @@ public class MealDTO implements Serializable {
 	 * @param tags list of tag to find a meal
 	 * @param restaurant restaurant associed to a meal
 	 */
-	public MealDTO(String name, List<String> tags, RestaurantDTO restaurant) {
+	public MealDTO(String name, List<String> tags, RestaurantDTO restaurant, double price) {
 		this.name = name;
 		this.tags = tags;
 		this.restaurant = restaurant;
+		this.price = price;
 	}
 }

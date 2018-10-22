@@ -60,15 +60,18 @@ public class CatalogDaoTest {
 		ramenFromLion.setName("Ramen soup");
 		ramenFromLion.addTag(ASIAN_CATEGORY);
 		ramenFromLion.setRestaurant(lionRestaurant);
+		ramenFromLion.setPrice(11.5);
 		
 		ramenFromDragon = new Meal();
 		ramenFromDragon.setName("Ramen soup");
 		ramenFromDragon.addTag(ASIAN_CATEGORY);
 		ramenFromDragon.setRestaurant(dragonRestaurant);
+		ramenFromDragon.setPrice(10.99);
 		
 		sushis = new Meal();
 		sushis.setName("Sushis");
 		sushis.addTag(ASIAN_CATEGORY);
+		sushis.setPrice(7.5);
 		
 		Session session = sessionFactory.openSession();
 		try {

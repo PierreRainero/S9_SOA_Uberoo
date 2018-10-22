@@ -1,0 +1,78 @@
+package fr.unice.polytech.si5.soa.a.services.component;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
+import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
+import fr.unice.polytech.si5.soa.a.communication.PaymentDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.communication.bus.ProcessPayment;
+import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
+import fr.unice.polytech.si5.soa.a.dao.IPaymentDao;
+import fr.unice.polytech.si5.soa.a.entities.Payment;
+import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowPaymentException;
+import fr.unice.polytech.si5.soa.a.services.IPaymentService;
+
+/**
+ * Class name	PaymentServiceImpl
+ * @author 		PierreRainero
+ * @see 		IPaymentService
+ * Date			22/10/2018
+ **/
+@Primary
+@Service("PaymentService")
+public class PaymentServiceImpl implements IPaymentService {
+	@Autowired
+	private IPaymentDao paymentDao;
+	
+	@Autowired
+	private IOrderTakerDao orderDao;
+	
+	@Autowired
+	private MessageProducer producer;
+	
+	@Override
+	/**
+	 * {@inheritDoc}
+	 */
+	public PaymentDTO addPayment(PaymentDTO paymentToAdd, OrderDTO orderAssociated) throws UnknowOrderException {
+		if(orderAssociated == null) {
+			throw new UnknowOrderException("Order is not present");
+		}
+		
+		Optional<UberooOrder> orderWrapped = orderDao.findOrderById(orderAssociated.getId());
+		if (!orderWrapped.isPresent()) {
+			throw new UnknowOrderException("Can't find order with id = " + orderAssociated.getId());
+		}
+		
+		Payment payment = new Payment(paymentToAdd);
+		payment.setOrder(orderWrapped.get());
+		
+		PaymentDTO result = paymentDao.addPayment(payment).toDTO();
+		
+		ProcessPayment message = new ProcessPayment(result);
+		producer.sendMessage(message);
+		
+		return result;
+	}
+
+	@Override
+	/**
+	 * {@inheritDoc}
+	 */
+	public PaymentDTO findPaymentById(int idToSearch) throws UnknowPaymentException {
+		Optional<Payment> paymentWrapped = paymentDao.findPaymentById(idToSearch);
+		
+		if(!paymentWrapped.isPresent()) {
+			throw new UnknowPaymentException("Can't find payment with id = "+idToSearch);
+		}
+		
+		return paymentWrapped.get().toDTO();
+	}
+
+}
