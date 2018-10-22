@@ -13,7 +13,7 @@ public interface IOrderTakerService {
 	/**
 	 * Add a {@link OrderDTO} to the system
 	 * @param orderToAdd command to add
-	 * @return the traited command
+	 * @return the treated command
 	 * @throws UnknowUserException if the transmitter doesn't exist
 	 * @throws EmptyDeliveryAddressException if the delivery address is empty
 	 * @throws UnknowMealException if a meal doesn't exist
@@ -27,4 +27,12 @@ public interface IOrderTakerService {
 	 * @throws UnknowOrderException if the order doesn't exist
 	 */
 	OrderDTO updateOrderState(OrderDTO orderToUpdate) throws UnknowOrderException;
+	
+	/**
+	 * Search an order in the system using his id
+	 * @param id id to use
+	 * @return order with the corresponding id
+	 * @throws UnknowOrderException if the order doesn't exist
+	 */
+	OrderDTO findOrderById(int id) throws UnknowOrderException;
 }

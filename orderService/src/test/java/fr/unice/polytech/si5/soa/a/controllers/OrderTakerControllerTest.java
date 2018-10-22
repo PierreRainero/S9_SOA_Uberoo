@@ -48,10 +48,12 @@ import fr.unice.polytech.si5.soa.a.util.TestUtil;
 @WebAppConfiguration
 public class OrderTakerControllerTest {
 	private final static String BASE_URI = "/orders/";
+	
 	private final static String ERROR_UNKNOW_USER = "Can't find user with id = -1";
 	private final static String ERROR_EMPTY_ADDRESS = "Delivery address cannot be empty";
 	private final static String ERROR_UNKNOW_MEAL = "Can't find meal nammed \"superfétatoire\"";
 	private final static String ERROR_UNKNOW_ORDER = "Can't find order with id = -1";
+	
 	private MockMvc mockMvc;
 	
 	@Qualifier("mock")

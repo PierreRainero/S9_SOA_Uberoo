@@ -149,4 +149,20 @@ public class RestaurantDaoTest {
 		Optional<Restaurant> result = restaurantDao.findRestaurantById(-1);
 		assertFalse(result.isPresent());
 	}
+	
+	@Test
+	public void listEveryRestaurants() {
+		Session session = sessionFactory.openSession();
+		try {
+			session.save(italianRestaurant);
+			session.beginTransaction().commit();
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+		} finally {
+			session.close();
+		}
+		
+		List<Restaurant> result = restaurantDao.listRestaurants();
+		assertEquals(2, result.size());
+	}
 }

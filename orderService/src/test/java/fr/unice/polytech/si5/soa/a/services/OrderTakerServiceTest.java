@@ -3,13 +3,13 @@ package fr.unice.polytech.si5.soa.a.services;
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.Message;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
-import fr.unice.polytech.si5.soa.a.communication.bus.NewOrder;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.*;
+import fr.unice.polytech.si5.soa.a.entities.states.OrderState;
 import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveryAddressException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
@@ -40,7 +39,7 @@ import static org.mockito.Mockito.*;
  * Class name	OrderTakerServiceTest
  * Date			30/09/2018
  *
- * @author PierreRainero
+ * @author 		PierreRainero
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TestConfiguration.class})
@@ -66,11 +65,6 @@ public class OrderTakerServiceTest {
 	private IRestaurantDao restaurantDaoMock;
 
 	@Autowired
-	@Qualifier("mock")
-	@Mock
-	private RestTemplate restTemplate;
-
-	@Autowired
 	@Mock
 	private MessageProducer messageProducerMock;
 
@@ -89,7 +83,6 @@ public class OrderTakerServiceTest {
 		Mockito.reset(orderDaoMock);
 		Mockito.reset(userDaoMock);
 		Mockito.reset(catalogDaoMock);
-		Mockito.reset(restTemplate);
 		Mockito.reset(messageProducerMock);
 		
 		asianRestaurant = new Restaurant();
@@ -170,7 +163,6 @@ public class OrderTakerServiceTest {
 	public void validateAnOrder() throws Exception {
 		when(orderDaoMock.findOrderById(anyInt())).thenReturn(Optional.of(bobOrder));
 		when(orderDaoMock.updateOrder(any(UberooOrder.class))).thenReturn(bobOrder);
-		when(restTemplate.postForObject(anyString(), any(NewOrder.class), Mockito.eq(Message.class))).thenReturn(new Message());
 		MessageProducer spy = Mockito.spy(messageProducerMock);
 		doNothing().when(spy).sendMessage(any(Message.class));
 
@@ -201,6 +193,26 @@ public class OrderTakerServiceTest {
 
 		assertThrows(UnknowOrderException.class, () -> {
 			orderService.updateOrderState(bobOrder.toDTO());
+		});
+	}
+	
+	@Test
+	public void findExistingOrderById() throws Exception {
+		when(orderDaoMock.findOrderById(anyInt())).thenReturn(Optional.of(bobOrder));
+		
+		OrderDTO orderDTO = orderService.findOrderById(-1);
+		
+		assertNotNull(orderDTO);
+		assertEquals(1, orderDTO.getMeals().size());
+		assertEquals(ramen.getName(), orderDTO.getMeals().get(0).getName());
+	}
+	
+	@Test
+	public void findNonExistingOrderById() {
+		when(orderDaoMock.findOrderById(anyInt())).thenReturn(Optional.empty());
+		
+		assertThrows(UnknowOrderException.class, () -> {
+			orderService.findOrderById(-1);
 		});
 	}
 }

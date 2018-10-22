@@ -4,14 +4,17 @@ import fr.unice.polytech.si5.soa.a.communication.bus.Message;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
+import fr.unice.polytech.si5.soa.a.dao.IPaymentDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Payment;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.services.ICatalogService;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
+import fr.unice.polytech.si5.soa.a.services.IPaymentService;
 import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
 
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -29,7 +32,6 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -80,7 +82,7 @@ public class TestConfiguration {
 
 		// Entities
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class);
+		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class, Payment.class);
 		return factoryBean;
 	}
 
@@ -134,6 +136,12 @@ public class TestConfiguration {
 	public IRestaurantDao iRestaurantDao() {
 		return Mockito.mock(IRestaurantDao.class);
 	}
+	
+	@Qualifier("mock")
+	@Bean
+	public IPaymentDao iPaymentDao() {
+		return Mockito.mock(IPaymentDao.class);
+	}
 
 	@Qualifier("mock")
 	@Bean
@@ -155,7 +163,7 @@ public class TestConfiguration {
 
 	@Qualifier("mock")
 	@Bean
-	public RestTemplate restTemplate() {
-		return Mockito.mock(RestTemplate.class);
+	public IPaymentService iPaymentService() {
+		return Mockito.mock(IPaymentService.class);
 	}
 }

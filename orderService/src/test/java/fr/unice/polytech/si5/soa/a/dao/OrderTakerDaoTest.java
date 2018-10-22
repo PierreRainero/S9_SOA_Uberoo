@@ -23,6 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.User;
 
 /**
@@ -39,14 +40,21 @@ public class OrderTakerDaoTest {
 	@Autowired
 	private IOrderTakerDao orderDao;
 	
+	private Restaurant asianRestaurant;
 	private Meal ramen;
 	private UberooOrder bobOrder;
 	private User bob;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
+		asianRestaurant = new Restaurant();
+		asianRestaurant.setName("Lion d'or");
+		asianRestaurant.setRestaurantAddress("22 rue des nems");
+		
 		ramen = new Meal();
 		ramen.setName("Ramen soup");
+		ramen.setRestaurant(asianRestaurant);
+		ramen.setPrice(11.5);
 		
 		bob = new User();
 		bob.setFirstName("Bob");
@@ -59,6 +67,7 @@ public class OrderTakerDaoTest {
 		
 		Session session = sessionFactory.openSession();
 		try {
+			session.save(asianRestaurant);
 			session.save(ramen);
 			session.save(bob);
 			session.beginTransaction().commit();
@@ -80,12 +89,14 @@ public class OrderTakerDaoTest {
 	    		session.delete(bobOrder);
 	    	}
 	    	
+	    	session.delete(asianRestaurant);
 			session.delete(ramen);
 			session.delete(bob);
 			
 			session.flush();
 			transaction.commit();
 			
+			asianRestaurant = null;
 			bobOrder = null;
 			bob = null;
 			ramen = null;

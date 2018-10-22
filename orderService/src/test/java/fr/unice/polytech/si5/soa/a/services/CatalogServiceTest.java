@@ -91,6 +91,16 @@ public class CatalogServiceTest {
 	}
 	
 	@Test
+	public void findAMealsByTagWithEmptyTag () {
+		List<Meal> expectedMock = new ArrayList<>();
+		expectedMock.add(ramen);
+		when(catalogDaoMock.listMeals()).thenReturn(expectedMock);
+		
+		List<MealDTO> resultAsDTO = catalogService.findMealsByTag("");
+		assertEquals(1, resultAsDTO.size());
+	}
+	
+	@Test
 	public void findMealsForExistingRestaurant() throws Exception {
 		List<Meal> expectedMock = new ArrayList<>();
 		expectedMock.add(ramen);

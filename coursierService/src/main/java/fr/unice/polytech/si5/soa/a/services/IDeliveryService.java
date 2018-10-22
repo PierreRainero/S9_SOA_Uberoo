@@ -14,4 +14,5 @@ public interface IDeliveryService {
 	DeliveryDTO addDelivery(DeliveryDTO deliveryToAdd);
 	DeliveryDTO updateDelivery(DeliveryDTO deliveryToUpdate) throws UnknowDeliveryException;
 	List<DeliveryDTO> getDeliveriesToDo();
+    List<DeliveryDTO> getDeliveriesToDo(Double latitude, Double longitude);
 }

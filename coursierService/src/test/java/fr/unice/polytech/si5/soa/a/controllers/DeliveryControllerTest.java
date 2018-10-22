@@ -56,6 +56,8 @@ public class DeliveryControllerTest {
 
     private Delivery delivery;
     private Delivery deliveryDone;
+    private Delivery deliveryBelow10;
+    private Delivery deliveryOver10;
     private NewOrder order;
 
     private static final String ADDRESS = "475 rue Evariste Galois";
@@ -75,6 +77,18 @@ public class DeliveryControllerTest {
         deliveryDone = new Delivery();
         deliveryDone.setDeliveryAddress(ADDRESS);
         deliveryDone.setState(true);
+
+        deliveryBelow10 = new Delivery();
+        deliveryBelow10.setDeliveryAddress(ADDRESS);
+        deliveryBelow10.setState(false);
+        deliveryBelow10.setLatitude(0.0);
+        deliveryBelow10.setLongitude(0.0);
+
+        deliveryOver10 = new Delivery();
+        deliveryOver10.setDeliveryAddress(ADDRESS);
+        deliveryOver10.setState(false);
+        deliveryOver10.setLatitude(1.0);
+        deliveryOver10.setLongitude(1.0);
 
         order = new NewOrder();
         order.setAddress(ADDRESS);
@@ -145,6 +159,19 @@ public class DeliveryControllerTest {
         ArgumentCaptor<DeliveryDTO> captor = ArgumentCaptor.forClass(DeliveryDTO.class);
         verify(deliveryServiceMock, times(1)).updateDelivery(captor.capture());
         verifyNoMoreInteractions(deliveryServiceMock);
+    }
+
+    @Test
+    public void getDeliveriesToDoWithPositionTest() throws Exception {
+        List<DeliveryDTO> expectedMock = new ArrayList<>();
+        expectedMock.add(deliveryBelow10.toDTO());
+        when(deliveryServiceMock.getDeliveriesToDo()).thenReturn(expectedMock);
+
+        mockMvc.perform(get(BASE_URI + "?latitude=0.05&longitude=0.5")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(expectedMock)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
     }
 
 }

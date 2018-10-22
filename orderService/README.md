@@ -16,6 +16,9 @@ Java 1.8 (JEE) avec les frameworks Spring et Hibernate.
 `/orders/{orderId}/` :  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- PUT (content-type : JSON, encoding : UTF-8), body : OrderDTO  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Permet de valider ou non une commande en changeant son status ("state")  
+`/orders/{orderId}/payments` :  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- POST (content-type : JSON, encoding : UTF-8), body : PaymentDTO  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Permet de payer une commande (dont l'identifiant est dans l'URI)  
 `/meals` :  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- GET (content-type : JSON, encoding : UTF-8), queryParam : tag=AFoodTag  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Permet de trouver tous les plats correspondant à un tag ("Asian" par exemple)  
@@ -32,4 +35,4 @@ Java 1.8 (JEE) avec les frameworks Spring et Hibernate.
 `{"address":"410 ch de chez moi","food":["plat1","plat2"],"type":"NEW_ORDER","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`
 
 **PROCESS_PAYMENT** :  
-`{"type":"PROCESS_PAYMENT","account":"numero de compte","amont":10.0}`
+`{"type":"PROCESS_PAYMENT","account":"numero de compte","amount":10.0,"id":-1}`

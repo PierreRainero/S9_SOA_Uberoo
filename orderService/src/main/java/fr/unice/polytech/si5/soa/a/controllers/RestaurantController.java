@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +27,11 @@ public class RestaurantController {
 	@RequestMapping(value = "",
 			method = RequestMethod.GET,
 			produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<?> findMealsByTag(@RequestParam("name") String name) {
-		return ResponseEntity.ok(restaurantService.findRestaurantByName(name));
+	public ResponseEntity<?> findMealsByTag(@RequestParam("name") Optional<String> name) {
+		if(!name.isPresent()) {
+			return ResponseEntity.ok(restaurantService.findRestaurantByName(""));
+		}else {
+			return ResponseEntity.ok(restaurantService.findRestaurantByName(name.get()));
+		}
 	}
 }

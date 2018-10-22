@@ -38,7 +38,11 @@ public class CatalogServiceImpl implements ICatalogService {
 	 * {@inheritDoc}
 	 */
 	public List<MealDTO> findMealsByTag(String tag) {
-		return catalogDao.findMealsByTag(tag).stream().map(meal -> meal.toDTO()).collect(Collectors.toList());
+		if(tag.isEmpty()) {
+			return catalogDao.listMeals().stream().map(meal -> meal.toDTO()).collect(Collectors.toList());
+		}else {
+			return catalogDao.findMealsByTag(tag).stream().map(meal -> meal.toDTO()).collect(Collectors.toList());
+		}
 	}
 
 	@Override

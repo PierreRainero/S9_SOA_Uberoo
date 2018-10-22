@@ -5,7 +5,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.unice.polytech.si5.soa.a.entities.OrderState;
+import fr.unice.polytech.si5.soa.a.entities.states.OrderState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -31,6 +31,7 @@ public class OrderDTO implements Serializable {
 	private Duration eta;
 	private OrderState state;
 	private RestaurantDTO restaurant;
+	private double price;
 	
 	/**
 	 * Default constructor
@@ -41,9 +42,16 @@ public class OrderDTO implements Serializable {
 	
 	/**
 	 * Normal constructor 
+	 * @param id identifier of the order
 	 * @param meals list of meals (DTO)
+	 * @param transmitter user concerned by the order
+	 * @param deliveryAddress address to deliver the order
+	 * @param eta estimate time before arrival to the deliveryAddress
+	 * @param state status of the order (accepted or not)
+	 * @param restaurant restaurant associated to the order
+	 * @param price price of the order
 	 */
-	public OrderDTO(int id, List<MealDTO> meals, UserDTO transmitter, String deliveryAddress, Duration eta, OrderState state, RestaurantDTO restaurant) {
+	public OrderDTO(int id, List<MealDTO> meals, UserDTO transmitter, String deliveryAddress, Duration eta, OrderState state, RestaurantDTO restaurant, double price) {
 		this.id = id;
 		this.meals = meals;
 		this.transmitter = transmitter;
@@ -51,5 +59,6 @@ public class OrderDTO implements Serializable {
 		this.eta = eta;
 		this.state = state;
 		this.restaurant = restaurant;
+		this.price = price;
 	}
 }

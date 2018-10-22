@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.entities;
 
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
+import fr.unice.polytech.si5.soa.a.entities.states.OrderState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
@@ -25,7 +26,7 @@ import static lombok.AccessLevel.NONE;
 @Entity
 @Data
 @Table(name = "`UBEROOORDER`")
-@EqualsAndHashCode(exclude={"id"})
+@EqualsAndHashCode(exclude={"id", "payments"})
 @ToString()
 public class UberooOrder implements Serializable {
 	/**
@@ -59,6 +60,11 @@ public class UberooOrder implements Serializable {
 
 	@Enumerated(EnumType.STRING)
 	private OrderState state = OrderState.WAITING;
+	
+	@Setter(NONE)
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "order")
+	@ToString.Exclude
+	private List<Payment> payments = new ArrayList<>();
 
 	/**
 	 * Default constructor
@@ -89,7 +95,8 @@ public class UberooOrder implements Serializable {
 				deliveryAddress,
 				eta,
 				state,
-				restaurant.toDTO());
+				restaurant.toDTO(),
+				getPrice());
 	}
 
 	/**
@@ -110,9 +117,22 @@ public class UberooOrder implements Serializable {
 
 	/**
 	 * Calculate the Estimated Time of Arrival
-	 * MOCKED
+	 * MOCKED return always 30min
 	 */
 	public void calculateEta() {
 		eta = Duration.ofMinutes(30);
+	}
+	
+	/**
+	 * Calculated the price of the order
+	 * @return sum of every meals' price
+	 */
+	public double getPrice() {
+		double price = 0.;
+		for(Meal tmp : meals) {
+			price += tmp.getPrice();
+		}
+		
+		return price;
 	}
 }

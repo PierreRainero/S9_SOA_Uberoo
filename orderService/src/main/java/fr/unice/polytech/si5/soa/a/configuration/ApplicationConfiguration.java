@@ -3,6 +3,7 @@ package fr.unice.polytech.si5.soa.a.configuration;
 import fr.unice.polytech.si5.soa.a.communication.bus.Message;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Payment;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
@@ -71,7 +72,7 @@ public class ApplicationConfiguration {
 		props.put("hibernate.dialect", env.getProperty("db.dialect"));
 
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class);
+		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class, Payment.class);
 		return factoryBean;
 	}
 
@@ -92,7 +93,6 @@ public class ApplicationConfiguration {
 	public MessageProducer messageProducer() {
 		return new MessageProducer();
 	}
-
 	
 	@Bean
     public ProducerFactory<String, Message> messageProducerFactory() {
