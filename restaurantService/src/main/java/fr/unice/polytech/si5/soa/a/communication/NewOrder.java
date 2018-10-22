@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.communication;
 
 import java.util.List;
 
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +18,7 @@ import lombok.ToString;
 @ToString()
 public class NewOrder extends Message {
 	public String address;
-	public List<String> food;
+	public List<Meal> meals;
 	
 	/**
 	 * Default constructor
@@ -27,6 +28,6 @@ public class NewOrder extends Message {
 	}
 	
 	public RestaurantOrderDTO createRestaurantOrder() {
-		return new RestaurantOrderDTO(-1, food, OrderState.TO_PREPARE);
+		return new RestaurantOrderDTO(-1, meals, OrderState.TO_PREPARE);
 	}
 }

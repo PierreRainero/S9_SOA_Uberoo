@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,14 +25,14 @@ public class RestaurantOrderDTO implements Serializable {
 	private static final long serialVersionUID = 2917537927445063668L;
 
 	private int id;
-	private List<String> meals = new ArrayList<>();
+	private List<Meal> meals = new ArrayList<>();
 	private OrderState state = OrderState.TO_PREPARE;
 	
 	public RestaurantOrderDTO() {
 		// Default constructor for Jackson databinding
 	}
 	
-	public RestaurantOrderDTO(int id, List<String> meals, OrderState state) {
+	public RestaurantOrderDTO(int id, List<Meal> meals, OrderState state) {
 		this.id = id;
 		this.meals = meals;
 		this.state = state;
