@@ -18,40 +18,47 @@ import lombok.ToString;
 /**
  * Class name	Delivery
  * Date			08/10/2018
- * @author		PierreRainero
+ *
+ * @author PierreRainero
  */
 @Entity
 @Data
 @Table(name = "`DELIVERY`")
-@EqualsAndHashCode(exclude={"id"})
+@EqualsAndHashCode(exclude = {"id"})
 @ToString()
 public class Delivery implements Serializable {
-	/**
-	 * Generated UID version
-	 */
-	private static final long serialVersionUID = 8262931988309989234L;
-	
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "id")
-	private int id;
-	
-	@Column(name = "deliveryAddress", nullable = false)
-	private String deliveryAddress;
-	
-	@Column(name = "state", nullable = false)
-	public boolean state = false;
-	
-	public Delivery() {
-		// Default constructor for JPA
-	}
-	
-	public Delivery(DeliveryDTO data) {
-		this.deliveryAddress = data.getDeliveryAddress();
-		this.state = data.isState();
-	}
-	
-	public DeliveryDTO toDTO() {
-		return new DeliveryDTO(id, deliveryAddress, state);
-	}
+    /**
+     * Generated UID version
+     */
+    private static final long serialVersionUID = 8262931988309989234L;
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "id")
+    private int id;
+
+    @Column(name = "deliveryAddress", nullable = false)
+    private String deliveryAddress;
+
+    @Column(name = "state", nullable = false)
+    public boolean state = false;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    public Delivery() {
+        // Default constructor for JPA
+    }
+
+    public Delivery(DeliveryDTO data) {
+        this.deliveryAddress = data.getDeliveryAddress();
+        this.state = data.isState();
+    }
+
+    public DeliveryDTO toDTO() {
+        return new DeliveryDTO(id, deliveryAddress, state, latitude, longitude);
+    }
 }
