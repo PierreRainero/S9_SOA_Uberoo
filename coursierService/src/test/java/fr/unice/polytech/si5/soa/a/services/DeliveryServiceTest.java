@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +46,8 @@ public class DeliveryServiceTest {
     private Delivery deliveryDone;
 
     private static final String ADDRESS = "Evariste Galois";
+    private Delivery deliveryBelow10;
+    private Delivery deliveryOver10;
 
     @BeforeEach
     public void setUp() {
@@ -56,12 +59,26 @@ public class DeliveryServiceTest {
         deliveryDone = new Delivery();
         deliveryDone.setState(true);
         deliveryDone.setDeliveryAddress(ADDRESS);
+
+        deliveryBelow10 = new Delivery();
+        deliveryBelow10.setDeliveryAddress(ADDRESS);
+        deliveryBelow10.setState(false);
+        deliveryBelow10.setLatitude(0.0);
+        deliveryBelow10.setLongitude(0.0);
+
+        deliveryOver10 = new Delivery();
+        deliveryOver10.setDeliveryAddress(ADDRESS);
+        deliveryOver10.setState(false);
+        deliveryOver10.setLatitude(1.0);
+        deliveryOver10.setLongitude(1.0);
     }
 
     @AfterEach
     public void cleanUp() {
         deliveryTodo = null;
         deliveryDone = null;
+        deliveryBelow10 = null;
+        deliveryOver10 = null;
     }
 
     @Test
@@ -71,6 +88,16 @@ public class DeliveryServiceTest {
         List<DeliveryDTO> deliveriesReturned = deliveryService.getDeliveriesToDo();
         assertTrue(deliveriesReturned.size() == 1);
         assertEquals(deliveriesReturned.get(0), deliveryTodo.toDTO());
+    }
+
+    @Test
+    public void getDeliveriesToDoWithPositionTest() {
+        List<Delivery> deliveries = Arrays.asList(deliveryBelow10, deliveryOver10);
+        when(iDeliveryDaoMock.getDeliveriesToDo()).thenReturn(deliveries);
+        double latitudeCoursier = 0.05, longitudeCoursier = 0.05;
+        List<DeliveryDTO> deliveriesReturned = deliveryService.getDeliveriesToDo(latitudeCoursier, longitudeCoursier);
+        assertTrue(deliveriesReturned.size() == 1);
+        assertEquals(deliveriesReturned.get(0), deliveryBelow10.toDTO());
     }
 
     @Test
@@ -85,7 +112,7 @@ public class DeliveryServiceTest {
         when(iDeliveryDaoMock.updateDelivery(deliveryTodo)).thenReturn(deliveryDone);
         when(iDeliveryDaoMock.findDeliveryById(deliveryTodo.getId())).thenReturn(Optional.of(deliveryTodo));
         DeliveryDTO returnedDelivery = deliveryService.updateDelivery(deliveryTodo.toDTO());
-        assertNotEquals(returnedDelivery,deliveryTodo.toDTO());
+        assertNotEquals(returnedDelivery, deliveryTodo.toDTO());
         assertEquals(returnedDelivery, deliveryDone.toDTO());
     }
 
