@@ -40,7 +40,7 @@ public class PaymentController {
 			method = RequestMethod.POST,
 			consumes = {"application/JSON; charset=UTF-8"},
 			produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<?> addOrder(@PathVariable("orderId") String id, @RequestBody PaymentDTO payment) {
+	public ResponseEntity<?> addPayment(@PathVariable("orderId") String id, @RequestBody PaymentDTO payment) {
 		int convertedId = Integer.parseInt(id);
 		OrderDTO order;
 		try {

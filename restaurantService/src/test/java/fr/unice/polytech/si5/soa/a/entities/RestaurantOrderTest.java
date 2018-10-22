@@ -1,6 +1,5 @@
 package fr.unice.polytech.si5.soa.a.entities;
 
-import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

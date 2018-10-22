@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.unice.polytech.si5.soa.a.communication.NewOrder;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
 import fr.unice.polytech.si5.soa.a.services.IOrderService;
@@ -21,28 +20,21 @@ import fr.unice.polytech.si5.soa.a.services.IOrderService;
  * @author		PierreRainero
  */
 @RestController
-@RequestMapping("/restaurants/orders")
+@RequestMapping("/restaurants/{restaurantId}/orders")
 public class OrderController {
 	private static Logger logger = LogManager.getLogger(OrderController.class);
 	
 	@Autowired
 	private IOrderService orderService;
 	
-	/*@RequestMapping(value = "",
-			method = RequestMethod.POST,
-			consumes = {"application/JSON; charset=UTF-8"},
-			produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<?> addOrder(@RequestBody NewOrder order) {
-		RestaurantOrderDTO delivery = order.createRestaurantOrder();
-		
-		return ResponseEntity.ok(orderService.addOrder(delivery));
-	}*/
-	
 	@RequestMapping(value = "/{orderId}/",
 			method = RequestMethod.PUT,
 			consumes = {"application/JSON; charset=UTF-8"},
 			produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<?> updateOrderState(@PathVariable("orderId") String id, @RequestBody RestaurantOrderDTO order) {
+	public ResponseEntity<?> updateOrderState(
+			@PathVariable("restaurantId") String restaurantId,
+			@PathVariable("orderId") String id,
+			@RequestBody RestaurantOrderDTO order) {
 		try {
 			return ResponseEntity.ok(orderService.updateOrder(order));
 		}catch(UnknowOrderException e) {
@@ -54,7 +46,7 @@ public class OrderController {
 	@RequestMapping(value = "",
 			method = RequestMethod.GET,
 			produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<?> getDeliveriesToDo() {
+	public ResponseEntity<?> getDeliveriesToDo(@PathVariable("restaurantId") String restaurantId) {
 		return ResponseEntity.ok(orderService.getOrdersToDo());
 	}
 }

@@ -1,9 +1,7 @@
 package fr.unice.polytech.si5.soa.a.communication;
 
-import fr.unice.polytech.si5.soa.a.entities.Ingredient;
+import fr.unice.polytech.si5.soa.a.communication.bus.NewOrder;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
-import fr.unice.polytech.si5.soa.a.entities.OrderState;
-import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

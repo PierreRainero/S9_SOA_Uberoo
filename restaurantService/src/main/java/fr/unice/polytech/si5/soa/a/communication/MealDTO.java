@@ -1,6 +1,5 @@
 package fr.unice.polytech.si5.soa.a.communication;
 
-import fr.unice.polytech.si5.soa.a.entities.Ingredient;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
