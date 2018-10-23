@@ -7,6 +7,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+/**
+ * Class name	RestaurantDTO
+ * Date			22/10/2018
+ * @author		PierreRainero
+ */
 @Data
 @EqualsAndHashCode()
 @ToString()

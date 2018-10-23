@@ -16,6 +16,12 @@ import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IMealService;
 import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
 
+/**
+ * Class name	RestaurantController
+ * Date			23/10/2018
+ * @author		PierreRainero
+ *
+ */
 @RestController
 @RequestMapping("/restaurants")
 public class RestaurantController {

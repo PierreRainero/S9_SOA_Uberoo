@@ -14,6 +14,12 @@ import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
 
+/**
+ * Class name	RestaurantServiceImpl
+ * @see			IRestaurantService
+ * Date			22/10/2018
+ * @author		PierreRainero
+ */
 @Primary
 @Service("RestaurantService")
 public class RestaurantServiceImpl implements IRestaurantService {
@@ -36,7 +42,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
 
 	@Override
 	public RestaurantDTO addRestaurant(RestaurantDTO restaurant) {
-		RestaurantDTO result = new Restaurant(restaurant).toDTO();
+		RestaurantDTO result = restaurantDao.addRestaurant(new Restaurant(restaurant)).toDTO();
 		NewRestaurant message = new NewRestaurant(result);
 		producer.sendMessage(message);
 		

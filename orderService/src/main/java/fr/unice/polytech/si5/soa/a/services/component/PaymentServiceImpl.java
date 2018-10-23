@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.communication.PaymentDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.communication.bus.ProcessPayment;

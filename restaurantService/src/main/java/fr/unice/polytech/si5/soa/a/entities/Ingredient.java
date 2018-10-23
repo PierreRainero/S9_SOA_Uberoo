@@ -17,15 +17,23 @@ import java.io.Serializable;
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.NONE;
 
-
+/**
+ * Class name	Ingredient
+ * Date			22/10/2018
+ * @author		PierreRainero
+ */
 @Entity
 @Data
 @Table(name = "`INGREDIENT`")
 @EqualsAndHashCode(exclude={"id"})
 @ToString()
 public class Ingredient implements Serializable {
+    /**
+	 * Generated UID version
+	 */
+	private static final long serialVersionUID = -5802216050267448741L;
 
-    @Id
+	@Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id")
     @Setter(NONE)

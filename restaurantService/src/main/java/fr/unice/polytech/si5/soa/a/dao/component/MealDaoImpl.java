@@ -21,6 +21,12 @@ import org.hibernate.query.Query;
 
 import java.util.Optional;
 
+/**
+ * Class name	MealDaoImpl
+ * @see			IMealDao
+ * Date			22/10/2018
+ * @author		PierreRainero
+ */
 @Primary
 @Repository
 @Transactional

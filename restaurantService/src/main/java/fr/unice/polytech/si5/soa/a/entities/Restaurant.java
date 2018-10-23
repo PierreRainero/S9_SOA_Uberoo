@@ -23,12 +23,22 @@ import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Class name	Restaurant
+ * Date			23/10/2018
+ * @author		PierreRainero
+ */
 @Entity
 @Data
 @Table(name = "`RESTAURANT`")
 @EqualsAndHashCode(exclude={"id", "meals"})
 @ToString()
 public class Restaurant implements Serializable {
+	/**
+	 * Generated UID version
+	 */
+	private static final long serialVersionUID = -5271132190076336472L;
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id")

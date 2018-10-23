@@ -28,6 +28,9 @@ import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
  * @see			IOrderDao
  * Date			08/10/2018
  * @author		PierreRainero
+ * 
+ * @version		1.1
+ * Date			23/10/2018
  */
 @Primary
 @Repository

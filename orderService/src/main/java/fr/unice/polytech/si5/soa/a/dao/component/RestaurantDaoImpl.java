@@ -19,7 +19,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
-import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
 /**

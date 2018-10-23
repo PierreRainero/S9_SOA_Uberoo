@@ -20,6 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
+/**
+ * Class name	RestaurantDaoImpl
+ * @see			IRestaurantDao
+ * Date			22/10/2018
+ * @author		PierreRainero
+ */
 @Primary
 @Repository
 @Transactional

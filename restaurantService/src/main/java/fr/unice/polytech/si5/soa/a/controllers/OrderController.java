@@ -10,17 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IOrderService;
-import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
 
 /**
  * Class name	OrderController
  * Date			08/10/2018
  * @author		PierreRainero
+ * 
+ * @version		1.1
+ * Date			23/10/2018
  */
 @RestController
 @RequestMapping("/restaurants/{restaurantId}/orders")
@@ -30,7 +31,7 @@ public class OrderController {
 	@Autowired
 	private IOrderService orderService;
 	
-	@RequestMapping(value = "/{orderId}/",
+	@RequestMapping(value = "/{orderId}",
 			method = RequestMethod.PUT,
 			consumes = {"application/JSON; charset=UTF-8"},
 			produces = {"application/JSON; charset=UTF-8"})
@@ -40,7 +41,7 @@ public class OrderController {
 			@RequestBody RestaurantOrderDTO order) {
 		int restId = Integer.parseInt(restaurantId);
 		int orderId = Integer.parseInt(id);
-		
+
 		if(restId != order.getRestaurant().getId() || orderId != order.getId()) {
 			return ResponseEntity.status(400).body("Incorrect request according to the URI");
 		}
@@ -56,7 +57,7 @@ public class OrderController {
 	@RequestMapping(value = "",
 			method = RequestMethod.GET,
 			produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<?> getDeliveriesToDo(@PathVariable("restaurantId") String restaurantId) {
+	public ResponseEntity<?> getOrdersToDo(@PathVariable("restaurantId") String restaurantId) {
 		int convertedId = Integer.parseInt(restaurantId);
 		
 		try {

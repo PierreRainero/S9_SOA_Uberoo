@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
-import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
@@ -61,11 +60,11 @@ public class OrderServiceImpl implements IOrderService {
 
 	@Override
 	public RestaurantOrderDTO updateOrder(RestaurantOrderDTO orderToUpdate) throws UnknowOrderException {
-		Optional<RestaurantOrder> deliveryWrapped = orderDao.findOrderById(orderToUpdate.getId());
-		if(!deliveryWrapped.isPresent()) {
+		Optional<RestaurantOrder> orderWrapped = orderDao.findOrderById(orderToUpdate.getId());
+		if(!orderWrapped.isPresent()) {
 			throw new UnknowOrderException("Can't find order with id = "+orderToUpdate.getId());
 		}
-		RestaurantOrder order = deliveryWrapped.get();
+		RestaurantOrder order = orderWrapped.get();
 		order.setState(orderToUpdate.getState());
 		
 		return orderDao.updateOrder(order).toDTO();

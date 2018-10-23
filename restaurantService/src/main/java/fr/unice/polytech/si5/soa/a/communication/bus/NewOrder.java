@@ -2,7 +2,6 @@ package fr.unice.polytech.si5.soa.a.communication.bus;
 
 import java.util.List;
 
-import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

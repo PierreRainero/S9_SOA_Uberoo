@@ -22,6 +22,9 @@ import lombok.ToString;
  * Class name	RestaurantOrder
  * Date			08/10/2018
  * @author		PierreRainero
+ * 
+ * @version		1.1
+ * Date			23/10/2018
  */
 @Entity
 @Data

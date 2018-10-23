@@ -19,13 +19,23 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.NONE;
 
 
+/**
+ * Class name	Meal
+ * Date			22/10/2018
+ * @author		PierreRainero
+ */
 @Entity
 @Data
 @Table(name = "`MEALS`")
 @EqualsAndHashCode(exclude={"id"})
 @ToString()
 public class Meal implements Serializable {
-    @Id
+    /**
+	 * Generated UID version
+	 */
+	private static final long serialVersionUID = -3885514079403275908L;
+
+	@Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id")
     @Setter(NONE)

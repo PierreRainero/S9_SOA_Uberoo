@@ -1,4 +1,4 @@
-package fr.unice.polytech.si5.soa.a.dao.component;
+package fr.unice.polytech.si5.soa.a.dao;
 
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
@@ -18,7 +18,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,9 +27,6 @@ import static org.junit.Assert.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TestConfiguration.class})
 class OrderDaoTest {
-
-    private static final String ASIAN_CATEGORY = "Asian";
-
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -45,7 +41,7 @@ class OrderDaoTest {
     private Meal ramen;
 
     @BeforeEach
-    void setup() throws Exception {
+    public void setup() throws Exception {
     	tacosRestaurant = new Restaurant();
     	tacosRestaurant.setName("Enroule moi");
     	tacosRestaurant.setRestaurantAddress("88 rue des frites");
@@ -78,7 +74,6 @@ class OrderDaoTest {
         ramenOrder.addMeal(ramen);
 
         Session session = sessionFactory.openSession();
-
         try {
         	session.save(tacosRestaurant);
         	session.save(asianRestaurant);
@@ -130,7 +125,7 @@ class OrderDaoTest {
     }
 
     @Test
-    void addOrder() {
+    public void addOrder() {
         RestaurantOrder responseOrder = orderDao.addOrder(ramenOrder);
 
         assertNotNull(responseOrder);
@@ -139,7 +134,7 @@ class OrderDaoTest {
     }
 
     @Test
-    void updateOrder() {
+    public void updateOrder() {
         Meal pizza = new Meal();
         pizza.setName("Pizza");
         pizza.setPrice(12);
@@ -190,14 +185,14 @@ class OrderDaoTest {
     }
 
     @Test
-    void findOrderById() {
+    public void findOrderById() {
         Optional<RestaurantOrder> order = orderDao.findOrderById(tacosOrder.getId());
         assertTrue(order.isPresent());
         assertEquals(tacosOrder.getId(), order.get().getId());
     }
 
     @Test
-    void getOrdersToDo() {
+    public void getOrdersToDo() {
         List<RestaurantOrder> orders = orderDao.getOrdersToDo(tacosRestaurant);
         assertEquals(1, orders.size());
 
