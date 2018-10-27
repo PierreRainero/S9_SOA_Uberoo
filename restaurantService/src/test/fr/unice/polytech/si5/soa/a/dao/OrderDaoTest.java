@@ -1,7 +1,6 @@
 package fr.unice.polytech.si5.soa.a.dao;
 
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
-import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;

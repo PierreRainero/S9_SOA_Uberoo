@@ -5,10 +5,7 @@ import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
-import fr.unice.polytech.si5.soa.a.entities.Ingredient;
-import fr.unice.polytech.si5.soa.a.entities.Meal;
-import fr.unice.polytech.si5.soa.a.entities.Restaurant;
-import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
+import fr.unice.polytech.si5.soa.a.entities.*;
 import fr.unice.polytech.si5.soa.a.services.IMealService;
 import fr.unice.polytech.si5.soa.a.services.IOrderService;
 import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
@@ -81,7 +78,7 @@ public class TestConfiguration {
 
 		// Entities
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(RestaurantOrder.class, Meal.class, Ingredient.class, Restaurant.class);
+		factoryBean.setAnnotatedClasses(RestaurantOrder.class, Meal.class, Ingredient.class, Restaurant.class, Feedback.class);
 		return factoryBean;
 	}
 
