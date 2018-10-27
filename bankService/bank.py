@@ -6,7 +6,7 @@ import multiprocessing
 
 from kafka import KafkaConsumer, KafkaProducer
 
-class Consumer(multiprocessing.Process):
+class Topic(multiprocessing.Process):
     def __init__(self):
         multiprocessing.Process.__init__(self)
         self.stop_event = multiprocessing.Event()
@@ -17,20 +17,47 @@ class Consumer(multiprocessing.Process):
     def run(self):
         consumer = KafkaConsumer(bootstrap_servers='kafka:9092',group_id='bank',auto_offset_reset='latest',value_deserializer=lambda m: json.loads(m.decode('utf-8')))
         consumer.subscribe(['topic'])
+        producer = KafkaProducer(bootstrap_servers='kafka:9092')
 
         while not self.stop_event.is_set():
             for message in consumer:
                 if message.value['type'] == "PROCESS_PAYMENT":
-                    print("Processing Payment for account number "+str(message.value['account'])+" of amount: "+str(message.value['amount'])+"\n",file=sys.stderr)
+                    print("<topic> Processing Payment for account number "+str(message.value['account'])+" of amount: "+str(message.value['amount'])+"\n",file=sys.stderr)
+                    producer.send('topic', str.encode("{\"type\":\"PAYMENT_CONFIRMATION\",\"id\":"+str(message.value['id'])+",\"status\":true}"))
                 if self.stop_event.is_set():
                     break
 
         consumer.close()
+        producer.close()
 
+class Bank(multiprocessing.Process):
+    def __init__(self):
+        multiprocessing.Process.__init__(self)
+        self.stop_event = multiprocessing.Event()
+
+    def stop(self):
+        self.stop_event.set()
+
+    def run(self):
+        consumer = KafkaConsumer(bootstrap_servers='kafka:9092',group_id='bank',auto_offset_reset='latest',value_deserializer=lambda m: json.loads(m.decode('utf-8')))
+        consumer.subscribe(['bank'])
+        producer = KafkaProducer(bootstrap_servers='kafka:9092')
+
+        while not self.stop_event.is_set():
+            for message in consumer:
+                if message.value['type'] == "PROCESS_PAYMENT":
+                    print("<bank> Processing Payment for account number "+str(message.value['account'])+" of amount: "+str(message.value['amount'])+"\n",file=sys.stderr)
+                    producer.send('bank', str.encode("{\"type\":\"PAYMENT_CONFIRMATION\",\"id\":"+str(message.value['id'])+",\"status\":true}"))
+                if self.stop_event.is_set():
+                    break
+
+        consumer.close()
+        producer.close()
 
 def main():
     tasks = [
-        Consumer()
+        Topic(),
+        Bank()
     ]
 
     for t in tasks:
