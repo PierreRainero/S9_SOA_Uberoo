@@ -1,9 +1,13 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
+import fr.unice.polytech.si5.soa.a.communication.bus.Message;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageListener;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.entities.Ingredient;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
-import fr.unice.polytech.si5.soa.a.message.MessageListener;
+
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -14,10 +18,10 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -61,7 +65,7 @@ public class ApplicationConfiguration {
 		props.put("hibernate.dialect", env.getProperty("db.dialect"));
 
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(RestaurantOrder.class, Meal.class, Ingredient.class);
+		factoryBean.setAnnotatedClasses(RestaurantOrder.class, Meal.class, Ingredient.class, Restaurant.class);
 		return factoryBean;
 	}
 
@@ -73,8 +77,9 @@ public class ApplicationConfiguration {
 	}
 	
 	@Bean
-	public RestTemplate restTemplate() {
-	    return new RestTemplate();
+	@Primary
+	public MessageProducer messageProducer() {
+		return new MessageProducer();
 	}
 
 	@Bean
@@ -83,7 +88,7 @@ public class ApplicationConfiguration {
 		return new MessageListener();
 	}
 
-	public ConsumerFactory<String, String> consumerFactory(String groupId) {
+	public ConsumerFactory<String, Message> consumerFactory(String groupId) {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
 		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -93,23 +98,23 @@ public class ApplicationConfiguration {
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, String> topicKafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public ConcurrentKafkaListenerContainerFactory<String, Message> topicKafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory("restaurant"));
 		return factory;
 	}
 
 	@Bean
-	public ProducerFactory<String, String> producerFactory() {
-		Map<String, Object> configProps = new HashMap<>();
-		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		return new DefaultKafkaProducerFactory<>(configProps);
-	}
-
-	@Bean
-	public KafkaTemplate<String, String> kafkaTemplate() {
-		return new KafkaTemplate<>(producerFactory());
-	}
+    public ProducerFactory<String, Message> messageProducerFactory() {
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        return new DefaultKafkaProducerFactory<>(configProps);
+    }
+    
+    @Bean
+    public KafkaTemplate<String, Message> messageKafkaTemplate() {
+        return new KafkaTemplate<>(messageProducerFactory());
+    }
 }

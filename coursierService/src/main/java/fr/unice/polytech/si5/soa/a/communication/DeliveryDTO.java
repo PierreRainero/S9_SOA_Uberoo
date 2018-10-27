@@ -2,7 +2,6 @@ package fr.unice.polytech.si5.soa.a.communication;
 
 import java.io.Serializable;
 
-import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

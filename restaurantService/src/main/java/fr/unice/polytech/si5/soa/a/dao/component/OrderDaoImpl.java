@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
 
 /**
@@ -27,6 +28,9 @@ import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
  * @see			IOrderDao
  * Date			08/10/2018
  * @author		PierreRainero
+ * 
+ * @version		1.1
+ * Date			23/10/2018
  */
 @Primary
 @Repository
@@ -85,12 +89,16 @@ public class OrderDaoImpl implements IOrderDao {
 	}
 
 	@Override
-	public List<RestaurantOrder> getOrdersToDo() {
+	public List<RestaurantOrder> getOrdersToDo(Restaurant restaurantConcerned) {
 		Session session = sessionFactory.getCurrentSession();
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		CriteriaQuery<RestaurantOrder> criteria = builder.createQuery(RestaurantOrder.class);
 		Root<RestaurantOrder> root =  criteria.from(RestaurantOrder.class);
-		criteria.select(root).where(builder.equal(root.get("state"), OrderState.TO_PREPARE));
+		criteria.select(root).where(
+				builder.and(
+						builder.equal(root.get("restaurant"), restaurantConcerned),
+						builder.equal(root.get("state"), OrderState.TO_PREPARE))
+				);
 		Query<RestaurantOrder> query = session.createQuery(criteria);
 		
 		return query.getResultList();

@@ -3,6 +3,7 @@ echo "--- Creating context... ---"
 docker exec soa_database mysql -uroot -pteama -e \
 "USE uberoo_orderService; INSERT INTO RESTAURANT (name, restaurantAddress) VALUES ('Asiakeo','690 Route de Grasse, 06600 Antibes'); INSERT INTO MEAL (name,restaurant_id) VALUES ('Ramen',(SELECT id FROM RESTAURANT WHERE name = 'Asiakeo')); INSERT INTO Meal_tags VALUES ((SELECT id FROM MEAL WHERE name = 'Ramen'), 'Asian'); INSERT INTO USER (firstName, lastName) VALUES ('Bob', '');"
 docker exec soa_database mysql -uroot -pteama -e "USE uberoo_orderService; SELECT id FROM USER WHERE firstName='Bob';" > Temp/bobId.txt
+docker exec soa_database mysql -uroot -pteama -e "USE uberoo_restaurantService; ;"
 echo "--- Context created ---"
 
 # ************** Scenario **************

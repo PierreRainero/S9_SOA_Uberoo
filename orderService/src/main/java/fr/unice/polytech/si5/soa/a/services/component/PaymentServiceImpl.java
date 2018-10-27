@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.communication.PaymentDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.communication.bus.ProcessPayment;
@@ -40,14 +39,10 @@ public class PaymentServiceImpl implements IPaymentService {
 	/**
 	 * {@inheritDoc}
 	 */
-	public PaymentDTO addPayment(PaymentDTO paymentToAdd, OrderDTO orderAssociated) throws UnknowOrderException {
-		if(orderAssociated == null) {
-			throw new UnknowOrderException("Order is not present");
-		}
-		
-		Optional<UberooOrder> orderWrapped = orderDao.findOrderById(orderAssociated.getId());
+	public PaymentDTO addPayment(PaymentDTO paymentToAdd, int orderIdAssociated) throws UnknowOrderException {		
+		Optional<UberooOrder> orderWrapped = orderDao.findOrderById(orderIdAssociated);
 		if (!orderWrapped.isPresent()) {
-			throw new UnknowOrderException("Can't find order with id = " + orderAssociated.getId());
+			throw new UnknowOrderException("Can't find order with id = " + orderIdAssociated);
 		}
 		
 		Payment payment = new Payment(paymentToAdd);

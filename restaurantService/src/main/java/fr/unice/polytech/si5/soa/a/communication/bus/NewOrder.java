@@ -1,8 +1,7 @@
-package fr.unice.polytech.si5.soa.a.communication;
+package fr.unice.polytech.si5.soa.a.communication.bus;
 
 import java.util.List;
 
-import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -16,8 +15,10 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper=true)
 @ToString()
 public class NewOrder extends Message {
-	public String address;
-	public List<String> food;
+	private String address;
+	private String restaurantName;
+	private String restaurantAddress;
+	private List<String> food;
 
 	/**
 	 * Default constructor

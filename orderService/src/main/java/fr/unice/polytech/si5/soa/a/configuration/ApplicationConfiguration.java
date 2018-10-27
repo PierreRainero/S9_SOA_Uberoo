@@ -19,7 +19,6 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -71,11 +70,6 @@ public class ApplicationConfiguration {
 		factoryBean.setHibernateProperties(props);
 		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class, Payment.class);
 		return factoryBean;
-	}
-
-	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
 	}
 
 	@Bean

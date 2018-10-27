@@ -27,7 +27,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import fr.unice.polytech.si5.soa.a.communication.PaymentDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
@@ -36,7 +35,6 @@ import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
-import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 import fr.unice.polytech.si5.soa.a.services.IPaymentService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
 
@@ -60,11 +58,6 @@ public class PaymentControllerTest {
 	@Mock
 	private IPaymentService paymentService;
 	
-	@Qualifier("mock")
-	@Autowired
-	@Mock
-	private IOrderTakerService orderTakerService;
-	
 	@Autowired
     @InjectMocks
     private PaymentController paymentController;
@@ -76,7 +69,6 @@ public class PaymentControllerTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		Mockito.reset(paymentService);
-		Mockito.reset(orderTakerService);
 		
 		mockMvc = MockMvcBuilders.standaloneSetup(paymentController).build();
 		
@@ -93,8 +85,7 @@ public class PaymentControllerTest {
 	
 	@Test
 	public void payAnOrderUsingHTTPPost() throws Exception {
-		when(orderTakerService.findOrderById(anyInt())).thenReturn(order.toDTO());
-		when(paymentService.addPayment(any(PaymentDTO.class), any(OrderDTO.class))).thenReturn(payment.toDTO());
+		when(paymentService.addPayment(any(PaymentDTO.class), anyInt())).thenReturn(payment.toDTO());
 
 		mockMvc.perform(post("/orders/1"+BASE_URI)
                .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -102,64 +93,37 @@ public class PaymentControllerTest {
         ).andExpect(status().isOk())
          .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
         
-        ArgumentCaptor<Integer> orderCaptor = ArgumentCaptor.forClass(Integer.class);
-        verify(orderTakerService, times(1)).findOrderById(orderCaptor.capture());
-        verifyNoMoreInteractions(orderTakerService);
-        
-        ArgumentCaptor<PaymentDTO> paymentCaptorPaymentParam = ArgumentCaptor.forClass(PaymentDTO.class);
-        ArgumentCaptor<OrderDTO> paymentCaptorOrderParam = ArgumentCaptor.forClass(OrderDTO.class);
+		ArgumentCaptor<PaymentDTO> paymentCaptorPaymentParam = ArgumentCaptor.forClass(PaymentDTO.class);
+        ArgumentCaptor<Integer> paymentCaptorOrderParam = ArgumentCaptor.forClass(Integer.class);
         verify(paymentService, times(1)).addPayment(paymentCaptorPaymentParam.capture(), paymentCaptorOrderParam.capture());
         verifyNoMoreInteractions(paymentService);
         
-        Integer orderId = orderCaptor.getValue();
-        assertEquals(new Integer(1), orderId);
+        PaymentDTO paymentValue = paymentCaptorPaymentParam.getValue();
+        assertEquals(payment.getAccount(), paymentValue.getAccount());
         
-        PaymentDTO paymentReceived = paymentCaptorPaymentParam.getValue();
-        assertEquals(payment.getAccount(), paymentReceived.getAccount());
-        
-        OrderDTO orderReceived = paymentCaptorOrderParam.getValue();
-        assertEquals(order.getDeliveryAddress(), orderReceived.getDeliveryAddress());
-	}
-	
-	@Test
-	public void payANonExistingOrderUsingHTTPPost() throws Exception {
-		when(orderTakerService.findOrderById(anyInt())).thenThrow(new UnknowOrderException(ERROR_UNKNOW_ORDER));
-		when(paymentService.addPayment(any(PaymentDTO.class), any(OrderDTO.class))).thenReturn(payment.toDTO());
-
-		mockMvc.perform(post("/orders/1"+BASE_URI)
-               .contentType(TestUtil.APPLICATION_JSON_UTF8)
-               .content(TestUtil.convertObjectToJsonBytes(payment))
-        ).andExpect(status().isNotFound())
-		 .andExpect(content().string(ERROR_UNKNOW_ORDER));
-		
-		ArgumentCaptor<Integer> orderCaptor = ArgumentCaptor.forClass(Integer.class);
-        verify(orderTakerService, times(1)).findOrderById(orderCaptor.capture());
-        verifyNoMoreInteractions(orderTakerService);
-        
-        ArgumentCaptor<PaymentDTO> paymentCaptorPaymentParam = ArgumentCaptor.forClass(PaymentDTO.class);
-        ArgumentCaptor<OrderDTO> paymentCaptorOrderParam = ArgumentCaptor.forClass(OrderDTO.class);
-        verify(paymentService, times(0)).addPayment(paymentCaptorPaymentParam.capture(), paymentCaptorOrderParam.capture());
-        verifyNoMoreInteractions(paymentService);
+        Integer orderValue = paymentCaptorOrderParam.getValue();
+        assertEquals(new Integer(1), orderValue);
 	}
 	
 	@Test
 	public void payANonExistingOrderInServiceLayer() throws Exception {
-		when(orderTakerService.findOrderById(anyInt())).thenReturn(order.toDTO());
-		when(paymentService.addPayment(any(PaymentDTO.class), any(OrderDTO.class))).thenThrow(new UnknowOrderException(ERROR_UNKNOW_ORDER));
+		when(paymentService.addPayment(any(PaymentDTO.class), anyInt())).thenThrow(new UnknowOrderException(ERROR_UNKNOW_ORDER));
 
 		mockMvc.perform(post("/orders/1"+BASE_URI)
                .contentType(TestUtil.APPLICATION_JSON_UTF8)
                .content(TestUtil.convertObjectToJsonBytes(payment))
         ).andExpect(status().isNotFound())
 		 .andExpect(content().string(ERROR_UNKNOW_ORDER));
-		
-		ArgumentCaptor<Integer> orderCaptor = ArgumentCaptor.forClass(Integer.class);
-        verify(orderTakerService, times(1)).findOrderById(orderCaptor.capture());
-        verifyNoMoreInteractions(orderTakerService);
         
         ArgumentCaptor<PaymentDTO> paymentCaptorPaymentParam = ArgumentCaptor.forClass(PaymentDTO.class);
-        ArgumentCaptor<OrderDTO> paymentCaptorOrderParam = ArgumentCaptor.forClass(OrderDTO.class);
+        ArgumentCaptor<Integer> paymentCaptorOrderParam = ArgumentCaptor.forClass(Integer.class);
         verify(paymentService, times(1)).addPayment(paymentCaptorPaymentParam.capture(), paymentCaptorOrderParam.capture());
         verifyNoMoreInteractions(paymentService);
+        
+        PaymentDTO paymentValue = paymentCaptorPaymentParam.getValue();
+        assertEquals(payment.getAccount(), paymentValue.getAccount());
+        
+        Integer orderValue = paymentCaptorOrderParam.getValue();
+        assertEquals(new Integer(1), orderValue);
 	}
 }

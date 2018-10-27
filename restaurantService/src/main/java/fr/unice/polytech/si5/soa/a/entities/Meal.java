@@ -7,6 +7,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+
+import org.springframework.lang.NonNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +19,23 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.NONE;
 
 
+/**
+ * Class name	Meal
+ * Date			22/10/2018
+ * @author		PierreRainero
+ */
 @Entity
 @Data
 @Table(name = "`MEALS`")
 @EqualsAndHashCode(exclude={"id"})
 @ToString()
 public class Meal implements Serializable {
-    @Id
+    /**
+	 * Generated UID version
+	 */
+	private static final long serialVersionUID = -3885514079403275908L;
+
+	@Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id")
     @Setter(NONE)
@@ -36,6 +49,10 @@ public class Meal implements Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Ingredient> ingredients = new ArrayList<>();
+    
+    @ManyToOne(cascade = CascadeType.MERGE)
+	@NonNull
+	private Restaurant restaurant;
 
     public Meal() {
         // Default constructor for JPA
@@ -49,5 +66,12 @@ public class Meal implements Serializable {
     public MealDTO toDTO() {
         return new MealDTO(id, name, price, ingredients.stream().map(ingredient -> ingredient.toDTO()).collect(Collectors.toList()));
     }
+    
+    public void addIngredient(Ingredient ingredient) {
+    	ingredients.add(ingredient);
+    }
 
+    public void removeIngredient(Ingredient ingredient) {
+    	ingredients.remove(ingredient);
+    }
 }
