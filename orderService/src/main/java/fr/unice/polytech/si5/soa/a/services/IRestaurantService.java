@@ -1,8 +1,9 @@
 package fr.unice.polytech.si5.soa.a.services;
 
-import java.util.List;
-
 import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.NewRestaurant;
+
+import java.util.List;
 
 /**
  * Class name	IRestaurantService
@@ -17,4 +18,6 @@ public interface IRestaurantService {
 	 * @return list of restaurants matching with the name
 	 */
 	public List<RestaurantDTO> findRestaurantByName(String name);
+
+	RestaurantDTO addRestaurant(NewRestaurant message);
 }

@@ -1,9 +1,10 @@
 package fr.unice.polytech.si5.soa.a.services;
 
-import java.util.List;
-
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.NewMeal;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
+
+import java.util.List;
 
 /**
  * Class name	ICatalogService
@@ -28,4 +29,6 @@ public interface ICatalogService {
 	 * @throws UnknowRestaurantException if the restaurant doesn't exist
 	 */
 	List<MealDTO> findMealsByRestaurant(int restaurantId) throws UnknowRestaurantException;
+
+	MealDTO addMeal(NewMeal message);
 }

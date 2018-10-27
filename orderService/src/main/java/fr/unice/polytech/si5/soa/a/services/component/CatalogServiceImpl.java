@@ -1,19 +1,19 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
-
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.NewMeal;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.ICatalogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Class name	CatalogServiceImpl
@@ -57,5 +57,11 @@ public class CatalogServiceImpl implements ICatalogService {
 		}
 		
 		return catalogDao.findMealsByRestaurant(existingRestaurant.get()).stream().map(meal -> meal.toDTO()).collect(Collectors.toList());
+	}
+
+	@Override
+	public MealDTO addMeal(NewMeal message) {
+		//TODO: add meal in database
+		return new MealDTO();
 	}
 }
