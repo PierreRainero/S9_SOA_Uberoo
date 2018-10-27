@@ -1,8 +1,8 @@
 package fr.unice.polytech.si5.soa.a.dao;
 
-import java.util.Optional;
-
 import fr.unice.polytech.si5.soa.a.entities.Payment;
+
+import java.util.Optional;
 
 /**
  * Class name	IPaymentDAO

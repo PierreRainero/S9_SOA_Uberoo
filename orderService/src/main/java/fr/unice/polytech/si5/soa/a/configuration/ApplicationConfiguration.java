@@ -3,6 +3,7 @@ package fr.unice.polytech.si5.soa.a.configuration;
 import fr.unice.polytech.si5.soa.a.communication.bus.Message;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageListener;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.communication.bus.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.entities.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -99,12 +100,29 @@ public class ApplicationConfiguration {
 		return new KafkaTemplate<>(messageProducerFactory());
 	}
 
+	//Listener
 	@Bean
 	@Primary
 	public MessageListener messageListener() {
 		return new MessageListener();
 	}
 
+	public ConsumerFactory<String, PaymentConfirmation> consumerPaymentConfirmationFactory(String groupId) {
+		Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(PaymentConfirmation.class));
+	}
+
+
+	@Bean
+	public ConcurrentKafkaListenerContainerFactory<String, PaymentConfirmation> bankContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, PaymentConfirmation> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerPaymentConfirmationFactory("order"));
+		return factory;
+	}
+
+	//Note: don't use mother class Message since it's deserialized instanceof might not work
 	public ConsumerFactory<String, Message> consumerFactory(String groupId) {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));

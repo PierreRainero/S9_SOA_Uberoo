@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.services;
 
 import fr.unice.polytech.si5.soa.a.communication.PaymentDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowPaymentException;
 
@@ -27,4 +28,6 @@ public interface IPaymentService {
 	 * @throws UnknowPaymentException if the payment doesn't exist
 	 */
 	PaymentDTO findPaymentById(int idToSearch) throws UnknowPaymentException;
+
+	PaymentDTO updatePayment(PaymentConfirmation message) throws UnknowPaymentException;
 }
