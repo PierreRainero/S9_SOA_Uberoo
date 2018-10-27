@@ -1,24 +1,23 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
-import fr.unice.polytech.si5.soa.a.communication.bus.Message;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageListener;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.communication.bus.NewOrder;
+import fr.unice.polytech.si5.soa.a.communication.bus.OrderDelivered;
 import fr.unice.polytech.si5.soa.a.entities.Ingredient;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
-
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.*;
-import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -35,7 +34,7 @@ import java.util.Properties;
 })
 @EnableTransactionManagement
 // Components to used :
-@ComponentScans(value = { 
+@ComponentScans(value = {
 		@ComponentScan("fr.unice.polytech.si5.soa.a.dao"),
 		@ComponentScan("fr.unice.polytech.si5.soa.a.services")
 })
@@ -75,7 +74,7 @@ public class ApplicationConfiguration {
 		transactionManager.setSessionFactory(getSessionFactory().getObject());
 		return transactionManager;
 	}
-	
+
 	@Bean
 	@Primary
 	public MessageProducer messageProducer() {
@@ -88,33 +87,55 @@ public class ApplicationConfiguration {
 		return new MessageListener();
 	}
 
-	public ConsumerFactory<String, Message> consumerFactory(String groupId) {
+//Producer
+
+//	@Bean
+//	public ProducerFactory<String, Message> messageProducerFactory() {
+//		Map<String, Object> configProps = new HashMap<>();
+//		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
+//		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+//		configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+//		return new DefaultKafkaProducerFactory<>(configProps);
+//	}
+//
+//	@Bean
+//	public KafkaTemplate<String, Message> messageKafkaTemplate() {
+//		return new KafkaTemplate<>(messageProducerFactory());
+//	}
+
+	//Consumer
+	public ConsumerFactory<String, NewOrder> newOrderConsumerFactory(String groupId) {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
 		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		return new DefaultKafkaConsumerFactory<>(props);
+		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(NewOrder.class));
+
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, Message> topicKafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(consumerFactory("restaurant"));
+	public ConcurrentKafkaListenerContainerFactory<String, NewOrder> newOrderConcurrentKafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, NewOrder> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(newOrderConsumerFactory("restaurant"));
+		factory.setRecordFilterStrategy(record -> record.value()
+					.getType().equals(NewOrder.messageType));
 		return factory;
 	}
 
+	public ConsumerFactory<String, OrderDelivered> orderDeliveredConsumerFactory(String groupId) {
+		Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(),
+				new JsonDeserializer<>(OrderDelivered.class));
+	}
+
 	@Bean
-    public ProducerFactory<String, Message> messageProducerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
-    }
-    
-    @Bean
-    public KafkaTemplate<String, Message> messageKafkaTemplate() {
-        return new KafkaTemplate<>(messageProducerFactory());
-    }
+	public ConcurrentKafkaListenerContainerFactory<String, OrderDelivered> orderDeliveredConcurrentKafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, OrderDelivered> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(orderDeliveredConsumerFactory("restaurant"));
+		factory.setRecordFilterStrategy(record -> record.value()
+				.getType().equals(OrderDelivered.messageType));
+		return factory;
+	}
+
 }

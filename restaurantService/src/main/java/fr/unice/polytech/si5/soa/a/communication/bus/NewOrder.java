@@ -1,10 +1,9 @@
 package fr.unice.polytech.si5.soa.a.communication.bus;
 
-import java.util.List;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
+
+import java.util.List;
 
 /**
  * Class name	NewOrder
@@ -13,17 +12,29 @@ import lombok.ToString;
  */
 @Data
 @EqualsAndHashCode(callSuper=true)
-@ToString()
 public class NewOrder extends Message {
 	private String address;
 	private String restaurantName;
 	private String restaurantAddress;
 	private List<String> food;
+	public static String messageType = "NEW_ORDER";
 
 	/**
 	 * Default constructor
 	 */
 	public NewOrder() {
+		type = messageType;
 		// Default constructor for Jackson databinding
+	}
+
+	@Override
+	public String toString() {
+		return "NewOrder{" +
+				"address='" + address + '\'' +
+				", restaurantName='" + restaurantName + '\'' +
+				", restaurantAddress='" + restaurantAddress + '\'' +
+				", food=" + food +
+				", type='" + type + '\'' +
+				'}';
 	}
 }
