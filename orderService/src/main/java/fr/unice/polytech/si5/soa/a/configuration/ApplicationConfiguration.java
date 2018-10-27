@@ -1,22 +1,20 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.communication.bus.Message;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageListener;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
-import fr.unice.polytech.si5.soa.a.entities.Meal;
-import fr.unice.polytech.si5.soa.a.entities.Payment;
-import fr.unice.polytech.si5.soa.a.entities.Restaurant;
-import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
-import fr.unice.polytech.si5.soa.a.entities.User;
-
+import fr.unice.polytech.si5.soa.a.entities.*;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.*;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -48,7 +46,6 @@ import java.util.Properties;
 public class ApplicationConfiguration {
 	@Autowired
 	private Environment env;
-
 
 	@Bean
 	public DataSource getDataSource() {
@@ -93,18 +90,38 @@ public class ApplicationConfiguration {
 	public MessageProducer messageProducer() {
 		return new MessageProducer();
 	}
-	
+
 	@Bean
-    public ProducerFactory<String, Message> messageProducerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
-    }
-    
-    @Bean
-    public KafkaTemplate<String, Message> messageKafkaTemplate() {
-        return new KafkaTemplate<>(messageProducerFactory());
-    }
+	public ProducerFactory<String, Message> messageProducerFactory() {
+		Map<String, Object> configProps = new HashMap<>();
+		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
+		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+		return new DefaultKafkaProducerFactory<>(configProps);
+	}
+
+	@Bean
+	public KafkaTemplate<String, Message> messageKafkaTemplate() {
+		return new KafkaTemplate<>(messageProducerFactory());
+	}
+
+	@Bean
+	@Primary
+	public MessageListener messageListener() {
+		return new MessageListener();
+	}
+
+	public ConsumerFactory<String, Message> consumerFactory(String groupId) {
+		Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(Message.class));
+	}
+
+	@Bean
+	public ConcurrentKafkaListenerContainerFactory<String, Message> topicKafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerFactory("order"));
+		return factory;
+	}
 }
