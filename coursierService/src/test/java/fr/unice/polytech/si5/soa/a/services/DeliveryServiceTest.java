@@ -1,11 +1,12 @@
 package fr.unice.polytech.si5.soa.a.services;
 
-
 import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.communication.Message;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowDeliveryException;
+import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.component.DeliveryServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,8 @@ import java.util.Optional;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -41,6 +44,10 @@ public class DeliveryServiceTest {
     @Autowired
     @InjectMocks
     private DeliveryServiceImpl deliveryService;
+
+    @Autowired
+    @Mock
+    private MessageProducer messageProducerMock;
 
     private Delivery deliveryTodo;
     private Delivery deliveryDone;
@@ -111,6 +118,8 @@ public class DeliveryServiceTest {
     public void updateDelivery() throws UnknowDeliveryException {
         when(iDeliveryDaoMock.updateDelivery(deliveryTodo)).thenReturn(deliveryDone);
         when(iDeliveryDaoMock.findDeliveryById(deliveryTodo.getId())).thenReturn(Optional.of(deliveryTodo));
+        MessageProducer spy = Mockito.spy(messageProducerMock);
+        doNothing().when(spy).sendMessage(any(Message.class));
         DeliveryDTO returnedDelivery = deliveryService.updateDelivery(deliveryTodo.toDTO());
         assertNotEquals(returnedDelivery, deliveryTodo.toDTO());
         assertEquals(returnedDelivery, deliveryDone.toDTO());
