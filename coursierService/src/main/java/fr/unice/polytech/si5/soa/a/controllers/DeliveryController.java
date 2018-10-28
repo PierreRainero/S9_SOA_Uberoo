@@ -38,7 +38,6 @@ public class DeliveryController {
             produces = {"application/JSON; charset=UTF-8"})
     public ResponseEntity<?> addOrder(@RequestBody NewOrder order) {
         DeliveryDTO delivery = order.createDelivery();
-
         return ResponseEntity.ok(deliveryService.addDelivery(delivery));
     }
 

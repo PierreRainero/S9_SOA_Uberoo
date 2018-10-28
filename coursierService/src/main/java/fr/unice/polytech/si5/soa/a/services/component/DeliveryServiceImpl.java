@@ -47,10 +47,8 @@ public class DeliveryServiceImpl implements IDeliveryService {
         }
         Delivery delivery = deliveryWrapped.get();
         delivery.setState(deliveryToUpdate.isState());
-        //TODO: orderDelivered could have others attributes
 	    OrderDelivered orderDelivered = new OrderDelivered(delivery.getDeliveryAddress(),delivery.getId());
         messageProducer.sendMessage(orderDelivered);
-
         return deliveryDao.updateDelivery(delivery).toDTO();
     }
 
