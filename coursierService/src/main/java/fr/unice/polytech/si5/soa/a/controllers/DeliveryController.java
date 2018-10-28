@@ -46,7 +46,7 @@ public class DeliveryController {
             method = RequestMethod.PUT,
             consumes = {"application/JSON; charset=UTF-8"},
             produces = {"application/JSON; charset=UTF-8"})
-    public ResponseEntity<?> updateOrderState(@PathVariable("deliveryId") String id, @RequestBody DeliveryDTO delivery) {
+    public ResponseEntity<?> updateDeliveryState(@PathVariable("deliveryId") String id, @RequestBody DeliveryDTO delivery) {
         try {
             return ResponseEntity.ok(deliveryService.updateDelivery(delivery));
         } catch (UnknowDeliveryException e) {

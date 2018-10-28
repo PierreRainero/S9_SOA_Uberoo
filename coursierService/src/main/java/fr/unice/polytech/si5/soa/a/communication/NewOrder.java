@@ -17,6 +17,7 @@ import lombok.ToString;
 public class NewOrder extends Message {
 	public String address;
 	public List<String> food;
+	public Integer id;
 	
 	/**
 	 * Default constructor
@@ -26,6 +27,6 @@ public class NewOrder extends Message {
 	}
 	
 	public DeliveryDTO createDelivery() {
-		return new DeliveryDTO(-1, address, false);
+		return new DeliveryDTO(id, address, false);
 	}
 }

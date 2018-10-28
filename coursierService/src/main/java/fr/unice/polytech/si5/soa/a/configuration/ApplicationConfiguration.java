@@ -17,6 +17,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -96,7 +97,7 @@ public class ApplicationConfiguration {
 	}
 
 	@Bean
-	public KafkaTemplate<String, Message> messageKafkaTemplate() {
+	public KafkaTemplate<String, Message> kafkaTemplate() {
 		return new KafkaTemplate<>(messageProducerFactory());
 	}
 

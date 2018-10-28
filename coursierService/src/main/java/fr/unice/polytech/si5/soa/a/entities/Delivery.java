@@ -49,6 +49,9 @@ public class Delivery implements Serializable {
     @Column(name = "longitude")
     private Double longitude;
 
+    @Column(name = "coursierGetPaid")
+    private Boolean coursierGetPaid;
+
     public Delivery() {
         // Default constructor for JPA
     }

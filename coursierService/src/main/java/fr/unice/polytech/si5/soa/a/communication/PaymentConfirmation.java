@@ -10,12 +10,13 @@ import lombok.ToString;
  * @author Joël CANCELA VAZ
  */
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 @ToString()
 public class PaymentConfirmation extends Message {
-	private int id;
-	private boolean status;
 
-	public PaymentConfirmation() {
-	}
+    private int id;
+    private boolean status;
+
+    public PaymentConfirmation() {
+    }
 }

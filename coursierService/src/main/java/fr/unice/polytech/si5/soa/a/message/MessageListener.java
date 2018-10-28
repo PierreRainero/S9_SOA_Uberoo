@@ -1,6 +1,9 @@
 package fr.unice.polytech.si5.soa.a.message;
 
 import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
+import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 
 import java.util.concurrent.CountDownLatch;
@@ -12,16 +15,19 @@ import java.util.concurrent.CountDownLatch;
  */
 public class MessageListener {
 
-	private CountDownLatch latch = new CountDownLatch(3);
+    @Autowired
+    private IDeliveryService deliveryService;
 
-	@KafkaListener(topics = "${message.topic.name}", containerFactory = "paymentContainerFactory")
-	public void listenNewPayment(PaymentConfirmation message) {
-		System.out.println("Received new payment for coursier: " + message);
-		//TODO: do something with the payment confirmation .i.e. update db
-		latch.countDown();
-	}
+    private CountDownLatch latch = new CountDownLatch(3);
 
-	public CountDownLatch getLatch() {
-		return latch;
-	}
+    @KafkaListener(topics = "${message.topic.name}", containerFactory = "paymentContainerFactory")
+    public void listenNewPayment(PaymentConfirmation message) throws UnknownDeliveryException {
+        System.out.println("Received new payment for coursier: " + message.getId());
+        deliveryService.receiveNewPayment(message);
+        latch.countDown();
+    }
+
+    public CountDownLatch getLatch() {
+        return latch;
+    }
 }

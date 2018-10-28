@@ -2,9 +2,11 @@ package fr.unice.polytech.si5.soa.a.services.component;
 
 import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
 import fr.unice.polytech.si5.soa.a.communication.OrderDelivered;
+import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowDeliveryException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 import fr.unice.polytech.si5.soa.a.utils.Geoposition;
@@ -46,8 +48,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
         Delivery delivery = deliveryWrapped.get();
         delivery.setState(deliveryToUpdate.isState());
         //TODO: orderDelivered could have others attributes
-	    OrderDelivered orderDelivered = new OrderDelivered();
-	    orderDelivered.address = deliveryToUpdate.getDeliveryAddress();
+	    OrderDelivered orderDelivered = new OrderDelivered(delivery.getDeliveryAddress(),delivery.getId());
         messageProducer.sendMessage(orderDelivered);
 
         return deliveryDao.updateDelivery(delivery).toDTO();
@@ -63,5 +64,23 @@ public class DeliveryServiceImpl implements IDeliveryService {
         return this.getDeliveriesToDo().stream()
                 .filter(deliveryDTO -> Geoposition.distance(latitude, deliveryDTO.getLatitude(), longitude, deliveryDTO.getLongitude()) < Geoposition.DISTANCE_MAX_DELIVERY)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void receiveNewPayment(PaymentConfirmation message) throws UnknownDeliveryException {
+        boolean coursierGetPaid = message.isStatus();
+        if (coursierGetPaid){
+            Optional<Delivery> deliveryWrapped = this.deliveryDao.findDeliveryById(message.getId());
+            if (deliveryWrapped.isPresent()){
+                Delivery delivery = deliveryWrapped.get();
+                delivery.setCoursierGetPaid(true);
+                deliveryDao.updateDelivery(delivery);
+                System.out.println("The payment has been received by the coursier");
+            }else{
+                throw new UnknownDeliveryException("Can't find the delivery with id : " + message.getId());
+            }
+        }else{
+            System.out.println("The payment has not been confirmed : " + message.getId());
+        }
     }
 }

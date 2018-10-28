@@ -26,6 +26,7 @@ public class DeliveryDTO implements Serializable {
     private Double latitude;
     private Double longitude;
     public boolean state = false;
+    private boolean coursierGetPaid = false;
 
     public DeliveryDTO() {
         // Default constructor for Jackson databinding

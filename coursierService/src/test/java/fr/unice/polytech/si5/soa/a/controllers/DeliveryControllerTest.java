@@ -71,6 +71,7 @@ public class DeliveryControllerTest {
 
         delivery = new Delivery();
         delivery.setDeliveryAddress(ADDRESS);
+        delivery.setId(8);
         delivery.setState(false);
 
         deliveryDone = new Delivery();
@@ -90,6 +91,7 @@ public class DeliveryControllerTest {
         deliveryOver10.setLongitude(1.0);
 
         order = new NewOrder();
+        order.setId(8);
         order.setAddress(ADDRESS);
         order.setFood(Arrays.asList("Sushi", "Maki"));
         order.setType("Sushi");
