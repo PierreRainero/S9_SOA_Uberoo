@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.communication.bus.Message;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.dao.IFeedbackDao;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
@@ -125,6 +126,12 @@ public class TestConfiguration {
 	@Bean
     public IOrderDao iOrderDao() {
         return Mockito.mock(IOrderDao.class);
+    }
+    
+    @Qualifier("mock")
+	@Bean
+    public IFeedbackDao iFeedbackDao() {
+        return Mockito.mock(IFeedbackDao.class);
     }
 	
 	@Qualifier("mock")

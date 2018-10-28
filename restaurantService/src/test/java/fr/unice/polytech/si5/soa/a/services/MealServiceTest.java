@@ -1,5 +1,6 @@
 package fr.unice.polytech.si5.soa.a.services;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,6 +9,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,12 +25,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.Message;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
+import fr.unice.polytech.si5.soa.a.dao.IFeedbackDao;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
+import fr.unice.polytech.si5.soa.a.entities.Feedback;
 import fr.unice.polytech.si5.soa.a.entities.Ingredient;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
@@ -47,6 +53,11 @@ public class MealServiceTest {
 	@Qualifier("mock")
 	@Mock
 	private IRestaurantDao restaurantDaoMock;
+	
+	@Autowired
+	@Qualifier("mock")
+	@Mock
+    private IFeedbackDao feedbackDaoMock;
 
 	@Autowired
 	@Mock
@@ -59,6 +70,7 @@ public class MealServiceTest {
 	private Restaurant asianRestaurant;
 	private Meal ramen;
 	private Ingredient pork;
+	private Feedback feedback;
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -66,6 +78,7 @@ public class MealServiceTest {
 		Mockito.reset(mealDaoMock);
 		Mockito.reset(restaurantDaoMock);
 		Mockito.reset(messageProducerMock);
+		Mockito.reset(feedbackDaoMock);
 
 		asianRestaurant = new Restaurant();
 		asianRestaurant.setName("RizRiz");
@@ -78,6 +91,11 @@ public class MealServiceTest {
 
 		pork = new Ingredient();
 		pork.setName("Porc");
+		
+		feedback = new Feedback();
+		feedback.setAuthor("John");
+		feedback.setContent("Bof");
+		feedback.setMeal(ramen);
 	}
 
 	@Test
@@ -123,11 +141,42 @@ public class MealServiceTest {
 	}
 
 	@Test
-	public void findNonExistingMealByName() throws Exception {
+	public void findNonExistingMealByName() {
 		when(mealDaoMock.findMealByName(anyString())).thenReturn(Optional.empty());
 
 		assertThrows(UnknowMealException.class, () -> {
 			mealService.findMealByName(ramen.getName());
 		});
+	}
+	
+	@Test
+	public void findFeedbackForMeal() throws Exception {
+		List<Feedback> resultMocked = new ArrayList<>();
+		resultMocked.add(feedback);
+		when(mealDaoMock.findMealById(anyInt())).thenReturn(Optional.of(ramen));
+		when(feedbackDaoMock.findFeedBackByMeal(any(Meal.class))).thenReturn(resultMocked);
+		
+		List<FeedbackDTO> result = mealService.findFeedbackForMeal(ramen.getId());
+		assertNotNull(result);
+		assertEquals(1, result.size());
+	}
+	
+	@Test
+	public void findFeedBackForNonExistingMeal() {
+		when(mealDaoMock.findMealByName(anyString())).thenReturn(Optional.empty());
+		
+		assertThrows(UnknowMealException.class, () -> {
+			mealService.findFeedbackForMeal(ramen.getId());
+		});
+	}
+	
+	@Test
+	public void addANewFeedback() throws Exception {
+		when(mealDaoMock.findMealById(anyInt())).thenReturn(Optional.of(ramen));
+		when(feedbackDaoMock.addFeedback(any(Feedback.class))).thenReturn(feedback);
+		
+		FeedbackDTO result = mealService.addFeedback(feedback.toDTO(), ramen.getId());
+		assertNotNull(result);
+		assertEquals(feedback.getContent(), result.getContent());
 	}
 }

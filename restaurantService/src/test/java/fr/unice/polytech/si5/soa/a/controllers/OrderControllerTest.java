@@ -55,12 +55,12 @@ class OrderControllerTest {
     @Autowired
     @Mock
     private IOrderService orderServiceMock;
-
-    private RestaurantOrderDTO asianOrder;
-
+    
     @Autowired
     @InjectMocks
     private OrderController orderController;
+
+    private RestaurantOrderDTO asianOrder;
 
     @BeforeEach
     public void setUp() throws Exception {

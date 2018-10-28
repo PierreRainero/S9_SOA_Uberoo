@@ -4,6 +4,7 @@ import fr.unice.polytech.si5.soa.a.communication.bus.MessageListener;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.communication.bus.NewOrder;
 import fr.unice.polytech.si5.soa.a.communication.bus.OrderDelivered;
+import fr.unice.polytech.si5.soa.a.entities.Feedback;
 import fr.unice.polytech.si5.soa.a.entities.Ingredient;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
@@ -64,7 +65,7 @@ public class ApplicationConfiguration {
 		props.put("hibernate.dialect", env.getProperty("db.dialect"));
 
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(RestaurantOrder.class, Meal.class, Ingredient.class, Restaurant.class);
+		factoryBean.setAnnotatedClasses(RestaurantOrder.class, Meal.class, Ingredient.class, Restaurant.class, Feedback.class);
 		return factoryBean;
 	}
 

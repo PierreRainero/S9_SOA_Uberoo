@@ -53,6 +53,11 @@ public class Meal implements Serializable {
     @ManyToOne(cascade = CascadeType.MERGE)
 	@NonNull
 	private Restaurant restaurant;
+    
+    @Setter(NONE)
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "meal")
+	@ToString.Exclude
+	private List<Feedback> feedbacks = new ArrayList<>();
 
     public Meal() {
         // Default constructor for JPA
