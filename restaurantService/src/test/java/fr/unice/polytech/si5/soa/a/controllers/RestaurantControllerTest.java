@@ -8,9 +8,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,12 +32,15 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
+import fr.unice.polytech.si5.soa.a.entities.Feedback;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IMealService;
 import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
@@ -46,6 +53,7 @@ public class RestaurantControllerTest {
 	private final static String BASE_URI = "/restaurants";
 	
 	private final static String ERROR_RESTAURANT_NOT_FOUND = "Can't find restaurant with id = 1";
+	private final static String ERROR_MEAL_NOT_FOUND = "Can't find meal with id = 1";
 	
 	private MockMvc mockMvc;
 	
@@ -64,6 +72,7 @@ public class RestaurantControllerTest {
     private RestaurantController restaurantController;
 	
 	private Meal ramen;
+	private Feedback feedback;
 	private Restaurant asianRestaurant;
 	
 	@BeforeEach
@@ -82,6 +91,11 @@ public class RestaurantControllerTest {
 		ramen.setName("Ramen soup");
         ramen.setPrice(10);
         ramen.setRestaurant(asianRestaurant);
+        
+        feedback = new Feedback();
+		feedback.setAuthor("John");
+		feedback.setContent("Bof");
+		feedback.setMeal(ramen);
 	}
 	
 	@Test
@@ -140,5 +154,68 @@ public class RestaurantControllerTest {
         ArgumentCaptor<Integer> restaurantCaptor = ArgumentCaptor.forClass(Integer.class);
         verify(mealServiceMock, times(1)).addMeal(mealCaptor.capture(), restaurantCaptor.capture());
         verifyNoMoreInteractions(mealServiceMock);
+	}
+	
+	@Test
+	public void addFeedBackUsingHTTPPost() throws Exception {
+		when(mealServiceMock.addFeedback(any(FeedbackDTO.class), anyInt())).thenReturn(feedback.toDTO());
+		
+		mockMvc.perform(post(BASE_URI+"/1/meals/2/feedbacks")
+	               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+	               .content(TestUtil.convertObjectToJsonBytes(feedback.toDTO()))
+	        ).andExpect(status().isOk())
+		     .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+		
+		ArgumentCaptor<FeedbackDTO> feedbackCaptor = ArgumentCaptor.forClass(FeedbackDTO.class);
+        ArgumentCaptor<Integer> mealIdCaptor = ArgumentCaptor.forClass(Integer.class);
+        verify(mealServiceMock, times(1)).addFeedback(feedbackCaptor.capture(), mealIdCaptor.capture());
+        verifyNoMoreInteractions(mealServiceMock);
+        
+        FeedbackDTO feedbackReceived = feedbackCaptor.getValue();
+        assertNotNull(feedbackReceived);
+        assertEquals(feedback.getContent(), feedbackReceived.getContent());
+        
+        Integer mealId = mealIdCaptor.getValue();
+        assertEquals(new Integer(2), mealId);
+	}
+	
+	@Test
+	public void addFeedBackOnNonExistingMealUsingHTTPPost() throws Exception {
+		when(mealServiceMock.addFeedback(any(FeedbackDTO.class), anyInt())).thenThrow(new UnknowMealException(ERROR_MEAL_NOT_FOUND));
+		
+		mockMvc.perform(post(BASE_URI+"/1/meals/2/feedbacks")
+	               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+	               .content(TestUtil.convertObjectToJsonBytes(feedback.toDTO()))
+	        ).andExpect(status().isNotFound())
+		     .andExpect(content().string(ERROR_MEAL_NOT_FOUND));
+	}
+	
+	@Test
+	public void searchFeedbackForAMealUsingHTTPGet() throws Exception {
+		List<FeedbackDTO> resultMocked = new ArrayList<>();
+		resultMocked.add(feedback.toDTO());
+		when(mealServiceMock.findFeedbackForMeal(anyInt())).thenReturn(resultMocked);
+		
+		mockMvc.perform(get(BASE_URI+"/1/meals/2/feedbacks")
+	               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+	        ).andExpect(status().isOk())
+	         .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+		
+		 ArgumentCaptor<Integer> mealIdCaptor = ArgumentCaptor.forClass(Integer.class);
+	     verify(mealServiceMock, times(1)).findFeedbackForMeal(mealIdCaptor.capture());
+	     verifyNoMoreInteractions(mealServiceMock);
+	     
+	     Integer mealId = mealIdCaptor.getValue();
+	     assertEquals(new Integer(2), mealId);
+	}
+	
+	@Test
+	public void searchFeedbackForNonExistingMealUsingHTTPPost() throws Exception {
+		when(mealServiceMock.findFeedbackForMeal(anyInt())).thenThrow(new UnknowMealException(ERROR_MEAL_NOT_FOUND));
+		
+		mockMvc.perform(get(BASE_URI+"/1/meals/2/feedbacks")
+	               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+	        ).andExpect(status().isNotFound())
+		     .andExpect(content().string(ERROR_MEAL_NOT_FOUND));
 	}
 }

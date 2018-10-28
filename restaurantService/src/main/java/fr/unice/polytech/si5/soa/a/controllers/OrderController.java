@@ -33,8 +33,6 @@ public class OrderController {
 	@Autowired
 	private IOrderService orderService;
 
-	@Autowired
-    private FeedbackDaoImpl feedbackDao;
 	
 	@RequestMapping(value = "/{orderId}",
 			method = RequestMethod.PUT,
@@ -57,14 +55,6 @@ public class OrderController {
 			logger.error(e.getMessage(), e);
 			return ResponseEntity.status(404).body(e.getMessage());
 		}
-	}
-
-	@RequestMapping(value = "/feedback/{",
-			method = RequestMethod.POST,
-			consumes = {"application/JSON; charset=UTF-8"},
-			produces = {"application/JSON; charset=UTF-8"})
-	public ResponseEntity<?> postFeedback(@PathVariable("restoId") String restoId, @RequestBody Feedback feedback) {
-	    return ResponseEntity.ok(feedbackDao.addFeedback(feedback));
 	}
 	
 	@RequestMapping(value = "",
