@@ -1,7 +1,6 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
-import fr.unice.polytech.si5.soa.a.communication.bus.NewMeal;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
@@ -50,18 +49,16 @@ public class CatalogServiceImpl implements ICatalogService {
 	 * {@inheritDoc}
 	 */
 	public List<MealDTO> findMealsByRestaurant(int restaurantId) throws UnknowRestaurantException {
-		Optional<Restaurant> existingRestaurant = restaurantDao.findRestaurantById(restaurantId);
+		return catalogDao.findMealsByRestaurant(checkAndFindRestaurant(restaurantId)).stream().map(meal -> meal.toDTO()).collect(Collectors.toList());
+	}
+	
+	private Restaurant checkAndFindRestaurant(int id) throws UnknowRestaurantException {
+		Optional<Restaurant> existingRestaurant = restaurantDao.findRestaurantById(id);
 		
 		if(!existingRestaurant.isPresent()) {
-			throw new UnknowRestaurantException("Can't find restaurant with id = "+restaurantId);
+			throw new UnknowRestaurantException("Can't find restaurant with id = "+id);
 		}
 		
-		return catalogDao.findMealsByRestaurant(existingRestaurant.get()).stream().map(meal -> meal.toDTO()).collect(Collectors.toList());
-	}
-
-	@Override
-	public MealDTO addMeal(NewMeal message) {
-		//TODO: add meal in database
-		return new MealDTO();
+		return existingRestaurant.get();
 	}
 }

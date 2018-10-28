@@ -17,14 +17,18 @@ public class NewRestaurant extends Message {
 	private String name;
 	private String address;
 
+	/**
+	 * Default constructor
+	 */
 	public NewRestaurant() {
-
+		// Default constructor for Jackson databinding
 	}
 
-	public NewRestaurant(RestaurantDTO restaurant) {
-		type = "NEW_RESTAURANT";
-
-		name = restaurant.getName();
-		address = restaurant.getRestaurantAddress();
+	/**
+	 * Generate a {@link Restaurant} data transfer object from a message of the bus
+	 * @return restaurant representation for order service
+	 */
+	public RestaurantDTO createRestaurant() {
+		return new RestaurantDTO(-1, name, address);
 	}
 }

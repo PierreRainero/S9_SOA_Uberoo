@@ -1,5 +1,8 @@
 package fr.unice.polytech.si5.soa.a.communication.bus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,17 +20,22 @@ public class NewMeal extends Message {
 	private String name;
 	private String restaurantName;
 	private String restaurantAddress;
+	private double price;
+	private List<String> tags = new ArrayList<>();
 
+	/**
+	 * Default constructor
+	 */
 	public NewMeal() {
-
+		// Default constructor for Jackson databinding
 	}
-
-	public NewMeal(MealDTO meal, String restaurantName, String restaurantAddress) {
-		type = "NEW_MEAL";
-
-		name = meal.getName();
-		this.restaurantName =  restaurantName;
-		this.restaurantAddress = restaurantAddress;
+	
+	/**
+	 * Generate a {@link Meal} data transfer object from a message of the bus
+	 * @return meal representation for order service
+	 */
+	public MealDTO createMeal() {
+		return new MealDTO(name, tags, null, price);
 	}
 }
 

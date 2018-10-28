@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.services;
 
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,6 +33,7 @@ import fr.unice.polytech.si5.soa.a.entities.Payment;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
 import fr.unice.polytech.si5.soa.a.entities.User;
+import fr.unice.polytech.si5.soa.a.entities.states.PaymentState;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowPaymentException;
 import fr.unice.polytech.si5.soa.a.services.component.PaymentServiceImpl;
@@ -123,5 +125,38 @@ public class PaymentServiceTest {
 			paymentService.findPaymentById(-1);
 		});
 
+	}
+	
+	@Test
+	public void updateAPayment() throws Exception {
+		when(paymentDaoMock.findPaymentById(anyInt())).thenReturn(Optional.of(payment));
+		when(paymentDaoMock.updatePayment(any(Payment.class))).thenReturn(payment);
+		payment.setState(PaymentState.REFUSED);
+		
+		PaymentDTO paymentDTO = paymentService.updatePayment(payment.toDTO());
+		assertNotNull(paymentDTO);
+		assertTrue(payment.getAmount() == paymentDTO.getAmount());
+		assertEquals(PaymentState.REFUSED, paymentDTO.getState());
+	}
+	
+	@Test
+	public void updateANonExistingPayment() {
+		when(paymentDaoMock.findPaymentById(anyInt())).thenReturn(Optional.empty());
+		payment.setState(PaymentState.REFUSED);
+		
+		assertThrows(UnknowPaymentException.class, () -> {
+			paymentService.updatePayment(payment.toDTO());
+		});
+	}
+	
+	@Test
+	public void updatePaymentWithIdAndState() throws Exception {
+		when(paymentDaoMock.findPaymentById(anyInt())).thenReturn(Optional.of(payment));
+		when(paymentDaoMock.updatePayment(any(Payment.class))).thenReturn(payment);
+		
+		PaymentDTO paymentDTO = paymentService.updatePaymentStatus(payment.getId(), PaymentState.REFUSED);
+		assertNotNull(paymentDTO);
+		assertTrue(payment.getAmount() == paymentDTO.getAmount());
+		assertEquals(PaymentState.REFUSED, paymentDTO.getState());
 	}
 }

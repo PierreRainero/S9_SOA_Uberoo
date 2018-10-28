@@ -68,4 +68,21 @@ public class PaymentDaoImpl implements IPaymentDao {
 		return result;
 	}
 
+	@Override
+	/**
+     * {@inheritDoc}
+     */
+	public Payment updatePayment(Payment updatedPayment) {
+		Session session = sessionFactory.getCurrentSession();
+		Payment result = null;
+		try {
+			result = (Payment) session.merge(updatedPayment);
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+			logger.error("Cannot execute query : updatePayment", e);
+		}
+
+		return result;
+	}
+
 }

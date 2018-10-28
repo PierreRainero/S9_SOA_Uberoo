@@ -22,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
 /**
@@ -41,6 +42,7 @@ public class RestaurantDaoTest {
 	
 	private Restaurant asianRestaurant;
 	private Restaurant italianRestaurant;
+	private Meal ramen;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -51,6 +53,11 @@ public class RestaurantDaoTest {
 		italianRestaurant = new Restaurant();
 		italianRestaurant.setName("Chez pietro");
 		italianRestaurant.setRestaurantAddress("57 avenue des pizzas");
+		
+		ramen = new Meal();
+		ramen.setName("Ramen soup");
+		ramen.setRestaurant(asianRestaurant);
+		ramen.setPrice(11.5);
 		
 		Session session = sessionFactory.openSession();
 		try {
@@ -74,6 +81,10 @@ public class RestaurantDaoTest {
 	    		session.delete(italianRestaurant);
 	    	}
 	    	
+	    	if(ramen.getId() != 0) {
+	    		session.delete(ramen);
+	    	}
+	    	
 			session.delete(asianRestaurant);
 			
 			session.flush();
@@ -81,6 +92,7 @@ public class RestaurantDaoTest {
 			
 			italianRestaurant = null;
 			asianRestaurant = null;
+			ramen = null;
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
 		} finally {
@@ -164,5 +176,14 @@ public class RestaurantDaoTest {
 		
 		List<Restaurant> result = restaurantDao.listRestaurants();
 		assertEquals(2, result.size());
+	}
+	
+	@Test
+	public void addANewMeal() {
+		Meal meal = restaurantDao.addMeal(ramen);
+		
+		assertNotNull(meal);
+		assertNotEquals(0, meal.getId());
+		assertEquals(ramen.getName(), meal.getName());
 	}
 }

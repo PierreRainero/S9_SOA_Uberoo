@@ -40,4 +40,4 @@ Java 1.8 (JEE) avec les frameworks Spring et Hibernate.
 `{"type":"NEW_RESTAURANT","name":"Mon restaurant","address":"25 rue du restaurant"}`
 
 **NEW_MEAL** :  
-`{"type":"NEW_MEAL","name":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`
+`{"type":"NEW_MEAL","name":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","price":10.5,"tags":["Mon tag"]}`

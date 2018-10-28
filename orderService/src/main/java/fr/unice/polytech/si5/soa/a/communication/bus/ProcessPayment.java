@@ -25,9 +25,7 @@ public class ProcessPayment extends Message {
 		// Default constructor for Jackson databinding
 	}
 	
-	/**
-	 * Normal constructor for an "PROCESS_PAYMENT" message
-	 */
+
 	/**
 	 * Normal constructor for an "PROCESS_PAYMENT" message
 	 * @param payment {@link PaymentDTO} to use to construct the message

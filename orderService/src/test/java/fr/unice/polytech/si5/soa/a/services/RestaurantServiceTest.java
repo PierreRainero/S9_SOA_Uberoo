@@ -1,11 +1,15 @@
 package fr.unice.polytech.si5.soa.a.services;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,10 +23,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.component.RestaurantServiceImpl;
 
 /**
@@ -44,6 +51,7 @@ public class RestaurantServiceTest {
 	private RestaurantServiceImpl restaurantService;
 	
 	private Restaurant asianRestaurant;
+	private Meal ramen;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -53,6 +61,11 @@ public class RestaurantServiceTest {
 		asianRestaurant = new Restaurant();
 		asianRestaurant.setName("Lion d'or");
 		asianRestaurant.setRestaurantAddress("22 rue des nems");
+		
+		ramen = new Meal();
+		ramen.setName("Ramen soup");
+		ramen.setRestaurant(asianRestaurant);
+		ramen.setPrice(11.5);
 	}
 	
 	@Test
@@ -73,5 +86,33 @@ public class RestaurantServiceTest {
 		
 		List<RestaurantDTO> result = restaurantService.findRestaurantByName("");
 		assertEquals(1, result.size());
+	}
+	
+	@Test
+	public void addARestaurant() {
+		when(restaurantDaoMock.addRestaurant(any(Restaurant.class))).thenReturn(asianRestaurant);
+		
+		RestaurantDTO restaurant = restaurantService.addRestaurant(asianRestaurant.toDTO());
+		assertNotNull(restaurant);
+		assertEquals(asianRestaurant.getName(), restaurant.getName());
+	}
+	
+	@Test
+	public void addAMeal() throws Exception {
+		when(restaurantDaoMock.findRestaurantByNameAndAddress(anyString(), anyString())).thenReturn(Optional.of(asianRestaurant));
+		when(restaurantDaoMock.addMeal(any(Meal.class))).thenReturn(ramen);
+		
+		MealDTO meal = restaurantService.addMeal(ramen.toDTO(), asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
+		assertNotNull(meal);
+		assertEquals(ramen.getName(), meal.getName());
+	}
+	
+	@Test
+	public void addAMealOnANonExistingRestaurant() {
+		when(restaurantDaoMock.findRestaurantByNameAndAddress(anyString(), anyString())).thenReturn(Optional.empty());
+		
+		assertThrows(UnknowRestaurantException.class, () -> {
+			restaurantService.addMeal(ramen.toDTO(), asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
+		});
 	}
 }

@@ -10,6 +10,10 @@
 - As Jamie, I want to know the orders that will have to be delivered around me, so that I can choose one and go to the restaurant to begin the course.
 - As Jamie, I want to notify that the order has been delivered, so that my account can be credited and the restaurant can be informed.
 
+- As Jordan, I want the customers to be able to review the meals so that I can improve them according to their feedback;
+- As a customer (Gail, Erin), I want to track the geolocation of the coursier in real time, so that I can anticipate when I will eat.
+- As Terry, I want to get some statistics (speed, cost) about global delivery time and delivery per coursier.
+
 ## Liste des messages
 
 **NEW_ORDER** :  
@@ -18,8 +22,11 @@
 **PROCESS_PAYMENT** :  
 `{"type":"PROCESS_PAYMENT","account":"numero de compte","amount":10.0,"id":-1}`
 
+**PAYMENT_CONFIRMATION** :  
+`{"type":"PAYMENT_CONFIRMATION","status":true,"id":-1}`  
+
 **NEW_RESTAURANT** :  
 `{"type":"NEW_RESTAURANT","name":"Mon restaurant","address":"25 rue du restaurant"}`
 
 **NEW_MEAL** :  
-`{"type":"NEW_MEAL","name":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`
+`{"type":"NEW_MEAL","name":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","price":10.5,"tags":["Mon tag"]}`

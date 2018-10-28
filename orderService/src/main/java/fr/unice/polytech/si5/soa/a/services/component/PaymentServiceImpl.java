@@ -2,12 +2,12 @@ package fr.unice.polytech.si5.soa.a.services.component;
 
 import fr.unice.polytech.si5.soa.a.communication.PaymentDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
-import fr.unice.polytech.si5.soa.a.communication.bus.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.communication.bus.ProcessPayment;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IPaymentDao;
 import fr.unice.polytech.si5.soa.a.entities.Payment;
 import fr.unice.polytech.si5.soa.a.entities.UberooOrder;
+import fr.unice.polytech.si5.soa.a.entities.states.PaymentState;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowPaymentException;
 import fr.unice.polytech.si5.soa.a.services.IPaymentService;
@@ -61,27 +61,38 @@ public class PaymentServiceImpl implements IPaymentService {
 	 * {@inheritDoc}
 	 */
 	public PaymentDTO findPaymentById(int idToSearch) throws UnknowPaymentException {
-		Optional<Payment> paymentWrapped = paymentDao.findPaymentById(idToSearch);
-		
-		if(!paymentWrapped.isPresent()) {
-			throw new UnknowPaymentException("Can't find payment with id = "+idToSearch);
-		}
-		
-		return paymentWrapped.get().toDTO();
+		return checkAndFindPayment(idToSearch).toDTO();
 	}
 
-	@Override //TODO:updatePayment in dao
-	public PaymentDTO updatePayment(PaymentConfirmation message) throws UnknowPaymentException {
-		Optional<Payment> paymentWrapped = paymentDao.findPaymentById(message.getId());
-		if(!paymentWrapped.isPresent()) {
-			throw new UnknowPaymentException("Can't find payment with id = "+message.getId());
-		}
-		if(message.isStatus()){
-			//PAYMENT has ben accepted
-		}else{
-			//Payment was refused
-		}
-		return paymentWrapped.get().toDTO();
+	@Override
+	/**
+	 * {@inheritDoc}
+	 */
+	public PaymentDTO updatePayment(PaymentDTO paymentUpdated) throws UnknowPaymentException {
+		Payment payment = checkAndFindPayment(paymentUpdated.getId());
+		payment.setState(paymentUpdated.getState());
+		
+		return paymentDao.updatePayment(payment).toDTO();
 	}
 
+	@Override
+	/**
+	 * {@inheritDoc}
+	 */
+	public PaymentDTO updatePaymentStatus(int paymentId, PaymentState paymentState) throws UnknowPaymentException {
+		Payment payment = checkAndFindPayment(paymentId);
+		payment.setState(paymentState);
+		
+		return paymentDao.updatePayment(payment).toDTO();
+	}
+	
+	private Payment checkAndFindPayment(int id) throws UnknowPaymentException {
+		Optional<Payment> paymentWrapped = paymentDao.findPaymentById(id);
+		
+		if(!paymentWrapped.isPresent()) {
+			throw new UnknowPaymentException("Can't find payment with id = "+id);
+		}
+		
+		return paymentWrapped.get();
+	}
 }
