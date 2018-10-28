@@ -2,7 +2,9 @@ package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.communication.Message;
 import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
+import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.message.MessageListener;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -65,7 +67,7 @@ public class ApplicationConfiguration {
 		props.put("hibernate.dialect", env.getProperty("db.dialect"));
 
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(Delivery.class);
+        factoryBean.setAnnotatedClasses(Delivery.class, Coursier.class, Restaurant.class);
 		return factoryBean;
 	}
 

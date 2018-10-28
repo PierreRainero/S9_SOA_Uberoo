@@ -7,6 +7,7 @@ import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
@@ -58,7 +59,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
             throw new UnknownCoursierException(delivery.getCoursierId().toString());
         }
         Coursier coursier = coursierWrapped.get();
-        coursier.setCurrentDeliveryId(null);
+        coursier.updateDelivery(delivery);
         delivery.setState(deliveryToUpdate.isState());
         delivery.setDeliveryDate(new Date());
 	    OrderDelivered orderDelivered = new OrderDelivered()
@@ -85,20 +86,21 @@ public class DeliveryServiceImpl implements IDeliveryService {
     }
 
     @Override
-    public void receiveNewPayment(PaymentConfirmation message) throws UnknownDeliveryException {
+    public Delivery receiveNewPayment(PaymentConfirmation message) throws UnknownDeliveryException, CoursierDoesntGetPaidException {
         boolean coursierGetPaid = message.isStatus();
         if (coursierGetPaid){
             Optional<Delivery> deliveryWrapped = this.deliveryDao.findDeliveryById(message.getId());
             if (deliveryWrapped.isPresent()){
                 Delivery delivery = deliveryWrapped.get();
                 delivery.setCoursierGetPaid(true);
-                deliveryDao.updateDelivery(delivery);
+                delivery = deliveryDao.updateDelivery(delivery);
                 System.out.println("The payment has been received by the coursier");
+                return delivery;
             }else{
                 throw new UnknownDeliveryException(message.getId());
             }
         }else{
-            System.out.println("The payment has not been confirmed : " + message.getId());
+            throw new CoursierDoesntGetPaidException(message.getId());
         }
     }
 

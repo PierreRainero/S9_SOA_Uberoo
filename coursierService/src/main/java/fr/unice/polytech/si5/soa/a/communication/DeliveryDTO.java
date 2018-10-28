@@ -30,6 +30,7 @@ public class DeliveryDTO implements Serializable {
     private Date deliveryDate;
     public boolean state = false;
     private boolean coursierGetPaid = false;
+    private Integer coursierId;
 
     public DeliveryDTO() {
         // Default constructor for Jackson databinding
@@ -42,9 +43,10 @@ public class DeliveryDTO implements Serializable {
         this.restaurantId = restaurantId;
     }
 
-    public DeliveryDTO(int id, String deliveryAddress, boolean state, Double latitude, Double longitude, Integer restaurantId) {
+    public DeliveryDTO(int id, String deliveryAddress, boolean state, Double latitude, Double longitude, Integer restaurantId, Integer coursierId) {
         this(id, deliveryAddress, state, restaurantId);
         this.latitude = latitude;
         this.longitude = longitude;
+        this.coursierId = coursierId;
     }
 }
