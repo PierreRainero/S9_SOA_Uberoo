@@ -1,5 +1,6 @@
 package fr.unice.polytech.si5.soa.a.entities;
 
+import fr.unice.polytech.si5.soa.a.communication.CoursierDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -36,6 +37,13 @@ public class Coursier {
     @Column(name = "longitude")
     private Double longitude;
 
+    @Column(name = "current_delivery")
+    private Integer currentDeliveryId;
+
     public Coursier() {
+    }
+
+    public CoursierDto toDto(){
+        return new CoursierDto(id,name,accountNumber,latitude,longitude,currentDeliveryId);
     }
 }

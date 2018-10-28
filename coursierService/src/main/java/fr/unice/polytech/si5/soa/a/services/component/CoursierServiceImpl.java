@@ -2,7 +2,7 @@ package fr.unice.polytech.si5.soa.a.services.component;
 
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowCoursierException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.services.ICoursierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -18,12 +18,12 @@ public class CoursierServiceImpl implements ICoursierService {
     private ICoursierDao coursierDao;
 
     @Override
-    public Coursier getCoursier(Integer idCoursier) throws UnknowCoursierException {
+    public Coursier getCoursier(Integer idCoursier) throws UnknownCoursierException {
         Optional<Coursier> coursierWrapped = this.coursierDao.findCoursierById(idCoursier);
         if (coursierWrapped.isPresent()){
             return coursierWrapped.get();
         }else{
-            throw new UnknowCoursierException(idCoursier.toString());
+            throw new UnknownCoursierException(idCoursier.toString());
         }
     }
 }

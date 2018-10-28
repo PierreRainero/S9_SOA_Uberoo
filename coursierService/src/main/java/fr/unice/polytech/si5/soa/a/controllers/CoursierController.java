@@ -1,6 +1,6 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowCoursierException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.services.ICoursierService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +27,7 @@ public class CoursierController {
     public ResponseEntity<?> getCoursier(@QueryParam("id") Integer idCoursier) {
         try {
             return ResponseEntity.ok(this.coursierService.getCoursier(idCoursier));
-        } catch (UnknowCoursierException e) {
+        } catch (UnknownCoursierException e) {
             logger.error(e.getMessage(),e);
             return ResponseEntity.status(404).body(e.getMessage());
         }

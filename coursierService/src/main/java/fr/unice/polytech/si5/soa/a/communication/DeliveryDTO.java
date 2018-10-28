@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.communication;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,6 +26,8 @@ public class DeliveryDTO implements Serializable {
     private String deliveryAddress;
     private Double latitude;
     private Double longitude;
+    private Date creationDate;
+    private Date deliveryDate;
     public boolean state = false;
     private boolean coursierGetPaid = false;
 

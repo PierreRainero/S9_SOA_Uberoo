@@ -38,4 +38,18 @@ public class CoursierDaoImpl implements ICoursierDao {
         }
         return result;
     }
+
+    @Override
+    public Coursier updateCoursier(Coursier coursierToUpdate) {
+        Session session = sessionFactory.getCurrentSession();
+
+        Coursier result = null;
+        try{
+            result = (Coursier) session.merge(coursierToUpdate);
+        }catch (SQLGrammarException e){
+            session.getTransaction().rollback();
+            logger.error("Cannot execute query : updateDelivery", e);
+        }
+        return result;
+    }
 }

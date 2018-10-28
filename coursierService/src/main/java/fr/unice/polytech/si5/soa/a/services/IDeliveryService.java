@@ -4,8 +4,7 @@ import java.util.List;
 
 import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
 import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowCoursierException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowDeliveryException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 
 /**
@@ -15,8 +14,9 @@ import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
  */
 public interface IDeliveryService {
 	DeliveryDTO addDelivery(DeliveryDTO deliveryToAdd);
-	DeliveryDTO updateDelivery(DeliveryDTO deliveryToUpdate) throws UnknowDeliveryException, UnknowCoursierException;
+	DeliveryDTO updateDelivery(DeliveryDTO deliveryToUpdate) throws UnknownCoursierException, UnknownDeliveryException;
 	List<DeliveryDTO> getDeliveriesToDo();
     List<DeliveryDTO> getDeliveriesToDo(Double latitude, Double longitude);
     void receiveNewPayment(PaymentConfirmation message) throws UnknownDeliveryException;
+    DeliveryDTO assignDelivery(Integer deliveryId, Integer coursierId) throws UnknownDeliveryException, UnknownCoursierException;
 }

@@ -5,7 +5,7 @@ import fr.unice.polytech.si5.soa.a.communication.NewOrder;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowDeliveryException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -149,7 +149,7 @@ public class DeliveryControllerTest {
 
     @Test
     public void tryUpdateDeliveryStateCantFindDelivery() throws Exception {
-        when(deliveryServiceMock.updateDelivery(any(DeliveryDTO.class))).thenThrow(new UnknowDeliveryException(ERROR_MESSAGE));
+        when(deliveryServiceMock.updateDelivery(any(DeliveryDTO.class))).thenThrow(new UnknownDeliveryException(ERROR_MESSAGE));
 
         mockMvc.perform(put(BASE_URI + "/2/")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)

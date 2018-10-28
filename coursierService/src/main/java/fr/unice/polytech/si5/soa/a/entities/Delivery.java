@@ -3,6 +3,7 @@ package fr.unice.polytech.si5.soa.a.entities;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +55,12 @@ public class Delivery implements Serializable {
 
     @Column(name = "coursierGetPaid")
     private Boolean coursierGetPaid;
+
+    @Column(name = "creation_date")
+    private Date creationDate;
+
+    @Column(name = "delivery_date")
+    private Date deliveryDate;
 
     public Delivery() {
         // Default constructor for JPA

@@ -7,8 +7,7 @@ import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowCoursierException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowDeliveryException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
@@ -47,19 +46,20 @@ public class DeliveryServiceImpl implements IDeliveryService {
     }
 
     @Override
-    public DeliveryDTO updateDelivery(DeliveryDTO deliveryToUpdate) throws UnknowDeliveryException, UnknowCoursierException {
+    public DeliveryDTO updateDelivery(DeliveryDTO deliveryToUpdate) throws UnknownCoursierException, UnknownDeliveryException {
         Optional<Delivery> deliveryWrapped = deliveryDao.findDeliveryById(deliveryToUpdate.getId());
         if (!deliveryWrapped.isPresent()) {
-            throw new UnknowDeliveryException("Can't find delivery with id = " + deliveryToUpdate.getId());
+            throw new UnknownDeliveryException(deliveryToUpdate.getId());
         }
         Delivery delivery = deliveryWrapped.get();
 
         Optional<Coursier> coursierWrapped = this.coursierDao.findCoursierById(delivery.getCoursierId());
         if (!coursierWrapped.isPresent()){
-            throw new UnknowCoursierException(delivery.getCoursierId().toString());
+            throw new UnknownCoursierException(delivery.getCoursierId().toString());
         }
         Coursier coursier = coursierWrapped.get();
         delivery.setState(deliveryToUpdate.isState());
+        delivery.setDeliveryDate(new Date());
 	    OrderDelivered orderDelivered = new OrderDelivered()
                 .addAddress(delivery.getDeliveryAddress())
                 .addDate(new Date())
@@ -93,10 +93,31 @@ public class DeliveryServiceImpl implements IDeliveryService {
                 deliveryDao.updateDelivery(delivery);
                 System.out.println("The payment has been received by the coursier");
             }else{
-                throw new UnknownDeliveryException("Can't find the delivery with id : " + message.getId());
+                throw new UnknownDeliveryException(message.getId());
             }
         }else{
             System.out.println("The payment has not been confirmed : " + message.getId());
         }
+    }
+
+    @Override
+    public DeliveryDTO assignDelivery(Integer deliveryId, Integer coursierId) throws UnknownDeliveryException, UnknownCoursierException {
+        Optional<Delivery> deliveryWrapped = this.deliveryDao.findDeliveryById(deliveryId);
+        if (!deliveryWrapped.isPresent()){
+            throw new UnknownDeliveryException(deliveryId);
+        }
+        Delivery delivery = deliveryWrapped.get();
+
+        Optional<Coursier> coursierWrapped = this.coursierDao.findCoursierById(coursierId);
+        if (!coursierWrapped.isPresent()){
+            throw new UnknownCoursierException(coursierId.toString());
+        }
+        Coursier coursier = coursierWrapped.get();
+
+        delivery.setCoursierId(coursierId);
+        delivery.setCreationDate(new Date());
+        coursier.setCurrentDeliveryId(deliveryId);
+        this.coursierDao.updateCoursier(coursier);
+        return this.deliveryDao.updateDelivery(delivery).toDTO();
     }
 }

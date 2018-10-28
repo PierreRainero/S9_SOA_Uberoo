@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface ICoursierDao {
 
     Optional<Coursier> findCoursierById(Integer idCoursier);
+    Coursier updateCoursier(Coursier coursier);
 }

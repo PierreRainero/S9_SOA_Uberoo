@@ -5,7 +5,8 @@ import fr.unice.polytech.si5.soa.a.communication.Message;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowDeliveryException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.component.DeliveryServiceImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -115,7 +116,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void updateDelivery() throws UnknowDeliveryException {
+    public void updateDelivery() throws UnknownCoursierException, UnknownDeliveryException {
         when(iDeliveryDaoMock.updateDelivery(deliveryTodo)).thenReturn(deliveryDone);
         when(iDeliveryDaoMock.findDeliveryById(deliveryTodo.getId())).thenReturn(Optional.of(deliveryTodo));
         MessageProducer spy = Mockito.spy(messageProducerMock);

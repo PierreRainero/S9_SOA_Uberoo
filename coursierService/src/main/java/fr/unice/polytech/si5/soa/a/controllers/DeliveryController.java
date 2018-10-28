@@ -1,19 +1,16 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
 import fr.unice.polytech.si5.soa.a.communication.NewOrder;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowDeliveryException;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 
 import javax.ws.rs.QueryParam;
@@ -41,14 +38,27 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryService.addDelivery(delivery));
     }
 
-    @RequestMapping(value = "/{deliveryId}/",
+    @RequestMapping(value = "",
             method = RequestMethod.PUT,
             consumes = {"application/JSON; charset=UTF-8"},
             produces = {"application/JSON; charset=UTF-8"})
-    public ResponseEntity<?> updateDeliveryState(@PathVariable("deliveryId") String id, @RequestBody DeliveryDTO delivery) {
+    public ResponseEntity<?> updateDeliveryState(@RequestBody DeliveryDTO delivery) {
         try {
             return ResponseEntity.ok(deliveryService.updateDelivery(delivery));
-        } catch (UnknowDeliveryException e) {
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "",
+            method = RequestMethod.PUT,
+            consumes = {"application/JSON; charset=UTF-8"},
+            produces = {"application/JSON; charset=UTF-8"})
+    public ResponseEntity<?> chooseDelivery(@RequestParam("deliveryId") Integer deliveryId, @RequestParam("coursierId") Integer coursierId) {
+        try{
+            return ResponseEntity.ok(this.deliveryService.assignDelivery(deliveryId,coursierId));
+        }catch (Exception e){
             logger.error(e.getMessage(), e);
             return ResponseEntity.status(404).body(e.getMessage());
         }
