@@ -44,11 +44,11 @@ public class Delivery implements Serializable {
     @Column(name = "restaurant_id")
     private Integer restaurantId;
 
-    @Column(name = "deliveryAddress", nullable = false)
+    @Column(name = "deliveryAddress")
     private String deliveryAddress;
 
-    @Column(name = "state", nullable = false)
-    public boolean state = false;
+    @Column(name = "state")
+    public Boolean state = false;
 
     @Column(name = "latitude")
     private Double latitude;
@@ -57,7 +57,7 @@ public class Delivery implements Serializable {
     private Double longitude;
 
     @Column(name = "coursierGetPaid")
-    private Boolean coursierGetPaid;
+    private Boolean coursierGetPaid = false;
 
     @Column(name = "creation_date")
     private Date creationDate;
@@ -73,9 +73,31 @@ public class Delivery implements Serializable {
         this.deliveryAddress = data.getDeliveryAddress();
         this.state = data.isState();
         this.restaurantId = data.getRestaurantId();
+        this.coursierGetPaid = data.isCoursierGetPaid();
     }
 
     public DeliveryDTO toDTO() {
-        return new DeliveryDTO(id, deliveryAddress, state, latitude, longitude, restaurantId);
+        DeliveryDTO deliveryDTO = new DeliveryDTO();
+        deliveryDTO.setId(id);
+
+        if (deliveryAddress != null) {
+            deliveryDTO.setDeliveryAddress(deliveryAddress);
+        }
+        if (state != null) {
+            deliveryDTO.setState(state);
+        }
+        if (latitude != null) {
+            deliveryDTO.setLatitude(latitude);
+        }
+        if (longitude != null) {
+            deliveryDTO.setLongitude(longitude);
+        }
+        if (restaurantId != null) {
+            deliveryDTO.setRestaurantId(restaurantId);
+        }
+        if (coursierId != null) {
+            deliveryDTO.setCoursierId(coursierId);
+        }
+        return deliveryDTO;
     }
 }

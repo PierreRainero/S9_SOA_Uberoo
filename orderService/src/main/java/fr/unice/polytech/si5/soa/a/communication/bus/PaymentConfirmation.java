@@ -13,6 +13,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper=true)
 @ToString()
 public class PaymentConfirmation extends Message {
+	public static String messageType = "PAYMENT_CONFIRMATION";
 	private int id;
 	private boolean status;
 
@@ -20,6 +21,7 @@ public class PaymentConfirmation extends Message {
 	 * Default constructor
 	 */
 	public PaymentConfirmation() {
+
 		// Default constructor for Jackson databinding
 	}
 }

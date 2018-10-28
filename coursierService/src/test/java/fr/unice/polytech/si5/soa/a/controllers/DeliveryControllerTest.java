@@ -4,7 +4,9 @@ import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
 import fr.unice.polytech.si5.soa.a.communication.NewOrder;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
+import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
@@ -22,6 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
@@ -58,6 +61,7 @@ public class DeliveryControllerTest {
     private Delivery deliveryBelow10;
     private Delivery deliveryOver10;
     private NewOrder order;
+    private Coursier coursier;
 
     private static final String ADDRESS = "475 rue Evariste Galois";
     private static final String ERROR_MESSAGE = "Can't find delivery";
@@ -67,12 +71,17 @@ public class DeliveryControllerTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         Mockito.reset(deliveryServiceMock);
+
+        coursier = new Coursier();
+        coursier.setId(5);
+
         mockMvc = MockMvcBuilders.standaloneSetup(deliveryController).build();
 
         delivery = new Delivery();
         delivery.setDeliveryAddress(ADDRESS);
         delivery.setId(8);
         delivery.setState(false);
+        delivery.setCoursierGetPaid(false);
 
         deliveryDone = new Delivery();
         deliveryDone.setDeliveryAddress(ADDRESS);
@@ -173,6 +182,26 @@ public class DeliveryControllerTest {
                 .content(TestUtil.convertObjectToJsonBytes(expectedMock)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+    }
+
+    @Test
+    public void chooseDeliveryTest() throws Exception {
+        DeliveryDTO expectedMock = delivery.toDTO();
+        expectedMock.setCreationDate(new Date());
+        expectedMock.setCoursierId(this.coursier.getId());
+        when(deliveryServiceMock.assignDelivery(this.delivery.getId(), this.coursier.getId())).thenReturn(expectedMock);
+        mockMvc.perform(put(BASE_URI + delivery.getId() + "/?coursierId=" + coursier.getId())
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(expectedMock)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+
+        ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Integer> captor2 = ArgumentCaptor.forClass(Integer.class);
+        verify(deliveryServiceMock, times(1)).assignDelivery(captor.capture(), captor2.capture());
+        verifyNoMoreInteractions(deliveryServiceMock);
+        assertEquals(captor.getValue().intValue(), delivery.getId());
+        assertEquals(captor2.getValue().intValue(), coursier.getId());
     }
 
 }

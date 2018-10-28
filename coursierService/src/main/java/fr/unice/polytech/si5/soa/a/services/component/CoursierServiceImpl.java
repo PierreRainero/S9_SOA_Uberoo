@@ -1,5 +1,6 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
+import fr.unice.polytech.si5.soa.a.communication.CoursierDto;
 import fr.unice.polytech.si5.soa.a.communication.CoursierStatistics;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
@@ -33,10 +34,10 @@ public class CoursierServiceImpl implements ICoursierService {
     private IRestaurantDao restaurantDao;
 
     @Override
-    public Coursier getCoursier(Integer idCoursier) throws UnknownCoursierException {
+    public CoursierDto getCoursier(Integer idCoursier) throws UnknownCoursierException {
         Optional<Coursier> coursierWrapped = this.coursierDao.findCoursierById(idCoursier);
         if (coursierWrapped.isPresent()){
-            return coursierWrapped.get();
+            return coursierWrapped.get().toDto();
         }else{
             throw new UnknownCoursierException(idCoursier.toString());
         }

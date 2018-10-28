@@ -9,6 +9,7 @@ import java.util.Date;
  */
 public class OrderDelivered extends Message {
     public String address;
+    public static String messageType = "ORDER_DELIVERED";
 
     public String getAddress() {
         return address;
@@ -41,7 +42,7 @@ public class OrderDelivered extends Message {
     private Integer deliveryId;
     private String accountNumber;
     public OrderDelivered() {
-        type = "ORDER_DELIVERED";
+        type = messageType;
     }
 
     public OrderDelivered(String address, int deliveryId){

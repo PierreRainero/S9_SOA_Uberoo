@@ -68,6 +68,7 @@ public class MessageListener {
 			e.printStackTrace();
 		}
 		
+		
 		latch.countDown();
 	}
 

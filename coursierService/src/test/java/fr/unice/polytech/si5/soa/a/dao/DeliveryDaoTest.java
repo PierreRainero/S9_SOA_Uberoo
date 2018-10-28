@@ -42,7 +42,8 @@ public class DeliveryDaoTest {
         deliveries = new ArrayList<>();
         deliveryToDo = new Delivery();
         deliveryToDo.setDeliveryAddress("140 sentier des hautes breguières");
-        
+
+
         deliveryDone = new Delivery();
         deliveryDone.setDeliveryAddress("5 rue de l'hôpital");
         deliveryDone.state = true;

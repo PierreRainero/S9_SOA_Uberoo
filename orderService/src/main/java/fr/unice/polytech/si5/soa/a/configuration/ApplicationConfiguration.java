@@ -116,6 +116,8 @@ public class ApplicationConfiguration {
 	public ConcurrentKafkaListenerContainerFactory<String, PaymentConfirmation> bankContainerFactory() {
 		ConcurrentKafkaListenerContainerFactory<String, PaymentConfirmation> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerPaymentConfirmationFactory("order"));
+		factory.setRecordFilterStrategy(record -> !record.value()
+				.getType().equals(PaymentConfirmation.messageType));
 		return factory;
 	}
 
@@ -130,6 +132,8 @@ public class ApplicationConfiguration {
 	public ConcurrentKafkaListenerContainerFactory<String, NewMeal> mealContainerFactory() {
 		ConcurrentKafkaListenerContainerFactory<String, NewMeal> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(mealFactory("order"));
+		factory.setRecordFilterStrategy(record -> !record.value()
+				.getType().equals(NewMeal.messageType));
 		return factory;
 	}
 
@@ -144,21 +148,8 @@ public class ApplicationConfiguration {
 	public ConcurrentKafkaListenerContainerFactory<String, NewRestaurant> restaurantContainerFactory() {
 		ConcurrentKafkaListenerContainerFactory<String, NewRestaurant> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(restaurantFactory("order"));
-		return factory;
-	}
-
-	//Note: don't use mother class Message since it's deserialized instanceof might not work
-	public ConsumerFactory<String, Message> consumerFactory(String groupId) {
-		Map<String, Object> props = new HashMap<>();
-		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(Message.class));
-	}
-
-	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, Message> topicKafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(consumerFactory("order"));
+		factory.setRecordFilterStrategy(record -> !record.value()
+				.getType().equals(NewRestaurant.messageType));
 		return factory;
 	}
 }

@@ -2,9 +2,13 @@ package fr.unice.polytech.si5.soa.a.services;
 
 import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
 import fr.unice.polytech.si5.soa.a.communication.Message;
+import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
+import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
+import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
@@ -22,14 +26,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -41,6 +41,11 @@ public class DeliveryServiceTest {
     @Qualifier("mock")
     @Mock
     private IDeliveryDao iDeliveryDaoMock;
+
+    @Autowired
+    @Qualifier("mock")
+    @Mock
+    private ICoursierDao iCoursierDaoMock;
 
     @Autowired
     @InjectMocks
@@ -57,13 +62,24 @@ public class DeliveryServiceTest {
     private Delivery deliveryBelow10;
     private Delivery deliveryOver10;
 
+    private Coursier coursier;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         Mockito.reset(iDeliveryDaoMock);
+        Mockito.reset(iCoursierDaoMock);
+
+        coursier = new Coursier();
+        coursier.setAccountNumber("FR89 3704 0044 0532 0130 00");
 
         deliveryTodo = new Delivery();
         deliveryTodo.setDeliveryAddress(ADDRESS);
+        //deliveryTodo.setCoursierId(coursier.getId());
+        deliveryTodo.setRestaurantId(0);
+
+        coursier.addDelivery(deliveryTodo);
+
         deliveryDone = new Delivery();
         deliveryDone.setState(true);
         deliveryDone.setDeliveryAddress(ADDRESS);
@@ -110,7 +126,7 @@ public class DeliveryServiceTest {
 
     @Test
     public void addDelivery() {
-        when(iDeliveryDaoMock.addDelivery(deliveryTodo)).thenReturn(deliveryTodo);
+        when(iDeliveryDaoMock.addDelivery(any())).thenReturn(deliveryTodo);
         DeliveryDTO returnedDelivery = deliveryService.addDelivery(deliveryTodo.toDTO());
         assertEquals(returnedDelivery, deliveryTodo.toDTO());
     }
@@ -119,12 +135,42 @@ public class DeliveryServiceTest {
     public void updateDelivery() throws UnknownCoursierException, UnknownDeliveryException {
         when(iDeliveryDaoMock.updateDelivery(deliveryTodo)).thenReturn(deliveryDone);
         when(iDeliveryDaoMock.findDeliveryById(deliveryTodo.getId())).thenReturn(Optional.of(deliveryTodo));
+        coursier.setId(5);
+        when(iCoursierDaoMock.findCoursierById(coursier.getId())).thenReturn(Optional.of(coursier));
         MessageProducer spy = Mockito.spy(messageProducerMock);
         doNothing().when(spy).sendMessage(any(Message.class));
+        deliveryTodo.setCoursierId(coursier.getId());
         DeliveryDTO returnedDelivery = deliveryService.updateDelivery(deliveryTodo.toDTO());
         assertNotEquals(returnedDelivery, deliveryTodo.toDTO());
         assertEquals(returnedDelivery, deliveryDone.toDTO());
     }
 
+    @Test
+    public void receiveNewPayment() throws UnknownDeliveryException, CoursierDoesntGetPaidException {
+        assertFalse(this.deliveryDone.getCoursierGetPaid());
+        when(iDeliveryDaoMock.findDeliveryById(this.deliveryDone.getId())).thenReturn(Optional.of(this.deliveryDone));
+        when(iDeliveryDaoMock.updateDelivery(this.deliveryDone)).thenReturn(this.deliveryDone);
+        PaymentConfirmation message = new PaymentConfirmation();
+        message.setId(this.deliveryDone.getId());
+        message.setStatus(true);
+        Delivery deliveryAfterPayment = this.deliveryService.receiveNewPayment(message);
+        this.deliveryDone.setCoursierGetPaid(true);
+        assertEquals(deliveryAfterPayment, this.deliveryDone);
+    }
+
+    @Test
+    public void assignDelivery() throws UnknownDeliveryException, UnknownCoursierException {
+        assertNull(deliveryTodo.getCoursierId());
+        assertNull(deliveryTodo.getCreationDate());
+        when(iDeliveryDaoMock.findDeliveryById(this.deliveryTodo.getId())).thenReturn(Optional.ofNullable(this.deliveryTodo));
+        when(iCoursierDaoMock.findCoursierById(this.coursier.getId())).thenReturn(Optional.ofNullable(this.coursier));
+        this.deliveryTodo.setCoursierId(coursier.getId());
+        this.deliveryTodo.setCreationDate(new Date());
+        this.coursier.addDelivery(this.deliveryTodo);
+        when(iCoursierDaoMock.updateCoursier(this.coursier)).thenReturn(this.coursier);
+        when(iDeliveryDaoMock.updateDelivery(this.deliveryTodo)).thenReturn(this.deliveryTodo);
+        DeliveryDTO deliveryDTO = this.deliveryService.assignDelivery(this.deliveryTodo.getId(), coursier.getId());
+        assertEquals(this.deliveryTodo.toDTO(), deliveryDTO);
+    }
 
 }

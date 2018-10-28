@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.entities;
 
 import fr.unice.polytech.si5.soa.a.communication.CoursierDto;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.NONE;
@@ -43,21 +45,28 @@ public class Coursier {
     private Double longitude;
 
     @Setter(NONE)
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "coursier")
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "coursierId")
     @ToString.Exclude
     private List<Delivery> deliveries = new ArrayList<>();
-
-    @Column(name = "current_delivery")
-    private Integer currentDeliveryId;
 
     public Coursier() {
     }
 
     public CoursierDto toDto(){
-        return new CoursierDto(id,name,accountNumber,latitude,longitude,currentDeliveryId);
+        return new CoursierDto(id, name, latitude, longitude);
     }
 
     public void addDelivery(Delivery delivery) {
         this.deliveries.add(delivery);
+    }
+
+    public void updateDelivery(Delivery updateDelivery) throws UnknownDeliveryException {
+        Optional<Delivery> sameDelivery = this.deliveries.stream()
+                .filter(delivery -> delivery.getId() == updateDelivery.getId())
+                .findFirst();
+        if (!sameDelivery.isPresent()) {
+            throw new UnknownDeliveryException(updateDelivery.getId());
+        }
+        sameDelivery.get().setState(updateDelivery.state);
     }
 }
