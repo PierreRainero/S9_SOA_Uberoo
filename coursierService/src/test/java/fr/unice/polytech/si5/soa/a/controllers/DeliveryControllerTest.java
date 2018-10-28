@@ -132,7 +132,7 @@ public class DeliveryControllerTest {
     public void updateDeliveryStateCorrectly() throws Exception {
         when(deliveryServiceMock.updateDelivery(any(DeliveryDTO.class))).thenReturn(deliveryDone.toDTO());
 
-        mockMvc.perform(put(BASE_URI + "/" + delivery.getId() + "/")
+        mockMvc.perform(put(BASE_URI)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(deliveryDone.toDTO())))
                 .andExpect(status().isOk())
@@ -151,7 +151,7 @@ public class DeliveryControllerTest {
     public void tryUpdateDeliveryStateCantFindDelivery() throws Exception {
         when(deliveryServiceMock.updateDelivery(any(DeliveryDTO.class))).thenThrow(new UnknownDeliveryException(ERROR_MESSAGE));
 
-        mockMvc.perform(put(BASE_URI + "/2/")
+        mockMvc.perform(put(BASE_URI)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(new Delivery().toDTO())))
                 .andExpect(status().isNotFound())
