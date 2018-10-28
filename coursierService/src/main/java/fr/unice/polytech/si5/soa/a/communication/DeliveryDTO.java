@@ -21,7 +21,7 @@ public class DeliveryDTO implements Serializable {
      * Generated UID version
      */
     private static final long serialVersionUID = 2206465850241015470L;
-
+    private Integer restaurantId;
     int id;
     private String deliveryAddress;
     private Double latitude;
@@ -35,14 +35,15 @@ public class DeliveryDTO implements Serializable {
         // Default constructor for Jackson databinding
     }
 
-    public DeliveryDTO(int id, String deliveryAddress, boolean state) {
+    public DeliveryDTO(int id, String deliveryAddress, boolean state, Integer restaurantId) {
         this.id = id;
         this.deliveryAddress = deliveryAddress;
         this.state = state;
+        this.restaurantId = restaurantId;
     }
 
-    public DeliveryDTO(int id, String deliveryAddress, boolean state, Double latitude, Double longitude){
-        this(id,deliveryAddress,state);
+    public DeliveryDTO(int id, String deliveryAddress, boolean state, Double latitude, Double longitude, Integer restaurantId) {
+        this(id, deliveryAddress, state, restaurantId);
         this.latitude = latitude;
         this.longitude = longitude;
     }

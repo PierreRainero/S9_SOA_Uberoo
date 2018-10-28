@@ -18,6 +18,7 @@ import lombok.ToString;
 @ToString()
 public class NewOrder extends Message {
     public String address;
+    private Integer restaurantId;
     public List<String> food;
     public Integer id;
 
@@ -29,6 +30,6 @@ public class NewOrder extends Message {
     }
 
     public DeliveryDTO createDelivery() {
-        return new DeliveryDTO(id, address, false);
+        return new DeliveryDTO(id, address, false, restaurantId);
     }
 }

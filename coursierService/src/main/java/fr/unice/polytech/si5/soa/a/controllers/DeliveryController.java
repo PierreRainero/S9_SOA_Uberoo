@@ -55,7 +55,8 @@ public class DeliveryController {
             method = RequestMethod.PUT,
             consumes = {"application/JSON; charset=UTF-8"},
             produces = {"application/JSON; charset=UTF-8"})
-    public ResponseEntity<?> chooseDelivery(@RequestParam("coursierId") Integer coursierId, @PathVariable("deliveryId") Integer deliveryId) {
+    public ResponseEntity<?> chooseDelivery(@RequestParam("coursierId") Integer coursierId,
+                                            @PathVariable("deliveryId") Integer deliveryId) {
         try{
             return ResponseEntity.ok(this.deliveryService.assignDelivery(deliveryId,coursierId));
         }catch (Exception e){

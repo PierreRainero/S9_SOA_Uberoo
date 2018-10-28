@@ -15,4 +15,6 @@ public interface IDeliveryDao {
 	Delivery updateDelivery(Delivery deliveryToUpdate);
 	Optional<Delivery> findDeliveryById(int id);
 	List<Delivery> getDeliveriesToDo();
+
+    List<Delivery> getDeliveriesDoneBy(Integer idCoursier);
 }

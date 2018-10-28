@@ -84,14 +84,25 @@ public class DeliveryDaoImpl implements IDeliveryDao {
 	}
 
 	@Override
-	public List<Delivery> getDeliveriesToDo() {
-		Session session = sessionFactory.getCurrentSession();
-		CriteriaBuilder builder = session.getCriteriaBuilder();
-		CriteriaQuery<Delivery> criteria = builder.createQuery(Delivery.class);
-		Root<Delivery> root =  criteria.from(Delivery.class);
-		criteria.select(root).where(builder.equal(root.get("state"), false));
-		Query<Delivery> query = session.createQuery(criteria);
-		
-		return query.getResultList();
-	}
+    public List<Delivery> getDeliveriesToDo() {
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Delivery> criteria = builder.createQuery(Delivery.class);
+        Root<Delivery> root =  criteria.from(Delivery.class);
+        criteria.select(root).where(builder.equal(root.get("state"), false));
+        Query<Delivery> query = session.createQuery(criteria);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Delivery> getDeliveriesDoneBy(Integer idCoursier) {
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Delivery> criteria = builder.createQuery(Delivery.class);
+        Root<Delivery> root = criteria.from(Delivery.class);
+        criteria.select(root).where(builder.equal(root.get("coursier_id"), idCoursier));
+        Query<Delivery> query = session.createQuery(criteria);
+        return query.getResultList();
+    }
 }

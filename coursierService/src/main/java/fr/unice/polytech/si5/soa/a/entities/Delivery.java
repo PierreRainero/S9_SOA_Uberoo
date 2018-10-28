@@ -38,6 +38,12 @@ public class Delivery implements Serializable {
     @Column(name = "id")
     private int id;
 
+    @Column(name = "coursier_id")
+    private Integer coursierId;
+
+    @Column(name = "restaurant_id")
+    private Integer restaurantId;
+
     @Column(name = "deliveryAddress", nullable = false)
     private String deliveryAddress;
 
@@ -49,9 +55,6 @@ public class Delivery implements Serializable {
 
     @Column(name = "longitude")
     private Double longitude;
-
-    @Column(name = "coursier_id")
-    private Integer coursierId;
 
     @Column(name = "coursierGetPaid")
     private Boolean coursierGetPaid;
@@ -69,9 +72,10 @@ public class Delivery implements Serializable {
     public Delivery(DeliveryDTO data) {
         this.deliveryAddress = data.getDeliveryAddress();
         this.state = data.isState();
+        this.restaurantId = data.getRestaurantId();
     }
 
     public DeliveryDTO toDTO() {
-        return new DeliveryDTO(id, deliveryAddress, state, latitude, longitude);
+        return new DeliveryDTO(id, deliveryAddress, state, latitude, longitude, restaurantId);
     }
 }

@@ -58,6 +58,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
             throw new UnknownCoursierException(delivery.getCoursierId().toString());
         }
         Coursier coursier = coursierWrapped.get();
+        coursier.setCurrentDeliveryId(null);
         delivery.setState(deliveryToUpdate.isState());
         delivery.setDeliveryDate(new Date());
 	    OrderDelivered orderDelivered = new OrderDelivered()
@@ -67,6 +68,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
                 .addAccount(coursier.getAccountNumber());
 
         messageProducer.sendMessage(orderDelivered);
+        coursierDao.updateCoursier(coursier);
         return deliveryDao.updateDelivery(delivery).toDTO();
     }
 
@@ -116,7 +118,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
 
         delivery.setCoursierId(coursierId);
         delivery.setCreationDate(new Date());
-        coursier.setCurrentDeliveryId(deliveryId);
+        coursier.addDelivery(delivery);
         this.coursierDao.updateCoursier(coursier);
         return this.deliveryDao.updateDelivery(delivery).toDTO();
     }

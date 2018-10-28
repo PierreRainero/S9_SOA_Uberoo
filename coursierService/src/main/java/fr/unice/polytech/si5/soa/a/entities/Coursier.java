@@ -3,11 +3,16 @@ package fr.unice.polytech.si5.soa.a.entities;
 import fr.unice.polytech.si5.soa.a.communication.CoursierDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.NONE;
 
 /**
  * Class Coursier
@@ -16,7 +21,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Entity
 @Data
-@Table(name = "`DELIVERY`")
+@Table(name = "`COURSIER`")
 @EqualsAndHashCode(exclude = {"id"})
 @ToString()
 public class Coursier {
@@ -37,6 +42,11 @@ public class Coursier {
     @Column(name = "longitude")
     private Double longitude;
 
+    @Setter(NONE)
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "coursier")
+    @ToString.Exclude
+    private List<Delivery> deliveries = new ArrayList<>();
+
     @Column(name = "current_delivery")
     private Integer currentDeliveryId;
 
@@ -45,5 +55,9 @@ public class Coursier {
 
     public CoursierDto toDto(){
         return new CoursierDto(id,name,accountNumber,latitude,longitude,currentDeliveryId);
+    }
+
+    public void addDelivery(Delivery delivery) {
+        this.deliveries.add(delivery);
     }
 }
