@@ -28,7 +28,7 @@ public class Coursier {
     private String name;
 
     @Column(name = "account_number", nullable = false)
-    private String account_number;
+    private String accountNumber;
 
     @Column(name = "latitude")
     private Double latitude;

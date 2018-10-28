@@ -23,7 +23,7 @@ public class CoursierServiceImpl implements ICoursierService {
         if (coursierWrapped.isPresent()){
             return coursierWrapped.get();
         }else{
-            throw new UnknowCoursierException("Can't find the coursier with id : " + idCoursier);
+            throw new UnknowCoursierException(idCoursier.toString());
         }
     }
 }

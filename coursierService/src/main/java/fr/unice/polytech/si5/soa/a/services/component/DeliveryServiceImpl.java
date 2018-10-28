@@ -3,8 +3,11 @@ package fr.unice.polytech.si5.soa.a.services.component;
 import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
 import fr.unice.polytech.si5.soa.a.communication.OrderDelivered;
 import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
+import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
+import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowDeliveryException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +36,9 @@ public class DeliveryServiceImpl implements IDeliveryService {
     private IDeliveryDao deliveryDao;
 
     @Autowired
+    private ICoursierDao coursierDao;
+
+    @Autowired
     private MessageProducer messageProducer;
 
     @Override
@@ -40,14 +47,25 @@ public class DeliveryServiceImpl implements IDeliveryService {
     }
 
     @Override
-    public DeliveryDTO updateDelivery(DeliveryDTO deliveryToUpdate) throws UnknowDeliveryException {
+    public DeliveryDTO updateDelivery(DeliveryDTO deliveryToUpdate) throws UnknowDeliveryException, UnknowCoursierException {
         Optional<Delivery> deliveryWrapped = deliveryDao.findDeliveryById(deliveryToUpdate.getId());
         if (!deliveryWrapped.isPresent()) {
             throw new UnknowDeliveryException("Can't find delivery with id = " + deliveryToUpdate.getId());
         }
         Delivery delivery = deliveryWrapped.get();
+
+        Optional<Coursier> coursierWrapped = this.coursierDao.findCoursierById(delivery.getCoursierId());
+        if (!coursierWrapped.isPresent()){
+            throw new UnknowCoursierException(delivery.getCoursierId().toString());
+        }
+        Coursier coursier = coursierWrapped.get();
         delivery.setState(deliveryToUpdate.isState());
-	    OrderDelivered orderDelivered = new OrderDelivered(delivery.getDeliveryAddress(),delivery.getId());
+	    OrderDelivered orderDelivered = new OrderDelivered()
+                .addAddress(delivery.getDeliveryAddress())
+                .addDate(new Date())
+                .addDeliveryId(delivery.getId())
+                .addAccount(coursier.getAccountNumber());
+
         messageProducer.sendMessage(orderDelivered);
         return deliveryDao.updateDelivery(delivery).toDTO();
     }
