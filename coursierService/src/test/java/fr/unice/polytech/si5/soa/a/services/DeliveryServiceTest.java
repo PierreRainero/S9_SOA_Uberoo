@@ -139,6 +139,7 @@ public class DeliveryServiceTest {
         when(iCoursierDaoMock.findCoursierById(coursier.getId())).thenReturn(Optional.of(coursier));
         MessageProducer spy = Mockito.spy(messageProducerMock);
         doNothing().when(spy).sendMessage(any(Message.class));
+        deliveryTodo.setCoursierId(coursier.getId());
         DeliveryDTO returnedDelivery = deliveryService.updateDelivery(deliveryTodo.toDTO());
         assertNotEquals(returnedDelivery, deliveryTodo.toDTO());
         assertEquals(returnedDelivery, deliveryDone.toDTO());

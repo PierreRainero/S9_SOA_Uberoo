@@ -117,7 +117,7 @@ public class ApplicationConfiguration {
 	public ConcurrentKafkaListenerContainerFactory<String, NewOrder> newOrderConcurrentKafkaListenerContainerFactory() {
 		ConcurrentKafkaListenerContainerFactory<String, NewOrder> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(newOrderConsumerFactory("restaurant"));
-		factory.setRecordFilterStrategy(record -> record.value()
+		factory.setRecordFilterStrategy(record -> !record.value()
 					.getType().equals(NewOrder.messageType));
 		return factory;
 	}
@@ -134,7 +134,7 @@ public class ApplicationConfiguration {
 	public ConcurrentKafkaListenerContainerFactory<String, OrderDelivered> orderDeliveredConcurrentKafkaListenerContainerFactory() {
 		ConcurrentKafkaListenerContainerFactory<String, OrderDelivered> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(orderDeliveredConsumerFactory("restaurant"));
-		factory.setRecordFilterStrategy(record -> record.value()
+		factory.setRecordFilterStrategy(record -> !record.value()
 				.getType().equals(OrderDelivered.messageType));
 		return factory;
 	}

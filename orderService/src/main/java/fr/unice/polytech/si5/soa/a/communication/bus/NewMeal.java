@@ -11,9 +11,10 @@ import lombok.ToString;
  * @author Joël CANCELA VAZ
  */
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 @ToString()
 public class NewMeal extends Message {
+	public static String messageType = "NEW_MEAL";
 	private String name;
 	private String restaurantName;
 	private String restaurantAddress;
@@ -23,10 +24,10 @@ public class NewMeal extends Message {
 	}
 
 	public NewMeal(MealDTO meal, String restaurantName, String restaurantAddress) {
-		type = "NEW_MEAL";
+		type = messageType;
 
 		name = meal.getName();
-		this.restaurantName =  restaurantName;
+		this.restaurantName = restaurantName;
 		this.restaurantAddress = restaurantAddress;
 	}
 }

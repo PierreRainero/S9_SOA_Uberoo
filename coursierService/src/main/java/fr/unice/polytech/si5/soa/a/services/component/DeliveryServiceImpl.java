@@ -56,7 +56,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
 
         Optional<Coursier> coursierWrapped = this.coursierDao.findCoursierById(delivery.getCoursierId());
         if (!coursierWrapped.isPresent()){
-            throw new UnknownCoursierException(delivery.getCoursierId().toString());
+            throw new UnknownCoursierException(deliveryToUpdate.getCoursierId().toString());
         }
         Coursier coursier = coursierWrapped.get();
         coursier.updateDelivery(delivery);

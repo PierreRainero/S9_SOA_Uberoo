@@ -14,6 +14,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper=true)
 @ToString()
 public class NewRestaurant extends Message {
+	public static String messageType = "NEW_RESTAURANT";
 	private String name;
 	private String address;
 
@@ -22,7 +23,7 @@ public class NewRestaurant extends Message {
 	}
 
 	public NewRestaurant(RestaurantDTO restaurant) {
-		type = "NEW_RESTAURANT";
+		type = messageType;
 
 		name = restaurant.getName();
 		address = restaurant.getRestaurantAddress();

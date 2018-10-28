@@ -1,13 +1,13 @@
 package fr.unice.polytech.si5.soa.a.communication.bus;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.OrderDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class name	NewOrder
@@ -22,6 +22,7 @@ public class NewOrder extends Message {
 	private String restaurantName;
 	private String restaurantAddress;
 	private List<String> food;
+	public static String messageType = "NEW_ORDER";
 	
 	/**
 	 * Default constructor
@@ -39,7 +40,7 @@ public class NewOrder extends Message {
 		
 		food = new ArrayList<>();
 		
-		type = "NEW_ORDER";
+		type = messageType;
 		address = order.getDeliveryAddress();
 
 		for(MealDTO meal : order.getMeals()) {

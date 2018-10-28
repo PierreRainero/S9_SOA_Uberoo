@@ -8,26 +8,27 @@ import lombok.ToString;
 /**
  * Class name	NewMeal
  * Date			23/10/2018
- * @author		PierreRainero
  *
+ * @author PierreRainero
  */
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 @ToString()
 public class NewMeal extends Message {
 	private String name;
 	private String restaurantName;
 	private String restaurantAddress;
-	
+	public static String messageType = "NEW_MEAL";
+
 	public NewMeal() {
-		
+
 	}
-	
+
 	public NewMeal(MealDTO meal, String restaurantName, String restaurantAddress) {
-		type = "NEW_MEAL";
-		
+		type = messageType;
+
 		name = meal.getName();
-		this.restaurantName =  restaurantName;
+		this.restaurantName = restaurantName;
 		this.restaurantAddress = restaurantAddress;
 	}
 }

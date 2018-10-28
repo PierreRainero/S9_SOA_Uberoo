@@ -50,12 +50,6 @@ public class MessageListener {
 		latch.countDown();
 	}
 
-	@KafkaListener(topics = "${message.topic.name}", containerFactory = "topicKafkaListenerContainerFactory")
-	public void listenGroupOrder(Message message) {
-		System.out.println("Received Message in group 'order': " + message);
-		latch.countDown();
-	}
-
 	public CountDownLatch getLatch() {
 		return latch;
 	}

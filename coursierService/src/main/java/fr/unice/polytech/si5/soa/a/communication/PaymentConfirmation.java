@@ -14,9 +14,11 @@ import lombok.ToString;
 @ToString()
 public class PaymentConfirmation extends Message {
 
-    private int id;
-    private boolean status;
+	public static String messageType = "PAYMENT_CONFIRMATION";
+	private int id;
+	private boolean status;
 
-    public PaymentConfirmation() {
-    }
+	public PaymentConfirmation() {
+		type = messageType;
+	}
 }

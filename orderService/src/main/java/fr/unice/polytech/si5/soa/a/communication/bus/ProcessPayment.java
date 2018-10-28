@@ -8,15 +8,17 @@ import lombok.ToString;
 /**
  * Class name	ProcessPayment
  * Date			21/10/2018
- * @author		PierreRainero
+ *
+ * @author PierreRainero
  */
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 @ToString()
 public class ProcessPayment extends Message {
 	private int id;
 	private String account;
 	private double amount;
+	public static String messageType = "PROCESS_PAYMENT";
 
 	/**
 	 * Default constructor
@@ -24,17 +26,18 @@ public class ProcessPayment extends Message {
 	public ProcessPayment() {
 		// Default constructor for Jackson databinding
 	}
-	
+
 	/**
 	 * Normal constructor for an "PROCESS_PAYMENT" message
 	 */
 	/**
 	 * Normal constructor for an "PROCESS_PAYMENT" message
+	 *
 	 * @param payment {@link PaymentDTO} to use to construct the message
 	 */
 	public ProcessPayment(PaymentDTO payment) {
-		type = "PROCESS_PAYMENT";
-		
+		type = messageType;
+
 		this.id = payment.getId();
 		this.account = payment.getAccount();
 		this.amount = payment.getAmount();

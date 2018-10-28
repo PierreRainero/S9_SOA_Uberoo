@@ -45,7 +45,7 @@ public class Coursier {
     private Double longitude;
 
     @Setter(NONE)
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "coursier")
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "coursierId")
     @ToString.Exclude
     private List<Delivery> deliveries = new ArrayList<>();
 
