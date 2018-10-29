@@ -86,4 +86,35 @@ public class OrderServiceImpl implements IOrderService {
 		return restaurantWrapped.get();
 	}
 
+	@Override
+	public RestaurantOrderDTO addOrder(List<String> meals, String restaurantName, String restaurantAddress) throws UnknowRestaurantException, UnknowMealException {
+		RestaurantOrder order = new RestaurantOrder();
+		Restaurant restaurant = checkAndFindRestaurant(restaurantName, restaurantAddress);
+		order.setRestaurant(restaurant);
+		createMealsList(order, meals, restaurant);
+		
+		return orderDao.addOrder(order).toDTO();
+	}
+	
+	private Restaurant checkAndFindRestaurant(String name, String address) throws UnknowRestaurantException {
+		Optional<Restaurant> restaurantWrapped = restaurantDao.findRestaurant(name, address);
+		
+		if(!restaurantWrapped.isPresent()) {
+			throw new UnknowRestaurantException("Can't find restaurant : "+name);
+		}
+		
+		return restaurantWrapped.get();
+	}
+	
+	private void createMealsList(RestaurantOrder order, List<String> meals, Restaurant restaurant) throws UnknowMealException {
+		for (String foodName : meals) {
+			Optional<Meal> mealWrapped = mealDao.findMealByNameForRestaurant(foodName, restaurant);
+			
+			if(!mealWrapped.isPresent()) {
+				throw new UnknowMealException("Can't find meal with name = "+foodName);
+			}
+			order.addMeal(mealWrapped.get());
+		}
+	}
+
 }

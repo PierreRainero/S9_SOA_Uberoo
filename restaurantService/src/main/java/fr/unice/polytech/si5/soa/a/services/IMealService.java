@@ -17,7 +17,6 @@ import java.util.List;
  */
 public interface IMealService {
 	MealDTO addMeal(MealDTO meal, int restaurantId) throws UnknowRestaurantException;
-    MealDTO findMealByName(String name) throws UnknowMealException;
     
     FeedbackDTO addFeedback(FeedbackDTO feedbackToAdd, int mealID) throws UnknowMealException;
     FeedbackDTO addFeedback(FeedbackDTO feedbackToAdd, String mealName, String restaurantMeal, String restaurantAddress) throws UnknowMealException, UnknowRestaurantException;

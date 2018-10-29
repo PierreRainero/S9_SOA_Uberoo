@@ -23,18 +23,8 @@ public class NewOrder extends Message {
 	 * Default constructor
 	 */
 	public NewOrder() {
-		type = messageType;
 		// Default constructor for Jackson databinding
-	}
-
-	@Override
-	public String toString() {
-		return "NewOrder{" +
-				"address='" + address + '\'' +
-				", restaurantName='" + restaurantName + '\'' +
-				", restaurantAddress='" + restaurantAddress + '\'' +
-				", food=" + food +
-				", type='" + type + '\'' +
-				'}';
+		
+		type = messageType;
 	}
 }

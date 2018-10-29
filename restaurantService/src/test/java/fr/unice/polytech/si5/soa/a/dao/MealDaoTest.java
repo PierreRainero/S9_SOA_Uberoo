@@ -120,14 +120,6 @@ public class MealDaoTest {
 	}
 	
 	@Test
-	public void findMealByName() {
-		Optional<Meal> meal = mealDao.findMealByName(ramen.getName());
-		
-		assertTrue(meal.isPresent());
-		assertEquals(ramen.getName(), meal.get().getName());
-	}
-	
-	@Test
 	public void addIngredient() {
         Ingredient ingredient = mealDao.addIngredient(pork);
 

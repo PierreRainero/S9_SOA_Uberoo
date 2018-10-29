@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -147,6 +148,45 @@ public class OrderServiceTest {
 		
 		assertThrows(UnknowRestaurantException.class, () -> {
 			orderService.getOrdersToDo(asianRestaurant.getId());
+		});
+	}
+	
+	@Test
+	public void addOrderWithoutDTOObject() throws Exception {
+		when(restaurantDaoMock.findRestaurant(anyString(), anyString())).thenReturn(Optional.of(asianRestaurant));
+		when(mealDaoMock.findMealByNameForRestaurant(anyString(), any(Restaurant.class))).thenReturn(Optional.of(ramen));
+		when(orderDaoMock.addOrder(any(RestaurantOrder.class))).thenReturn(ramenOrder);
+		
+		List<String> meals = new ArrayList<>();
+		meals.add(ramen.getName());
+		RestaurantOrderDTO restautantOrder = orderService.addOrder(meals, asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
+		assertNotNull(restautantOrder);
+		assertEquals(1, restautantOrder.getMeals().size());
+	}
+	
+	@Test
+	public void addOrderWithoutDTOObjectWithUnknowRestaurant() throws Exception {
+		when(restaurantDaoMock.findRestaurant(anyString(), anyString())).thenReturn(Optional.empty());
+		when(mealDaoMock.findMealByNameForRestaurant(anyString(), any(Restaurant.class))).thenReturn(Optional.of(ramen));
+		when(orderDaoMock.addOrder(any(RestaurantOrder.class))).thenReturn(ramenOrder);
+		
+		List<String> meals = new ArrayList<>();
+		meals.add(ramen.getName());
+		assertThrows(UnknowRestaurantException.class, () -> {
+			orderService.addOrder(meals, asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
+		});
+	}
+	
+	@Test
+	public void addOrderWithoutDTOObjectWithUnknowMeal() throws Exception {
+		when(restaurantDaoMock.findRestaurant(anyString(), anyString())).thenReturn(Optional.of(asianRestaurant));
+		when(mealDaoMock.findMealByNameForRestaurant(anyString(), any(Restaurant.class))).thenReturn(Optional.empty());
+		when(orderDaoMock.addOrder(any(RestaurantOrder.class))).thenReturn(ramenOrder);
+		
+		List<String> meals = new ArrayList<>();
+		meals.add(ramen.getName());
+		assertThrows(UnknowMealException.class, () -> {
+			orderService.addOrder(meals, asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
 		});
 	}
 }

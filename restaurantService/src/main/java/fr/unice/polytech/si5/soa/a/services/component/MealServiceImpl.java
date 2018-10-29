@@ -47,17 +47,6 @@ public class MealServiceImpl implements IMealService {
     
     @Autowired
 	private MessageProducer producer;
-    
-    @Override
-    public MealDTO findMealByName(String name) throws UnknowMealException {
-        Optional<Meal> resultWrapped = mealDao.findMealByName(name);
-
-        if(!resultWrapped.isPresent()){
-            throw new UnknowMealException("Can't find meal with name = "+name);
-        }
-
-        return resultWrapped.get().toDTO();
-    }
 
 
 	@Override

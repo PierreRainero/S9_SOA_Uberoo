@@ -13,7 +13,6 @@ import java.util.Optional;
  */
 public interface IMealDao {
 	Meal addMeal(Meal meal);
-    Optional<Meal> findMealByName(String name);
     Optional<Meal> findMealByNameForRestaurant(String name, Restaurant restaurant);
     Optional<Meal> findMealById(int id);
     

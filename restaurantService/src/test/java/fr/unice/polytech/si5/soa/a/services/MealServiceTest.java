@@ -131,23 +131,6 @@ public class MealServiceTest {
 		MealDTO meal = mealService.addMeal(ramen.toDTO(), asianRestaurant.getId());
 		assertNotNull(meal);
 	}
-
-	@Test
-	public void findMealByName() throws Exception {
-		when(mealDaoMock.findMealByName(anyString())).thenReturn(Optional.of(ramen));
-
-		MealDTO meal = mealService.findMealByName(ramen.getName());
-		assertNotNull(meal);
-	}
-
-	@Test
-	public void findNonExistingMealByName() {
-		when(mealDaoMock.findMealByName(anyString())).thenReturn(Optional.empty());
-
-		assertThrows(UnknowMealException.class, () -> {
-			mealService.findMealByName(ramen.getName());
-		});
-	}
 	
 	@Test
 	public void findFeedbackForMeal() throws Exception {
@@ -163,7 +146,7 @@ public class MealServiceTest {
 	
 	@Test
 	public void findFeedBackForNonExistingMeal() {
-		when(mealDaoMock.findMealByName(anyString())).thenReturn(Optional.empty());
+		when(mealDaoMock.findMealById(anyInt())).thenReturn(Optional.empty());
 		
 		assertThrows(UnknowMealException.class, () -> {
 			mealService.findFeedbackForMeal(ramen.getId());

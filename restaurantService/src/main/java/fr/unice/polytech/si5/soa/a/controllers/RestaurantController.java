@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;

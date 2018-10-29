@@ -21,7 +21,12 @@ import static lombok.AccessLevel.NONE;
 @EqualsAndHashCode(exclude={"id"})
 @ToString()
 public class Feedback implements Serializable {
-    @Id
+    /**
+	 * Generated UID version
+	 */
+	private static final long serialVersionUID = -3883515512791433672L;
+
+	@Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id")
     @Setter(NONE)

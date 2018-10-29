@@ -37,22 +37,6 @@ public class MealDaoImpl implements IMealDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Override
-    public Optional<Meal> findMealByName(String name) {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Meal> criteria = builder.createQuery(Meal.class);
-        Root<Meal> root =  criteria.from(Meal.class);
-        criteria.select(root).where(builder.equal(root.get("name"), name));
-        Query<Meal> query = session.createQuery(criteria);
-
-        try {
-            return Optional.of(query.getSingleResult());
-        }catch(Exception e) {
-            return Optional.empty();
-        }
-    }
-
 	@Override
 	public Optional<Meal> findMealById(int id) {
 		Session session = sessionFactory.getCurrentSession();
