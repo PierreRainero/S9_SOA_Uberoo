@@ -8,6 +8,7 @@ import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IPaymentDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.dao.IUserDao;
+import fr.unice.polytech.si5.soa.a.entities.Feedback;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Payment;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
@@ -83,7 +84,7 @@ public class TestConfiguration {
 
 		// Entities
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class, Payment.class);
+		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class, Payment.class, Feedback.class);
 		return factoryBean;
 	}
 

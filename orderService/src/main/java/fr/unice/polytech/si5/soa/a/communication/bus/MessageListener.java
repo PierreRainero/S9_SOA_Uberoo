@@ -17,6 +17,7 @@ import java.util.concurrent.CountDownLatch;
  * @author Joël CANCELA VAZ
  */
 public class MessageListener {
+	
 
 	private CountDownLatch latch = new CountDownLatch(3);
 

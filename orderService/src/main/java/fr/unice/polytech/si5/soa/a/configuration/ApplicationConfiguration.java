@@ -66,7 +66,7 @@ public class ApplicationConfiguration {
 		props.put("hibernate.dialect", env.getProperty("db.dialect"));
 
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class, Payment.class);
+		factoryBean.setAnnotatedClasses(UberooOrder.class, Meal.class, User.class, Restaurant.class, Payment.class, Feedback.class);
 		return factoryBean;
 	}
 
