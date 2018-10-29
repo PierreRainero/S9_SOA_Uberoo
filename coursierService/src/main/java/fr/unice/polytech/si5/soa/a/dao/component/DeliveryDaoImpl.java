@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.dao.component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -23,72 +24,72 @@ import fr.unice.polytech.si5.soa.a.entities.Delivery;
 
 /**
  * Class name	DeliveryDaoImpl
- * @see			IDeliveryDao
- * Date			08/10/2018
- * @author		PierreRainero
+ *
+ * @author PierreRainero
+ * @see IDeliveryDao Date			08/10/2018
  */
 @Primary
 @Repository
 @Transactional
 public class DeliveryDaoImpl implements IDeliveryDao {
-	private static Logger logger = LogManager.getLogger(DeliveryDaoImpl.class);
-	
-	@Autowired
-	private SessionFactory sessionFactory;
+    private static Logger logger = LogManager.getLogger(DeliveryDaoImpl.class);
 
-	@Override
-	public Delivery addDelivery(Delivery deliveryToAdd) {
-		Session session = sessionFactory.getCurrentSession();
+    @Autowired
+    private SessionFactory sessionFactory;
 
-		try {
-			session.save(deliveryToAdd);
-		} catch (SQLGrammarException e) {
-			session.getTransaction().rollback();
-			logger.error("Cannot execute query : addDelivery", e);
-		}
+    @Override
+    public Delivery addDelivery(Delivery deliveryToAdd) {
+        Session session = sessionFactory.getCurrentSession();
 
-		return deliveryToAdd;
-	}
+        try {
+            session.save(deliveryToAdd);
+        } catch (SQLGrammarException e) {
+            session.getTransaction().rollback();
+            logger.error("Cannot execute query : addDelivery", e);
+        }
 
-	@Override
-	public Delivery updateDelivery(Delivery deliveryToUpdate) {
-		Session session = sessionFactory.getCurrentSession();
+        return deliveryToAdd;
+    }
 
-		Delivery result = null;
-		try {
+    @Override
+    public Delivery updateDelivery(Delivery deliveryToUpdate) {
+        Session session = sessionFactory.getCurrentSession();
+
+        Delivery result = null;
+        try {
             result = (Delivery) session.merge(deliveryToUpdate);
-		} catch (SQLGrammarException e) {
-			session.getTransaction().rollback();
-			logger.error("Cannot execute query : updateDelivery", e);
-		}
+        } catch (SQLGrammarException e) {
+            session.getTransaction().rollback();
+            logger.error("Cannot execute query : updateDelivery", e);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public Optional<Delivery> findDeliveryById(int id) {
-		Session session = sessionFactory.getCurrentSession();
+    @Override
+    public Optional<Delivery> findDeliveryById(int id) {
+        Session session = sessionFactory.getCurrentSession();
 
-		Optional<Delivery> result = Optional.empty();
-		try {
-			Delivery delivery = (Delivery) session.get(Delivery.class, id);
+        Optional<Delivery> result = Optional.empty();
+        try {
+            Delivery delivery = (Delivery) session.get(Delivery.class, id);
 
-			if(delivery!=null){
-				result = Optional.of(delivery);
-			}
-		} catch (SQLGrammarException e) {
-			logger.error("Cannot execute query : findDeliveryById", e);
-		}
+            if (delivery != null) {
+                result = Optional.of(delivery);
+            }
+        } catch (SQLGrammarException e) {
+            logger.error("Cannot execute query : findDeliveryById", e);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
+    @Override
     public List<Delivery> getDeliveriesToDo() {
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Delivery> criteria = builder.createQuery(Delivery.class);
-        Root<Delivery> root =  criteria.from(Delivery.class);
+        Root<Delivery> root = criteria.from(Delivery.class);
         criteria.select(root).where(builder.equal(root.get("state"), Boolean.FALSE));
         Query<Delivery> query = session.createQuery(criteria);
 
@@ -101,8 +102,11 @@ public class DeliveryDaoImpl implements IDeliveryDao {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Delivery> criteria = builder.createQuery(Delivery.class);
         Root<Delivery> root = criteria.from(Delivery.class);
-        criteria.select(root).where(builder.equal(root.get("coursier_id"), idCoursier));
+        criteria.select(root).where(builder.equal(root.get("coursierId"), idCoursier));
         Query<Delivery> query = session.createQuery(criteria);
-        return query.getResultList();
+        return query.getResultList()
+                .stream()
+                .filter(Delivery::getState)
+                .collect(Collectors.toList());
     }
 }

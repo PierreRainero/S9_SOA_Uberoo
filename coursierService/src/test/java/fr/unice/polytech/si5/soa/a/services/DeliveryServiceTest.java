@@ -136,6 +136,7 @@ public class DeliveryServiceTest {
         when(iDeliveryDaoMock.updateDelivery(deliveryTodo)).thenReturn(deliveryDone);
         when(iDeliveryDaoMock.findDeliveryById(deliveryTodo.getId())).thenReturn(Optional.of(deliveryTodo));
         coursier.setId(5);
+        deliveryTodo.setCoursierId(coursier.getId());
         when(iCoursierDaoMock.findCoursierById(coursier.getId())).thenReturn(Optional.of(coursier));
         MessageProducer spy = Mockito.spy(messageProducerMock);
         doNothing().when(spy).sendMessage(any(Message.class));
