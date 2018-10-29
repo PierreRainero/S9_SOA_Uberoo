@@ -1,0 +1,1 @@
+echo "As Erin, I can pay directly by credit card on the platform, so that I only have to retrieve my food when delivered"
