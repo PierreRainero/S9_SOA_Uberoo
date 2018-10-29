@@ -30,7 +30,7 @@ import lombok.ToString;
 @Entity
 @Data
 @Table(name = "`USER`")
-@EqualsAndHashCode(exclude={"id"})
+@EqualsAndHashCode(exclude={"id", "feedbacks"})
 @ToString()
 public class User implements Serializable {
 	/**
@@ -54,6 +54,11 @@ public class User implements Serializable {
 	
 	@Column(name = "firstName", nullable = false)
 	private String firstName;
+	
+	@Setter(NONE)
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "author")
+	@ToString.Exclude
+	private List<Feedback> feedbacks = new ArrayList<>();
 	
 	/**
 	 * Default constructor

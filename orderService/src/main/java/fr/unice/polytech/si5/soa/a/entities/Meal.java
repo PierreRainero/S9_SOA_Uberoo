@@ -15,6 +15,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.lang.NonNull;
@@ -33,7 +34,7 @@ import lombok.ToString;
 @Entity
 @Data
 @Table(name = "`MEAL`")
-@EqualsAndHashCode(exclude={"id", "tags"})
+@EqualsAndHashCode(exclude={"id", "tags", "feedbacks"})
 @ToString()
 public class Meal implements Serializable {
 	/**
@@ -59,6 +60,11 @@ public class Meal implements Serializable {
 	
 	@Column(name = "price", nullable = false)
 	private double price;
+	
+	@Setter(NONE)
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "meal")
+	@ToString.Exclude
+	private List<Feedback> feedbacks = new ArrayList<>();
 
 	/**
 	 * Default constructor
@@ -100,5 +106,21 @@ public class Meal implements Serializable {
 	 */
 	public void removeTag(String tag) {
 		tags.remove(tag);
+	}
+	
+	/**
+	 * Add a new feedback to the meal
+	 * @param newFeedback feedback to add
+	 */
+	public void addFeedback(Feedback newFeedback) {
+		feedbacks.add(newFeedback);
+	}
+	
+	/**
+	 * Remove a feedback to the meal
+	 * @param feedbackToRemove feedback to remove
+	 */
+	public void removeFeedback(Feedback feedbackToRemove) {
+		feedbacks.remove(feedbackToRemove);
 	}
 }
