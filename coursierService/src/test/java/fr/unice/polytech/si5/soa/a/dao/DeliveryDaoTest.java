@@ -4,8 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -37,16 +40,22 @@ public class DeliveryDaoTest {
 
     private List<Delivery> deliveries;
 
+    private int coursierId = 9;
+    private int secondCoursierId = 11;
+
     @BeforeEach
     public void setUp(){
+
         deliveries = new ArrayList<>();
         deliveryToDo = new Delivery();
         deliveryToDo.setDeliveryAddress("140 sentier des hautes breguières");
+        deliveryToDo.setCoursierId(coursierId);
 
 
         deliveryDone = new Delivery();
         deliveryDone.setDeliveryAddress("5 rue de l'hôpital");
         deliveryDone.state = true;
+        deliveryDone.setCoursierId(secondCoursierId);
 
         deliveries.add(deliveryToDo);
         deliveries.add(deliveryDone);
@@ -108,5 +117,11 @@ public class DeliveryDaoTest {
         assertTrue(deliveriesToDo.size() == 2);
         assertEquals(deliveriesToDo.get(1),newDelivery);
         deliveries.add(newDelivery);
+    }
+
+    @Test
+    public void getDeliveriesDoneBy() {
+        assertEquals(this.deliveryDao.getDeliveriesDoneBy(coursierId), Collections.emptyList());
+        assertEquals(this.deliveryDao.getDeliveriesDoneBy(secondCoursierId), Collections.singletonList(deliveryDone));
     }
 }

@@ -21,7 +21,7 @@ public class MessageListener {
 
     private CountDownLatch latch = new CountDownLatch(3);
 
-    @KafkaListener(topics = "${message.topic.name}", containerFactory = "paymentContainerFactory")
+    @KafkaListener(topics = "${coursier.topic.name}", containerFactory = "paymentContainerFactory")
     public void listenNewPayment(PaymentConfirmation message) throws UnknownDeliveryException, CoursierDoesntGetPaidException {
         System.out.println("Received new payment for coursier: " + message.getId());
         deliveryService.receiveNewPayment(message);

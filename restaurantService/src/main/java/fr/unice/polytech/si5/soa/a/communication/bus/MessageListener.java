@@ -59,6 +59,7 @@ public class MessageListener {
 	@KafkaListener(topics = "${message.topic.name}", containerFactory = "orderDeliveredConcurrentKafkaListenerContainerFactory")
 	public void listenOrderDelivered(OrderDelivered orderDelivered) {
 		System.out.println("An order has been delivered "+orderDelivered.getAddress());
+		//TODO: update db order set delivered and create message process payment in topic coursier
 		latch.countDown();
 	}
 

@@ -54,10 +54,35 @@ class Bank(multiprocessing.Process):
         consumer.close()
         producer.close()
 
+class Coursier(multiprocessing.Process):
+    def __init__(self):
+        multiprocessing.Process.__init__(self)
+        self.stop_event = multiprocessing.Event()
+
+    def stop(self):
+        self.stop_event.set()
+
+    def run(self):
+        consumer = KafkaConsumer(bootstrap_servers='kafka:9092',group_id='bank',auto_offset_reset='latest',value_deserializer=lambda m: json.loads(m.decode('utf-8')))
+        consumer.subscribe(['coursier'])
+        producer = KafkaProducer(bootstrap_servers='kafka:9092')
+
+        while not self.stop_event.is_set():
+            for message in consumer:
+                if message.value['type'] == "PROCESS_PAYMENT":
+                    print("<coursier> Processing Payment for account number "+str(message.value['account'])+" of amount: "+str(message.value['amount'])+"\n",file=sys.stderr)
+                    producer.send('coursier', str.encode("{\"type\":\"PAYMENT_CONFIRMATION\",\"id\":"+str(message.value['id'])+",\"status\":true}"))
+                if self.stop_event.is_set():
+                    break
+
+        consumer.close()
+        producer.close()
+
 def main():
     tasks = [
         Topic(),
-        Bank()
+        Bank(),
+        Coursier()
     ]
 
     for t in tasks:
