@@ -5,6 +5,7 @@ import static lombok.AccessLevel.NONE;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,16 +54,20 @@ public class RestaurantOrder implements Serializable {
 	@NonNull
 	private Restaurant restaurant;
 	
+	@Column(name = "validationDate")
+	private Date validationDate;
+	
 	public RestaurantOrder() {
 		// Default constructor for JPA
 	}
 	
 	public RestaurantOrder(RestaurantOrderDTO data) {
 		this.state = data.getState();
+		this.validationDate = data.getValidationDate();
 	}
 	
 	public RestaurantOrderDTO toDTO() {
-		return new RestaurantOrderDTO(id, meals.stream().map(meal -> meal.toDTO()).collect(Collectors.toList()), state, restaurant.toDTO());
+		return new RestaurantOrderDTO(id, meals.stream().map(meal -> meal.toDTO()).collect(Collectors.toList()), state, restaurant.toDTO(), validationDate);
 	}
 
 	public void addMeal(Meal meal){

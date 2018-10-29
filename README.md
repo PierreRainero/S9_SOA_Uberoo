@@ -17,7 +17,7 @@
 ## Liste des messages
 
 **NEW_ORDER** :  
-`{"address":"410 ch de chez moi","food":["plat1","plat2"],"type":"NEW_ORDER","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`
+`{"address":"410 ch de chez moi","food":["plat1","plat2"],"type":"NEW_ORDER","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","date":"date typé en java"}`
 
 **PROCESS_PAYMENT** :  
 `{"type":"PROCESS_PAYMENT","account":"numero de compte","amount":10.0,"id":-1}`
@@ -32,4 +32,7 @@
 `{"type":"NEW_MEAL","name":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","price":10.5,"tags":["Mon tag"]}`  
 
 **NEW_FEEDBACK** :  
-`{"type":"NEW_FEEDBACK","author":"prenom nom","content":"mon avis","mealName":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`
+`{"type":"NEW_FEEDBACK","author":"prenom nom","content":"mon avis","mealName":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`  
+
+**ORDER_DELIVERED** :  
+`{"type":"ORDER_DELIVERED","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","deliveryAddress":"410 ch de chez moi","food":["plat1","plat2"],"date":"date typé en java"}`  

@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.communication;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
@@ -27,16 +28,18 @@ public class RestaurantOrderDTO implements Serializable {
 	private List<MealDTO> meals = new ArrayList<>();
 	private OrderState state = OrderState.TO_PREPARE;
 	private RestaurantDTO restaurant;
+	private Date validationDate;
 	
 	public RestaurantOrderDTO() {
 		// Default constructor for Jackson databinding
 	}
 	
-	public RestaurantOrderDTO(int id, List<MealDTO> meals, OrderState state, RestaurantDTO restaurant) {
+	public RestaurantOrderDTO(int id, List<MealDTO> meals, OrderState state, RestaurantDTO restaurant, Date validationDate) {
 		this.id = id;
 		this.meals = meals;
 		this.state = state;
 		this.restaurant = restaurant;
+		this.validationDate = validationDate;
 	}
 
 	public void addMeal(MealDTO meal){

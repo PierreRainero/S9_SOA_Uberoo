@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,11 +19,13 @@ import java.util.List;
 @EqualsAndHashCode(callSuper=true)
 @ToString()
 public class NewOrder extends Message {
+	public static String messageType = "NEW_ORDER";
+	
 	private String address;
 	private String restaurantName;
 	private String restaurantAddress;
 	private List<String> food;
-	public static String messageType = "NEW_ORDER";
+	private Date date;
 	
 	/**
 	 * Default constructor
@@ -49,5 +52,6 @@ public class NewOrder extends Message {
 		
 		restaurantName = order.getRestaurant().getName();
 		restaurantAddress = order.getRestaurant().getRestaurantAddress();
+		date = order.getValidationDate();
 	}
 }

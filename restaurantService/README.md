@@ -29,10 +29,13 @@ Java 1.8 (JEE) avec les frameworks Spring et Hibernate.
 ## Messages consommés du bus  
 
 **NEW_ORDER** :  
-`{"address":"410 ch de chez moi","food":["plat1","plat2"],"type":"NEW_ORDER","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`  
+`{"address":"410 ch de chez moi","food":["plat1","plat2"],"type":"NEW_ORDER","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","date":"date typé en java"}`  
 
 **NEW_FEEDBACK** :  
-`{"type":"NEW_FEEDBACK","author":"prenom nom","content":"mon avis","mealName":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`
+`{"type":"NEW_FEEDBACK","author":"prenom nom","content":"mon avis","mealName":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`  
+
+**ORDER_DELIVERED** :  
+`{"type":"ORDER_DELIVERED","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","deliveryAddress":"410 ch de chez moi","food":["plat1","plat2"],"date":"date typé en java"}`  
 
 ## Messages transmis au bus
 

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +62,7 @@ public class MessageListenerTest {
 	
 	private NewFeedback newFeedbackMessage;
 	private NewOrder newOrderMessage;
+	private Date validationDate;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -81,6 +83,7 @@ public class MessageListenerTest {
 		newOrderMessage.setFood(meals);
 		newOrderMessage.setRestaurantName(RESTAURANT_NAME);
 		newOrderMessage.setRestaurantAddress(RESTAURANT_ADDRESS);
+		newOrderMessage.setDate(validationDate);
 	}
 	
 	@Test
@@ -111,13 +114,18 @@ public class MessageListenerTest {
 	
 	@Test
 	public void handleNewOrderMessage() throws Exception {
-		when(orderServiceMock.addOrder(anyList(), anyString(), anyString())).thenReturn(new RestaurantOrderDTO());
+		when(orderServiceMock.addOrder(any(RestaurantOrderDTO.class), anyList(), anyString(), anyString())).thenReturn(new RestaurantOrderDTO());
 		
 		messageListener.listenNewOrder(newOrderMessage);
 		
+		ArgumentCaptor<RestaurantOrderDTO> orderCaptor = ArgumentCaptor.forClass(RestaurantOrderDTO.class);
 		ArgumentCaptor<String> restaurantNameCaptor = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<String> restaurantAddressCaptor = ArgumentCaptor.forClass(String.class);
-		verify(orderServiceMock, times(1)).addOrder(listOfStringCaptor.capture(), restaurantNameCaptor.capture(), restaurantAddressCaptor.capture());
+		verify(orderServiceMock, times(1)).addOrder(orderCaptor.capture(), listOfStringCaptor.capture(), restaurantNameCaptor.capture(), restaurantAddressCaptor.capture());
+		
+		RestaurantOrderDTO order = orderCaptor.getValue();
+		assertNotNull(order);
+		assertEquals(validationDate, order.getValidationDate());
 		
 		List<String> resultList = listOfStringCaptor.getValue();
 		assertNotNull(resultList);

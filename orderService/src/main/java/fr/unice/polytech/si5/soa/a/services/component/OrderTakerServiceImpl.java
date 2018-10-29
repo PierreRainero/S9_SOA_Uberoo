@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,6 +97,10 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 
 		UberooOrder order = orderWrapped.get();
 		order.setState(orderToUpdate.getState());
+		
+		if(orderToUpdate.getState().equals(OrderState.VALIDATED) && order.getState().equals(OrderState.WAITING)) {
+			order.setValidationDate(new Date());
+		}
 
 		order = orderDao.updateOrder(order);
 		OrderDTO result = order.toDTO();

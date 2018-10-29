@@ -3,7 +3,11 @@ package fr.unice.polytech.si5.soa.a.communication.bus.messages;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
 import java.util.List;
+
+import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
+import fr.unice.polytech.si5.soa.a.entities.OrderState;
 
 /**
  * Class name	NewOrder
@@ -13,11 +17,13 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper=true)
 public class NewOrder extends Message {
+	public static String messageType = "NEW_ORDER";
+	
 	private String address;
 	private String restaurantName;
 	private String restaurantAddress;
 	private List<String> food;
-	public static String messageType = "NEW_ORDER";
+	private Date date;
 
 	/**
 	 * Default constructor
@@ -26,5 +32,9 @@ public class NewOrder extends Message {
 		// Default constructor for Jackson databinding
 		
 		type = messageType;
+	}
+	
+	public RestaurantOrderDTO createOrder() {
+		return new RestaurantOrderDTO(-1, null, OrderState.TO_PREPARE, null, date);
 	}
 }

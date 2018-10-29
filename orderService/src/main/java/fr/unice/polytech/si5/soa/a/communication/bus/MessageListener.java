@@ -34,7 +34,7 @@ public class MessageListener {
 
 	@KafkaListener(topics = "${bank.topic.name}", containerFactory = "bankContainerFactory")
 	public void listenPaymentConfirmation(PaymentConfirmation message) {
-		System.out.println("Received payment confirmation': " + message.getId());
+		System.out.println("Received payment confirmation");
 		
 		PaymentState stateOfThePayment;
 		if(message.isStatus()) {
@@ -54,7 +54,7 @@ public class MessageListener {
 
 	@KafkaListener(topics = "${message.topic.name}", containerFactory = "restaurantContainerFactory")
 	public void listenNewRestaurant(NewRestaurant message) {
-		System.out.println("Received newRestaurant: " + message);
+		System.out.println("Received newRestaurant");
 		
 		restaurantService.addRestaurant(message.createRestaurant());
 		
@@ -63,7 +63,7 @@ public class MessageListener {
 
 	@KafkaListener(topics = "${message.topic.name}", containerFactory = "mealContainerFactory")
 	public void listenNewMeal(NewMeal message) {
-		System.out.println("Received new Meal: " + message);
+		System.out.println("Received new Meal");
 		
 		MealDTO meal = message.createMeal();
 		try {

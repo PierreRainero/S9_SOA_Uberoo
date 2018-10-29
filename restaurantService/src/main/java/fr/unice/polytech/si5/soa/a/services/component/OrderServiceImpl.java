@@ -87,8 +87,8 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public RestaurantOrderDTO addOrder(List<String> meals, String restaurantName, String restaurantAddress) throws UnknowRestaurantException, UnknowMealException {
-		RestaurantOrder order = new RestaurantOrder();
+	public RestaurantOrderDTO addOrder(RestaurantOrderDTO orderToAdd, List<String> meals, String restaurantName, String restaurantAddress) throws UnknowRestaurantException, UnknowMealException {
+		RestaurantOrder order = new RestaurantOrder(orderToAdd);
 		Restaurant restaurant = checkAndFindRestaurant(restaurantName, restaurantAddress);
 		order.setRestaurant(restaurant);
 		createMealsList(order, meals, restaurant);

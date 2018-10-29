@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -159,7 +160,9 @@ public class OrderServiceTest {
 		
 		List<String> meals = new ArrayList<>();
 		meals.add(ramen.getName());
-		RestaurantOrderDTO restautantOrder = orderService.addOrder(meals, asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
+		RestaurantOrderDTO standardOrderDTO = new RestaurantOrderDTO();
+		standardOrderDTO.setValidationDate(new Date());
+		RestaurantOrderDTO restautantOrder = orderService.addOrder(standardOrderDTO, meals, asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
 		assertNotNull(restautantOrder);
 		assertEquals(1, restautantOrder.getMeals().size());
 	}
@@ -172,8 +175,10 @@ public class OrderServiceTest {
 		
 		List<String> meals = new ArrayList<>();
 		meals.add(ramen.getName());
+		RestaurantOrderDTO standardOrderDTO = new RestaurantOrderDTO();
+		standardOrderDTO.setValidationDate(new Date());
 		assertThrows(UnknowRestaurantException.class, () -> {
-			orderService.addOrder(meals, asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
+			orderService.addOrder(standardOrderDTO, meals, asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
 		});
 	}
 	
@@ -185,8 +190,10 @@ public class OrderServiceTest {
 		
 		List<String> meals = new ArrayList<>();
 		meals.add(ramen.getName());
+		RestaurantOrderDTO standardOrderDTO = new RestaurantOrderDTO();
+		standardOrderDTO.setValidationDate(new Date());
 		assertThrows(UnknowMealException.class, () -> {
-			orderService.addOrder(meals, asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
+			orderService.addOrder(standardOrderDTO, meals, asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
 		});
 	}
 }

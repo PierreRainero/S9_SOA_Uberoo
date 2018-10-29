@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.communication.bus;
 
 import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
+import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewFeedback;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewOrder;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.OrderDelivered;
@@ -33,10 +34,11 @@ public class MessageListener {
 
 	@KafkaListener(topics = "${message.topic.name}", containerFactory = "newOrderConcurrentKafkaListenerContainerFactory")
 	public void listenNewOrder(NewOrder message) {
-		System.out.println("A new order has arrived "+message.getAddress());
+		System.out.println("A new order has arrived ");
 
+		RestaurantOrderDTO orderDTO = message.createOrder();
 		try {
-			orderService.addOrder(message.getFood(), message.getRestaurantName(), message.getRestaurantAddress());
+			orderService.addOrder(orderDTO, message.getFood(), message.getRestaurantName(), message.getRestaurantAddress());
 		} catch (UnknowRestaurantException | UnknowMealException e) {
 			logger.error(e.getMessage(), e);;
 		}
@@ -60,8 +62,8 @@ public class MessageListener {
 
 	@KafkaListener(topics = "${message.topic.name}", containerFactory = "orderDeliveredConcurrentKafkaListenerContainerFactory")
 	public void listenOrderDelivered(OrderDelivered orderDelivered) {
-		System.out.println("An order has been delivered "+orderDelivered.getAddress());
-		//TODO: update db order set delivered and create message process payment in topic coursier
+		System.out.println("An order has been delivered ");
+		//TODO
 		latch.countDown();
 	}
 

@@ -14,7 +14,7 @@ import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
  */
 public interface IOrderService {
 	RestaurantOrderDTO addOrder(RestaurantOrderDTO orderToAdd) throws UnknowRestaurantException, UnknowMealException;
-	RestaurantOrderDTO addOrder(List<String> meals, String restaurantName, String restaurantAddress) throws UnknowRestaurantException, UnknowMealException;
+	RestaurantOrderDTO addOrder(RestaurantOrderDTO orderToAdd, List<String> meals, String restaurantName, String restaurantAddress) throws UnknowRestaurantException, UnknowMealException;
 	
 	RestaurantOrderDTO updateOrder(RestaurantOrderDTO orderToUpdate) throws UnknowOrderException;
 	

@@ -3,6 +3,7 @@ package fr.unice.polytech.si5.soa.a.communication;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import fr.unice.polytech.si5.soa.a.entities.states.OrderState;
@@ -32,6 +33,7 @@ public class OrderDTO implements Serializable {
 	private OrderState state;
 	private RestaurantDTO restaurant;
 	private double price;
+	private Date validationDate;
 	
 	/**
 	 * Default constructor
@@ -51,7 +53,7 @@ public class OrderDTO implements Serializable {
 	 * @param restaurant restaurant associated to the order
 	 * @param price price of the order
 	 */
-	public OrderDTO(int id, List<MealDTO> meals, UserDTO transmitter, String deliveryAddress, Duration eta, OrderState state, RestaurantDTO restaurant, double price) {
+	public OrderDTO(int id, List<MealDTO> meals, UserDTO transmitter, String deliveryAddress, Duration eta, OrderState state, RestaurantDTO restaurant, double price, Date validationDate) {
 		this.id = id;
 		this.meals = meals;
 		this.transmitter = transmitter;
@@ -60,5 +62,6 @@ public class OrderDTO implements Serializable {
 		this.state = state;
 		this.restaurant = restaurant;
 		this.price = price;
+		this.validationDate = validationDate;
 	}
 }

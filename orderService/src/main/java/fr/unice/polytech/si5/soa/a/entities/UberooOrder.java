@@ -12,6 +12,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,6 +66,9 @@ public class UberooOrder implements Serializable {
 	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "order")
 	@ToString.Exclude
 	private List<Payment> payments = new ArrayList<>();
+	
+	@Column(name = "validationDate")
+	private Date validationDate;
 
 	/**
 	 * Default constructor
@@ -96,7 +100,8 @@ public class UberooOrder implements Serializable {
 				eta,
 				state,
 				restaurant.toDTO(),
-				getPrice());
+				getPrice(),
+				validationDate);
 	}
 
 	/**
