@@ -17,7 +17,11 @@ public class PaymentConfirmation extends Message {
 	private int id;
 	private boolean status;
 
+	/**
+	 * Default constructor
+	 */
 	public PaymentConfirmation() {
-		type=messageType;
+
+		// Default constructor for Jackson databinding
 	}
 }

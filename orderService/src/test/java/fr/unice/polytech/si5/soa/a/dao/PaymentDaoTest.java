@@ -1,5 +1,6 @@
 package fr.unice.polytech.si5.soa.a.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Payment;
+import fr.unice.polytech.si5.soa.a.entities.states.PaymentState;
 
 /**
  * Class name	PaymentDaoTest
@@ -108,5 +110,17 @@ public class PaymentDaoTest {
 	public void searchNonExistingPaymentById() {
 		Optional<Payment> result = paymentDao.findPaymentById(newPayment.getId());
 		assertFalse(result.isPresent());
+	}
+	
+	@Test
+	public void updateAPayment() {
+		assertEquals(PaymentState.SENT, alreadySavedPayment.getState());
+		
+		Session session = sessionFactory.openSession();
+		session.evict(alreadySavedPayment);
+		alreadySavedPayment.setState(PaymentState.REFUSED);
+	
+		Payment payment = paymentDao.updatePayment(alreadySavedPayment);
+		assertEquals(PaymentState.REFUSED, payment.getState());
 	}
 }

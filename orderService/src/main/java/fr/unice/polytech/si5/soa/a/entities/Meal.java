@@ -71,7 +71,7 @@ public class Meal implements Serializable {
 	 * Normal construtor using Data Transfert Object
 	 * @param mealDatas DTO for {@link Meal}
 	 */
-	public Meal(MealDTO mealDatas, List<String> tags) {
+	public Meal(MealDTO mealDatas) {
 		this.name = mealDatas.getName();
 		this.tags = mealDatas.getTags();
 	}

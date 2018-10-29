@@ -24,4 +24,11 @@ public interface IPaymentDao {
 	 * @return the payment wrapped in an {@link Optional} if the payment exists, Optional.empty() otherwise
 	 */
 	Optional<Payment> findPaymentById(int idToSearch);
+	
+	/**
+	 * Update a payment in the database
+	 * @param updatedPayment payment with the new datas
+	 * @return updated payment
+	 */
+	Payment updatePayment (Payment updatedPayment);
 }

@@ -1,4 +1,4 @@
-# Order Service v1.1
+# Order Service v1.2
 
 ## Description
 
@@ -28,6 +28,17 @@ Java 1.8 (JEE) avec les frameworks Spring et Hibernate.
 `/restaurants/{restaurantId}/meals` :  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- GET (content-type : JSON, encoding : UTF-8)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Permet de trouver tous les plats d'un restaurant (dont l'identifiant est dans l'URI)
+
+## Messages consommés du bus  
+
+**NEW_RESTAURANT** :  
+`{"type":"NEW_RESTAURANT","name":"Mon restaurant","address":"25 rue du restaurant"}`
+
+**NEW_MEAL** :  
+`{"type":"NEW_MEAL","name":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","price":10.5,"tags":["Mon tag"]}`
+
+**PAYMENT_CONFIRMATION** :  
+`{"type":"PAYMENT_CONFIRMATION","status":true,"id":-1}`
 
 ## Messages transmis au bus
 

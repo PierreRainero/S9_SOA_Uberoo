@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.communication.bus.Message;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageListener;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
@@ -112,6 +113,13 @@ public class TestConfiguration {
     public KafkaTemplate<String, Message> messageKafkaTemplate() {
         return new KafkaTemplate<>(messageProducerFactory());
     }
+    
+	//Listener
+	@Bean
+	@Primary
+	public MessageListener messageListener() {
+		return new MessageListener();
+	}
 
 	@Qualifier("mock")
 	@Bean

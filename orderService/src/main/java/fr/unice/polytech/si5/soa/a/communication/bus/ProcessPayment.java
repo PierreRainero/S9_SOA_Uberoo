@@ -26,10 +26,15 @@ public class ProcessPayment extends Message {
 	public ProcessPayment() {
 		// Default constructor for Jackson databinding
 	}
+<<<<<<< HEAD
+	
+
+=======
 
 	/**
 	 * Normal constructor for an "PROCESS_PAYMENT" message
 	 */
+>>>>>>> 0f33745a734b4d9a65b7907eb9b3e53f5d487631
 	/**
 	 * Normal constructor for an "PROCESS_PAYMENT" message
 	 *

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
 /**
@@ -51,6 +52,23 @@ public class RestaurantDaoImpl implements IRestaurantDao{
 		}
 
 		return restaurantToAdd;
+	}
+	
+	@Override
+	/**
+     * {@inheritDoc}
+     */
+	public Meal addMeal(Meal mealToAdd) {
+		Session session = sessionFactory.getCurrentSession();
+
+		try {
+			session.save(mealToAdd);
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+			logger.error("Cannot execute query : addMeal", e);
+		}
+
+		return mealToAdd;
 	}
 
 	@Override
@@ -106,4 +124,26 @@ public class RestaurantDaoImpl implements IRestaurantDao{
 		return query.getResultList();
 	}
 
+	@Override
+	/**
+     * {@inheritDoc}
+     */
+	public Optional<Restaurant> findRestaurantByNameAndAddress(String name, String address) {
+		Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Restaurant> criteria = builder.createQuery(Restaurant.class);
+        Root<Restaurant> root =  criteria.from(Restaurant.class);
+        criteria.select(root).where(
+        		builder.and(
+        				builder.equal(root.get("name"), name), 
+        				builder.equal(root.get("restaurantAddress"), address)
+        				));
+        Query<Restaurant> query = session.createQuery(criteria);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        }catch(Exception e) {
+            return Optional.empty();
+        }
+	}
 }

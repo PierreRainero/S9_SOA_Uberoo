@@ -3,6 +3,7 @@ package fr.unice.polytech.si5.soa.a.dao;
 import java.util.List;
 import java.util.Optional;
 
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
 /**
@@ -20,11 +21,26 @@ public interface IRestaurantDao {
 	Restaurant addRestaurant(Restaurant restaurantToAdd);
 	
 	/**
+	 * Add an {@link Meal} into the database
+	 * @param mealToAdd meal to add
+	 * @return the saved meal
+	 */
+	Meal addMeal(Meal mealToAdd);
+	
+	/**
 	 * Search a restaurant in the database using his id
 	 * @param id id to use
 	 * @return the restaurant wrapped in an {@link Optional} if the restaurant exists, Optional.empty() otherwise
 	 */
 	Optional<Restaurant> findRestaurantById(int id);
+	
+	/**
+	 * Search a restaurant using his name and his address
+	 * @param name name of the searched restaurant
+	 * @param address address of the searched restaurant
+	 * @return the restaurant wrapped in an {@link Optional} if the restaurant exists, Optional.empty() otherwise
+	 */
+	Optional<Restaurant> findRestaurantByNameAndAddress(String name, String address);
 	
 	/**
 	 * Search restaurants in the database using their names

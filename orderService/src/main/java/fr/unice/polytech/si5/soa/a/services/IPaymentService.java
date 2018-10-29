@@ -1,7 +1,7 @@
 package fr.unice.polytech.si5.soa.a.services;
 
 import fr.unice.polytech.si5.soa.a.communication.PaymentDTO;
-import fr.unice.polytech.si5.soa.a.communication.bus.PaymentConfirmation;
+import fr.unice.polytech.si5.soa.a.entities.states.PaymentState;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowPaymentException;
 
@@ -28,6 +28,21 @@ public interface IPaymentService {
 	 * @throws UnknowPaymentException if the payment doesn't exist
 	 */
 	PaymentDTO findPaymentById(int idToSearch) throws UnknowPaymentException;
-
-	PaymentDTO updatePayment(PaymentConfirmation message) throws UnknowPaymentException;
+	
+	/**
+	 * Update a payment in the system
+	 * @param paymentUpdated payment to use to update the payment in the system
+	 * @return the updated payment
+	 * @throws UnknowPaymentException if the payment doesn't exist
+	 */
+	PaymentDTO updatePayment(PaymentDTO paymentUpdated) throws UnknowPaymentException;
+	
+	/**
+	 * Update a payment in the system
+	 * @param paymentId id of the payment to update
+	 * @param paymentState new state of the payment
+	 * @return the updated payment
+	 * @throws UnknowPaymentException if the payment doesn't exist
+	 */
+	PaymentDTO updatePaymentStatus(int paymentId, PaymentState paymentState) throws UnknowPaymentException;
 }
