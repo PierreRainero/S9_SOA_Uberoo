@@ -20,5 +20,6 @@ public interface IMealService {
     MealDTO findMealByName(String name) throws UnknowMealException;
     
     FeedbackDTO addFeedback(FeedbackDTO feedbackToAdd, int mealID) throws UnknowMealException;
+    FeedbackDTO addFeedback(FeedbackDTO feedbackToAdd, String mealName, String restaurantMeal, String restaurantAddress) throws UnknowMealException, UnknowRestaurantException;
     List<FeedbackDTO> findFeedbackForMeal(int mealId) throws UnknowMealException;
 }

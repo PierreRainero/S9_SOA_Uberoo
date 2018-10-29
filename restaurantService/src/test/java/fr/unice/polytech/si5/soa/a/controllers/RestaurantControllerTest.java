@@ -157,40 +157,6 @@ public class RestaurantControllerTest {
 	}
 	
 	@Test
-	public void addFeedBackUsingHTTPPost() throws Exception {
-		when(mealServiceMock.addFeedback(any(FeedbackDTO.class), anyInt())).thenReturn(feedback.toDTO());
-		
-		mockMvc.perform(post(BASE_URI+"/1/meals/2/feedbacks")
-	               .contentType(TestUtil.APPLICATION_JSON_UTF8)
-	               .content(TestUtil.convertObjectToJsonBytes(feedback.toDTO()))
-	        ).andExpect(status().isOk())
-		     .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
-		
-		ArgumentCaptor<FeedbackDTO> feedbackCaptor = ArgumentCaptor.forClass(FeedbackDTO.class);
-        ArgumentCaptor<Integer> mealIdCaptor = ArgumentCaptor.forClass(Integer.class);
-        verify(mealServiceMock, times(1)).addFeedback(feedbackCaptor.capture(), mealIdCaptor.capture());
-        verifyNoMoreInteractions(mealServiceMock);
-        
-        FeedbackDTO feedbackReceived = feedbackCaptor.getValue();
-        assertNotNull(feedbackReceived);
-        assertEquals(feedback.getContent(), feedbackReceived.getContent());
-        
-        Integer mealId = mealIdCaptor.getValue();
-        assertEquals(new Integer(2), mealId);
-	}
-	
-	@Test
-	public void addFeedBackOnNonExistingMealUsingHTTPPost() throws Exception {
-		when(mealServiceMock.addFeedback(any(FeedbackDTO.class), anyInt())).thenThrow(new UnknowMealException(ERROR_MEAL_NOT_FOUND));
-		
-		mockMvc.perform(post(BASE_URI+"/1/meals/2/feedbacks")
-	               .contentType(TestUtil.APPLICATION_JSON_UTF8)
-	               .content(TestUtil.convertObjectToJsonBytes(feedback.toDTO()))
-	        ).andExpect(status().isNotFound())
-		     .andExpect(content().string(ERROR_MEAL_NOT_FOUND));
-	}
-	
-	@Test
 	public void searchFeedbackForAMealUsingHTTPGet() throws Exception {
 		List<FeedbackDTO> resultMocked = new ArrayList<>();
 		resultMocked.add(feedback.toDTO());

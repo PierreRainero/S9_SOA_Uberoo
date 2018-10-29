@@ -24,8 +24,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
-import fr.unice.polytech.si5.soa.a.communication.bus.Message;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.Message;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;

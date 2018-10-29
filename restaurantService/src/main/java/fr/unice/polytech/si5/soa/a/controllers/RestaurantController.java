@@ -62,24 +62,6 @@ public class RestaurantController {
 	}
 	
 	@RequestMapping(value = "/{restaurantId}/meals/{mealId}/feedbacks",
-			method = RequestMethod.POST,
-			consumes = {HEADERS},
-			produces = {HEADERS})
-	public ResponseEntity<?> addFeedback(
-			@PathVariable("restaurantId") String restaurantId,
-			@PathVariable("mealId") String mealId,
-			@RequestBody FeedbackDTO feedback) {
-		int mealIdAsInt = Integer.parseInt(mealId);
-		
-		try {
-			return ResponseEntity.ok(mealService.addFeedback(feedback, mealIdAsInt));
-		} catch (UnknowMealException e) {
-			logger.error(e.getMessage(), e);
-			return ResponseEntity.status(404).body(e.getMessage());
-		}
-	}
-	
-	@RequestMapping(value = "/{restaurantId}/meals/{mealId}/feedbacks",
 			method = RequestMethod.GET,
 			consumes = {HEADERS},
 			produces = {HEADERS})

@@ -4,7 +4,7 @@ import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import fr.unice.polytech.si5.soa.a.communication.IngredientDTO;
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
-import fr.unice.polytech.si5.soa.a.communication.bus.NewMeal;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewMeal;
 import fr.unice.polytech.si5.soa.a.dao.IFeedbackDao;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
@@ -112,5 +112,34 @@ public class MealServiceImpl implements IMealService {
 		}
 		
 		return ingredient.get();
+	}
+
+
+	@Override
+	public FeedbackDTO addFeedback(FeedbackDTO feedbackToAdd, String mealName, String restaurantMeal, String restaurantAddress) throws UnknowMealException, UnknowRestaurantException {
+		Feedback feedback = new Feedback(feedbackToAdd);
+		Restaurant restaurant = checkAndFindRestaurant(restaurantMeal, restaurantAddress);
+		feedback.setMeal(checkAndFindMealForRestaurant(mealName, restaurant));
+		
+		return feedbackDao.addFeedback(feedback).toDTO();
+	}
+	
+	private Restaurant checkAndFindRestaurant(String name, String address) throws UnknowRestaurantException {
+		Optional<Restaurant> restaurantWrapped = restaurantDao.findRestaurant(name, address);
+		
+		if(!restaurantWrapped.isPresent()) {
+			throw new UnknowRestaurantException("Can't find restaurant : "+name);
+		}
+		
+		return restaurantWrapped.get();
+	}
+	
+	private Meal checkAndFindMealForRestaurant(String name, Restaurant restaurant) throws UnknowMealException {
+		Optional<Meal> resultWrapped = mealDao.findMealByNameForRestaurant(name, restaurant);
+		 if(!resultWrapped.isPresent()){
+	            throw new UnknowMealException("Can't find meal with name = "+name);
+	     }
+		 
+		 return resultWrapped.get();
 	}
 }

@@ -1,7 +1,9 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
-import fr.unice.polytech.si5.soa.a.communication.bus.Message;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageListener;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.Message;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewFeedback;
 import fr.unice.polytech.si5.soa.a.dao.IFeedbackDao;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
@@ -21,7 +23,9 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +35,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -109,6 +117,29 @@ public class TestConfiguration {
     public KafkaTemplate<String, Message> messageKafkaTemplate() {
         return new KafkaTemplate<>(messageProducerFactory());
     }
+    
+	@Bean
+	@Primary
+	public MessageListener messageListener() {
+		return new MessageListener();
+	}
+	
+	public ConsumerFactory<String, NewFeedback> newFeedbackConsumerFactory(String groupId) {
+		Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(NewFeedback.class));
+
+	}
+	
+	@Bean
+	public ConcurrentKafkaListenerContainerFactory<String, NewFeedback> newFeedbackConcurrentKafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, NewFeedback> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(newFeedbackConsumerFactory("restaurant"));
+		factory.setRecordFilterStrategy(record -> !record.value()
+					.getType().equals(NewFeedback.messageType));
+		return factory;
+	}
     
     @Qualifier("mock")
 	@Bean

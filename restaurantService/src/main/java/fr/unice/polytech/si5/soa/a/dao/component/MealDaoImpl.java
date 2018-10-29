@@ -3,6 +3,7 @@ package fr.unice.polytech.si5.soa.a.dao.component;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.entities.Ingredient;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.SQLGrammarException;
@@ -106,6 +107,26 @@ public class MealDaoImpl implements IMealDao {
         Root<Ingredient> root =  criteria.from(Ingredient.class);
         criteria.select(root).where(builder.equal(root.get("name"), name));
         Query<Ingredient> query = session.createQuery(criteria);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        }catch(Exception e) {
+            return Optional.empty();
+        }
+	}
+
+	@Override
+	public Optional<Meal> findMealByNameForRestaurant(String name, Restaurant restaurant) {
+		Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Meal> criteria = builder.createQuery(Meal.class);
+        Root<Meal> root =  criteria.from(Meal.class);
+        criteria.select(root).where(
+        		builder.and(
+        				builder.equal(root.get("name"), name), 
+        				builder.equal(root.get("restaurant"), restaurant)
+        				));
+        Query<Meal> query = session.createQuery(criteria);
 
         try {
             return Optional.of(query.getSingleResult());

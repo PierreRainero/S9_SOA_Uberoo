@@ -1,6 +1,7 @@
 package fr.unice.polytech.si5.soa.a.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -151,4 +152,16 @@ public class MealDaoTest {
 		assertTrue(ingredient.isPresent());
 		assertEquals(pork.getName(), ingredient.get().getName());
     }
+	
+	@Test
+	public void findExistingMealByNameForRestaurant() {
+		Optional<Meal> result = mealDao.findMealByNameForRestaurant(ramen.getName(), asianRestaurant);
+		assertTrue(result.isPresent());
+	}
+	
+	@Test
+	public void findNonExistingMealByNameForRestaurant() {
+		Optional<Meal> result = mealDao.findMealByNameForRestaurant(sushis.getName(), asianRestaurant);
+		assertFalse(result.isPresent());
+	}
 }

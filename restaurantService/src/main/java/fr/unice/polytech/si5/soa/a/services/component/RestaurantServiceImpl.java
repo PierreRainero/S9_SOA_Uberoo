@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
-import fr.unice.polytech.si5.soa.a.communication.bus.NewRestaurant;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewRestaurant;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;

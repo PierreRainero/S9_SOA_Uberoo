@@ -27,8 +27,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
-import fr.unice.polytech.si5.soa.a.communication.bus.Message;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.Message;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.IFeedbackDao;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
@@ -178,5 +178,38 @@ public class MealServiceTest {
 		FeedbackDTO result = mealService.addFeedback(feedback.toDTO(), ramen.getId());
 		assertNotNull(result);
 		assertEquals(feedback.getContent(), result.getContent());
+	}
+	
+	@Test
+	public void addFeedbackWithoutAnyId() throws Exception {
+		when(restaurantDaoMock.findRestaurant(anyString(), anyString())).thenReturn(Optional.of(asianRestaurant));
+		when(mealDaoMock.findMealByNameForRestaurant(anyString(), any(Restaurant.class))).thenReturn(Optional.of(ramen));
+		when(feedbackDaoMock.addFeedback(any(Feedback.class))).thenReturn(feedback);
+		
+		FeedbackDTO result = mealService.addFeedback(feedback.toDTO(), ramen.getName(), asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
+		assertNotNull(result);
+		assertEquals(feedback.getContent(), result.getContent());
+	}
+	
+	@Test
+	public void addFeedbackWithoutAnyIdWithUnknowMeal() {
+		when(restaurantDaoMock.findRestaurant(anyString(), anyString())).thenReturn(Optional.empty());
+		when(mealDaoMock.findMealByNameForRestaurant(anyString(), any(Restaurant.class))).thenReturn(Optional.of(ramen));
+		when(feedbackDaoMock.addFeedback(any(Feedback.class))).thenReturn(feedback);
+		
+		assertThrows(UnknowRestaurantException.class, () -> {
+			mealService.addFeedback(feedback.toDTO(), ramen.getName(), asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
+		});
+	}
+	
+	@Test
+	public void addFeedbackWithoutAnyIdWithUnknowRestaurant() {
+		when(restaurantDaoMock.findRestaurant(anyString(), anyString())).thenReturn(Optional.of(asianRestaurant));
+		when(mealDaoMock.findMealByNameForRestaurant(anyString(), any(Restaurant.class))).thenReturn(Optional.empty());
+		when(feedbackDaoMock.addFeedback(any(Feedback.class))).thenReturn(feedback);
+		
+		assertThrows(UnknowMealException.class, () -> {
+			mealService.addFeedback(feedback.toDTO(), ramen.getName(), asianRestaurant.getName(), asianRestaurant.getRestaurantAddress());
+		});
 	}
 }

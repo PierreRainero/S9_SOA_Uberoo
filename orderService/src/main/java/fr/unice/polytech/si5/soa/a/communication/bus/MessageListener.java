@@ -4,11 +4,15 @@ import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewMeal;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewRestaurant;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.PaymentConfirmation;
+import fr.unice.polytech.si5.soa.a.controllers.CatalogController;
 import fr.unice.polytech.si5.soa.a.entities.states.PaymentState;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowPaymentException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IPaymentService;
 import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 
@@ -20,8 +24,7 @@ import java.util.concurrent.CountDownLatch;
  * @author Joël CANCELA VAZ
  */
 public class MessageListener {
-	
-
+	private static Logger logger = LogManager.getLogger(MessageListener.class);
 	private CountDownLatch latch = new CountDownLatch(3);
 
 	@Autowired
@@ -44,8 +47,7 @@ public class MessageListener {
 		try {
 			paymentService.updatePaymentStatus(message.getId(), stateOfThePayment);
 		} catch (UnknowPaymentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		
 		latch.countDown();
@@ -68,8 +70,7 @@ public class MessageListener {
 		try {
 			restaurantService.addMeal(meal, message.getRestaurantName(), message.getRestaurantAddress());
 		} catch (UnknowRestaurantException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		
 		
