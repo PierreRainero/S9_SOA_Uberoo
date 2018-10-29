@@ -2,7 +2,7 @@ package fr.unice.polytech.si5.soa.a.services.component;
 
 import fr.unice.polytech.si5.soa.a.communication.PaymentDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
-import fr.unice.polytech.si5.soa.a.communication.bus.ProcessPayment;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.ProcessPayment;
 import fr.unice.polytech.si5.soa.a.dao.IOrderTakerDao;
 import fr.unice.polytech.si5.soa.a.dao.IPaymentDao;
 import fr.unice.polytech.si5.soa.a.entities.Payment;

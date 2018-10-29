@@ -29,4 +29,7 @@
 `{"type":"NEW_RESTAURANT","name":"Mon restaurant","address":"25 rue du restaurant"}`
 
 **NEW_MEAL** :  
-`{"type":"NEW_MEAL","name":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","price":10.5,"tags":["Mon tag"]}`
+`{"type":"NEW_MEAL","name":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","price":10.5,"tags":["Mon tag"]}`  
+
+**NEW_FEEDBACK** :  
+`{"type":"NEW_FEEDBACK","author":"prenom nom","content":"mon avis","mealName":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`

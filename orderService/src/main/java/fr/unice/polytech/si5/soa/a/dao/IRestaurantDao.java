@@ -3,7 +3,6 @@ package fr.unice.polytech.si5.soa.a.dao;
 import java.util.List;
 import java.util.Optional;
 
-import fr.unice.polytech.si5.soa.a.entities.Feedback;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
@@ -27,20 +26,6 @@ public interface IRestaurantDao {
 	 * @return the saved meal
 	 */
 	Meal addMeal(Meal mealToAdd);
-	
-	/**
-	 * Add a {@link Feedback} into the database
-	 * @param feedbackToAdd feedback to add
-	 * @return the saved feedback
-	 */
-	Feedback addFeedback(Feedback feedbackToAdd);
-	
-	/**
-	 * Search a meal in the database using his id
-	 * @param id id to use
-	 * @return the restaurant wrapped in an {@link Optional} if the meal exists, Optional.empty() otherwise
-	 */
-	Optional<Meal> findMealById(int id);
 	
 	/**
 	 * Search a restaurant in the database using his id

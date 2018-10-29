@@ -1,4 +1,4 @@
-package fr.unice.polytech.si5.soa.a.communication.bus;
+package fr.unice.polytech.si5.soa.a.communication.bus.messages;
 
 import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
 import lombok.Data;

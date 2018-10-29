@@ -1,6 +1,9 @@
 package fr.unice.polytech.si5.soa.a.communication.bus;
 
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewMeal;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewRestaurant;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.entities.states.PaymentState;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowPaymentException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;

@@ -1,6 +1,10 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.communication.bus.*;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.Message;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewMeal;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewRestaurant;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.entities.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

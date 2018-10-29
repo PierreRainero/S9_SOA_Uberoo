@@ -1,17 +1,11 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
-import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantDTO;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
-import fr.unice.polytech.si5.soa.a.dao.IUserDao;
-import fr.unice.polytech.si5.soa.a.entities.Feedback;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
-import fr.unice.polytech.si5.soa.a.entities.User;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +30,6 @@ import java.util.stream.Collectors;
 public class RestaurantServiceImpl implements IRestaurantService {
 	@Autowired
 	private IRestaurantDao restaurantDao;
-	
-	@Autowired
-	private IUserDao userDao;
 
 	@Override
 	/**
@@ -79,37 +70,5 @@ public class RestaurantServiceImpl implements IRestaurantService {
 		}
 		
 		return existingRestaurant.get();
-	}
-
-	@Override
-	/**
-	 * {@inheritDoc}
-	 */
-	public FeedbackDTO addFeedback(FeedbackDTO feedbackToAdd, int authorId, int mealId) throws UnknowMealException, UnknowUserException {
-		Feedback feedback = new Feedback(feedbackToAdd);
-		feedback.setAuthor(checkAndFindUser(authorId));
-		feedback.setMeal(checkAndFindMeal(mealId));
-		
-		return restaurantDao.addFeedback(feedback).toDTO();
-	}
-
-	private User checkAndFindUser(int id) throws UnknowUserException {
-		Optional<User> userWrapped = userDao.findUserById(id);
-		
-		if(!userWrapped.isPresent()) {
-			throw new UnknowUserException("Can't find user with id = "+id);
-		}
-		
-		return userWrapped.get();
-	}
-	
-	private Meal checkAndFindMeal(int id) throws UnknowMealException {
-		Optional<Meal> mealWrapped = restaurantDao.findMealById(id);
-		
-		if(!mealWrapped.isPresent()) {
-			throw new UnknowMealException("Can't find meal with id = "+id);
-		}
-		
-		return mealWrapped.get();
 	}
 }

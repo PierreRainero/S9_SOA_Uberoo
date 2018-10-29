@@ -44,7 +44,8 @@ public class Feedback implements Serializable {
     @Setter(NONE)
     private int id;
     
-    @Column(name = "author", nullable = false)
+	@ManyToOne(cascade = CascadeType.MERGE)
+    @NonNull
     private User author;
 
     @Column(name = "content", nullable = false)

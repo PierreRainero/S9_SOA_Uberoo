@@ -22,6 +22,9 @@ Java 1.8 (JEE) avec les frameworks Spring et Hibernate.
 `/meals` :  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- GET (content-type : JSON, encoding : UTF-8), queryParam : tag=AFoodTag  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Permet de trouver tous les plats correspondant à un tag ("Asian" par exemple)  
+`/meals/{mealID}/feedbacks` :  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- POST (content-type : JSON, encoding : UTF-8), body : FeedbackDTO  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Permet d'ajouter un avis à un plat  
 `/restaurants` :  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- GET (content-type : JSON, encoding : UTF-8), queryParam : name=ARestaurantName  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Permet de trouver tous les restaurants dont le nom contient la chaine de caractères passée en paramètre  
@@ -46,4 +49,7 @@ Java 1.8 (JEE) avec les frameworks Spring et Hibernate.
 `{"address":"410 ch de chez moi","food":["plat1","plat2"],"type":"NEW_ORDER","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`
 
 **PROCESS_PAYMENT** :  
-`{"type":"PROCESS_PAYMENT","account":"numero de compte","amount":10.0,"id":-1}`
+`{"type":"PROCESS_PAYMENT","account":"numero de compte","amount":10.0,"id":-1}`  
+
+**NEW_FEEDBACK** :  
+`{"type":"NEW_FEEDBACK","author":"prenom nom","content":"mon avis","mealName":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`

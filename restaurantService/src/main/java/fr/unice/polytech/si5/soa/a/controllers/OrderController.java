@@ -1,7 +1,5 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
-import fr.unice.polytech.si5.soa.a.dao.component.FeedbackDaoImpl;
-import fr.unice.polytech.si5.soa.a.entities.Feedback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

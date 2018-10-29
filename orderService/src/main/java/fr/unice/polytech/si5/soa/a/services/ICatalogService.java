@@ -1,7 +1,10 @@
 package fr.unice.polytech.si5.soa.a.services;
 
+import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 
 import java.util.List;
 
@@ -10,8 +13,8 @@ import java.util.List;
  * Date			01/10/2018
  * @author		PierreRainero
  *
- * @version		1.1
- * Date			21/10/2018
+ * @version		1.2
+ * Date			29/10/2018
  */
 public interface ICatalogService {
 	/**
@@ -28,4 +31,16 @@ public interface ICatalogService {
 	 * @throws UnknowRestaurantException if the restaurant doesn't exist
 	 */
 	List<MealDTO> findMealsByRestaurant(int restaurantId) throws UnknowRestaurantException;
+	
+	/**
+	 * 
+	 * Add a {@link FeedbackDTO} to the system
+	 * @param feedbackToAdd feedback to add
+	 * @param authorId id of the author
+	 * @param mealId id of the meal
+	 * @return the feedback added
+	 * @throws UnknowMealException if the meal doesn't exist
+	 * @throws UnknowUserException if the author doesn't exist
+	 */
+	FeedbackDTO addFeedback(FeedbackDTO feedbackToAdd, int authorId, int mealId) throws UnknowMealException, UnknowUserException;
 }

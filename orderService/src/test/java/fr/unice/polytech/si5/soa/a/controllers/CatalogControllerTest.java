@@ -1,14 +1,17 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,11 +35,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
+import fr.unice.polytech.si5.soa.a.entities.Feedback;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
+import fr.unice.polytech.si5.soa.a.entities.User;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.ICatalogService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
 
@@ -51,6 +59,8 @@ import fr.unice.polytech.si5.soa.a.util.TestUtil;
 public class CatalogControllerTest {
 	private final static String BASE_URI = "/meals/";
 	private final static String ERROR_UNKNOW_RESTAURANT = "Can't find restaurant with id = -1";
+	private final static String ERROR_USER_RESTAURANT ="Can't find user with id = -1";
+	private final static String ERROR_MEAL_RESTAURANT ="Can't find meal with id = -1";
 	
 	private static final String ASIAN_CATEGORY = "Asian";
 	private MockMvc mockMvc;
@@ -66,6 +76,8 @@ public class CatalogControllerTest {
 	
 	private Restaurant asianRestaurant;
 	private Meal ramen;
+	private User bob;
+	private Feedback feedback;
 	
     @BeforeEach
 	public void setUp() throws Exception {
@@ -82,6 +94,15 @@ public class CatalogControllerTest {
 		ramen.setName("Ramen soup");
 		ramen.addTag(ASIAN_CATEGORY);
 		ramen.setRestaurant(asianRestaurant);
+		
+		bob = new User();
+		bob.setFirstName("Bob");
+		bob.setLastName("Harington");
+		
+		feedback = new Feedback();
+		feedback.setAuthor(bob);
+		feedback.setMeal(ramen);
+		feedback.setContent("Trés bon plat");
 	}
     
     @Test
@@ -157,4 +178,66 @@ public class CatalogControllerTest {
         verify(catalogServiceMock, times(1)).findMealsByRestaurant(captor.capture());
         verifyNoMoreInteractions(catalogServiceMock);
 	}
+    
+    @Test
+    public void addFeedbackUsingHTTPPost() throws Exception {
+		when(catalogServiceMock.addFeedback(any(FeedbackDTO.class), anyInt(), anyInt())).thenReturn(feedback.toDTO());
+
+		mockMvc.perform(post(BASE_URI+"/1/feedbacks")
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+               .content(TestUtil.convertObjectToJsonBytes(feedback.toDTO()))
+        ).andExpect(status().isOk())
+         .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+        
+		ArgumentCaptor<FeedbackDTO> feedbackCaptor = ArgumentCaptor.forClass(FeedbackDTO.class);
+		ArgumentCaptor<Integer> authorIdCaptor = ArgumentCaptor.forClass(Integer.class);
+		ArgumentCaptor<Integer> mealIdCaptor = ArgumentCaptor.forClass(Integer.class);
+		verify(catalogServiceMock, times(1)).addFeedback(feedbackCaptor.capture(), authorIdCaptor.capture(), mealIdCaptor.capture());
+        verifyNoMoreInteractions(catalogServiceMock);
+        
+        FeedbackDTO feedbackSent = feedbackCaptor.getValue();
+        assertNotNull(feedbackSent);
+        assertEquals(feedback.getContent(), feedbackSent.getContent());
+        
+        Integer mealId = mealIdCaptor.getValue();
+        assertEquals(new Integer(1), mealId);
+        
+        Integer authorId = authorIdCaptor.getValue();
+        assertEquals(new Integer(0), authorId);
+	}
+    
+    @Test
+    public void addMalformedFeedbackUsingHTTPPost() throws Exception {
+    	when(catalogServiceMock.addFeedback(any(FeedbackDTO.class), anyInt(), anyInt())).thenReturn(feedback.toDTO());
+    	FeedbackDTO data =feedback.toDTO();
+    	data.setAuthor(null);
+
+		mockMvc.perform(post(BASE_URI+"/1/feedbacks")
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+               .content(TestUtil.convertObjectToJsonBytes(data))
+        ).andExpect(status().isBadRequest())
+		 .andExpect(content().string("Malformed request."));
+    }
+    
+    @Test
+    public void addFeedbackWithUnkownMealUsingHTTPPost() throws Exception {
+    	when(catalogServiceMock.addFeedback(any(FeedbackDTO.class), anyInt(), anyInt())).thenThrow(new UnknowMealException(ERROR_MEAL_RESTAURANT));
+
+		mockMvc.perform(post(BASE_URI+"/1/feedbacks")
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+               .content(TestUtil.convertObjectToJsonBytes(feedback.toDTO()))
+        ).andExpect(status().isNotFound())
+		 .andExpect(content().string(ERROR_MEAL_RESTAURANT));
+    }
+    
+    @Test
+    public void addFeedbackWithUnkownUserUsingHTTPPost() throws Exception {
+    	when(catalogServiceMock.addFeedback(any(FeedbackDTO.class), anyInt(), anyInt())).thenThrow(new UnknowUserException(ERROR_USER_RESTAURANT));
+
+		mockMvc.perform(post(BASE_URI+"/1/feedbacks")
+               .contentType(TestUtil.APPLICATION_JSON_UTF8)
+               .content(TestUtil.convertObjectToJsonBytes(feedback.toDTO()))
+        ).andExpect(status().isNotFound())
+		 .andExpect(content().string(ERROR_USER_RESTAURANT));
+    }
 }

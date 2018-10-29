@@ -19,7 +19,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
-import fr.unice.polytech.si5.soa.a.entities.Feedback;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 
@@ -146,43 +145,5 @@ public class RestaurantDaoImpl implements IRestaurantDao{
         }catch(Exception e) {
             return Optional.empty();
         }
-	}
-
-	@Override
-	/**
-     * {@inheritDoc}
-     */
-	public Feedback addFeedback(Feedback feedbackToAdd) {
-		Session session = sessionFactory.getCurrentSession();
-
-		try {
-			session.save(feedbackToAdd);
-		} catch (SQLGrammarException e) {
-			session.getTransaction().rollback();
-			logger.error("Cannot execute query : addFeedback", e);
-		}
-
-		return feedbackToAdd;
-	}
-
-	@Override
-	/**
-     * {@inheritDoc}
-     */
-	public Optional<Meal> findMealById(int id) {
-		Session session = sessionFactory.getCurrentSession();
-
-		Optional<Meal> result = Optional.empty();
-		try {
-			Meal meal = (Meal) session.get(Meal.class, id);
-
-			if(meal!=null){
-				result = Optional.of(meal);
-			}
-		} catch (SQLGrammarException e) {
-			logger.error("Cannot execute query : findRestaurantById", e);
-		}
-
-		return result;
 	}
 }

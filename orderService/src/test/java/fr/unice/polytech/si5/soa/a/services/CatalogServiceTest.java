@@ -1,12 +1,20 @@
 package fr.unice.polytech.si5.soa.a.services;
 
+import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.Message;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.ICatalogDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
+import fr.unice.polytech.si5.soa.a.dao.IUserDao;
+import fr.unice.polytech.si5.soa.a.entities.Feedback;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
+import fr.unice.polytech.si5.soa.a.entities.User;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowUserException;
 import fr.unice.polytech.si5.soa.a.services.component.CatalogServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,11 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 /**
@@ -50,7 +60,16 @@ public class CatalogServiceTest {
 	@Autowired
 	@Qualifier("mock")
 	@Mock
+	private IUserDao userDaoMock;
+	
+	@Autowired
+	@Qualifier("mock")
+	@Mock
 	private IRestaurantDao restaurantDaoMock;
+	
+	@Autowired
+	@Mock
+	private MessageProducer messageProducerMock;
 	
 	@Autowired
 	@InjectMocks
@@ -58,12 +77,16 @@ public class CatalogServiceTest {
 	
 	private Restaurant asianRestaurant;
 	private Meal ramen;
+	private User bob;
+	private Feedback feedback;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		Mockito.reset(catalogDaoMock);
 		Mockito.reset(restaurantDaoMock);
+		Mockito.reset(userDaoMock);
+		Mockito.reset(messageProducerMock);
 
 		asianRestaurant = new Restaurant();
 		asianRestaurant.setName("Lion d'or");
@@ -73,6 +96,15 @@ public class CatalogServiceTest {
 		ramen.setName("Ramen soup");
 		ramen.addTag(ASIAN_CATEGORY);
 		ramen.setRestaurant(asianRestaurant);
+		
+		bob = new User();
+		bob.setFirstName("Bob");
+		bob.setLastName("Harington");
+		
+		feedback = new Feedback();
+		feedback.setAuthor(bob);
+		feedback.setMeal(ramen);
+		feedback.setContent("Trés bon plat");
 	}
 	
 	@AfterEach
@@ -120,6 +152,38 @@ public class CatalogServiceTest {
 		
 		assertThrows(UnknowRestaurantException.class, () -> {
 			catalogService.findMealsByRestaurant(asianRestaurant.getId());
+		});
+	}
+	
+	@Test
+	public void addFeedback() throws Exception {
+		when(catalogDaoMock.findMealById(anyInt())).thenReturn(Optional.of(ramen));
+		when(userDaoMock.findUserById(anyInt())).thenReturn(Optional.of(bob));
+		when(catalogDaoMock.addFeedback(any(Feedback.class))).thenReturn(feedback);
+		MessageProducer spy = Mockito.spy(messageProducerMock);
+		doNothing().when(spy).sendMessage(any(Message.class));
+		
+		FeedbackDTO feedbackReceived = catalogService.addFeedback(feedback.toDTO(), bob.getId(), ramen.getId());
+		assertNotNull(feedbackReceived);
+		assertEquals(feedback.getContent(), feedbackReceived.getContent());
+	}
+	
+	@Test
+	public void addFeedbackOnNonExistingUser() {
+		when(userDaoMock.findUserById(anyInt())).thenReturn(Optional.empty());
+		
+		assertThrows(UnknowUserException.class, () -> {
+			catalogService.addFeedback(feedback.toDTO(), bob.getId(), ramen.getId());
+		});
+	}
+	
+	@Test
+	public void addFeedbackOnNonExistingMeal() {
+		when(catalogDaoMock.findMealById(anyInt())).thenReturn(Optional.empty());
+		when(userDaoMock.findUserById(anyInt())).thenReturn(Optional.of(bob));
+		
+		assertThrows(UnknowMealException.class, () -> {
+			catalogService.addFeedback(feedback.toDTO(), bob.getId(), ramen.getId());
 		});
 	}
 }
