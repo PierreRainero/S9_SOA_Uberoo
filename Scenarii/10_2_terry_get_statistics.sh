@@ -1,0 +1,1 @@
+echo "As Terry, I want to get some statistics (speed, cost) about global delivery time and delivery per coursier."

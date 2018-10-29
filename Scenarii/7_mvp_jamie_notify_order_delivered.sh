@@ -1,0 +1,1 @@
+echo "As Jamie, I want to notify that the order has been delivered, so that my account can be credited and the restaurant can be informed."

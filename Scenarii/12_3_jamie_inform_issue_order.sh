@@ -1,0 +1,1 @@
+echo "As Jamie, I want to inform quickly that I can't terminate the course (accident, sick), so that the order can be replaced."
