@@ -5,11 +5,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
 import lombok.Data;
@@ -25,7 +21,7 @@ import lombok.ToString;
 @Entity
 @Data
 @Table(name = "`DELIVERY`")
-@EqualsAndHashCode(exclude = {"id"})
+@EqualsAndHashCode(exclude = {"id", "coursier"})
 @ToString()
 public class Delivery implements Serializable {
     /**
@@ -38,8 +34,8 @@ public class Delivery implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "coursier_id")
-    private Integer coursierId;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private Coursier coursier;
 
     @Column(name = "restaurant_id")
     private Integer restaurantId;
@@ -95,8 +91,8 @@ public class Delivery implements Serializable {
         if (restaurantId != null) {
             deliveryDTO.setRestaurantId(restaurantId);
         }
-        if (coursierId != null) {
-            deliveryDTO.setCoursierId(coursierId);
+        if (coursier != null) {
+            deliveryDTO.setCoursier(coursier);
         }
         return deliveryDTO;
     }

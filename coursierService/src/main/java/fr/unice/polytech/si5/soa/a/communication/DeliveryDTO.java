@@ -3,6 +3,7 @@ package fr.unice.polytech.si5.soa.a.communication;
 import java.io.Serializable;
 import java.util.Date;
 
+import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,7 +15,7 @@ import lombok.ToString;
  * @author PierreRainero
  */
 @Data
-@EqualsAndHashCode(exclude = {"id"})
+@EqualsAndHashCode(exclude = {"id", "coursier"})
 @ToString()
 public class DeliveryDTO implements Serializable {
     /**
@@ -30,7 +31,7 @@ public class DeliveryDTO implements Serializable {
     private Date deliveryDate;
     public boolean state = false;
     private boolean coursierGetPaid = false;
-    private Integer coursierId;
+    private Coursier coursier;
 
     public DeliveryDTO() {
         // Default constructor for Jackson databinding
@@ -43,10 +44,16 @@ public class DeliveryDTO implements Serializable {
         this.restaurantId = restaurantId;
     }
 
-    public DeliveryDTO(int id, String deliveryAddress, boolean state, Double latitude, Double longitude, Integer restaurantId, Integer coursierId) {
+    public DeliveryDTO(int id, String deliveryAddress, boolean state, Double latitude, Double longitude, Integer restaurantId, Coursier coursier) {
         this(id, deliveryAddress, state, restaurantId);
         this.latitude = latitude;
         this.longitude = longitude;
-        this.coursierId = coursierId;
+        this.coursier = coursier;
     }
+
+    /*
+    public Integer getCoursierId() {
+        return this.coursier.getId();
+    }
+    */
 }

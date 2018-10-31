@@ -73,6 +73,8 @@ public class DeliveryControllerTest {
         Mockito.reset(deliveryServiceMock);
 
         coursier = new Coursier();
+        coursier.setName("Jean");
+        coursier.setAccountNumber("FR XXXX XXXXX");
         coursier.setId(5);
 
         mockMvc = MockMvcBuilders.standaloneSetup(deliveryController).build();
@@ -82,22 +84,26 @@ public class DeliveryControllerTest {
         delivery.setId(8);
         delivery.setState(false);
         delivery.setCoursierGetPaid(false);
+        delivery.setCoursier(coursier);
 
         deliveryDone = new Delivery();
         deliveryDone.setDeliveryAddress(ADDRESS);
         deliveryDone.setState(true);
+        deliveryDone.setCoursier(coursier);
 
         deliveryBelow10 = new Delivery();
         deliveryBelow10.setDeliveryAddress(ADDRESS);
         deliveryBelow10.setState(false);
         deliveryBelow10.setLatitude(0.0);
         deliveryBelow10.setLongitude(0.0);
+        deliveryBelow10.setCoursier(coursier);
 
         deliveryOver10 = new Delivery();
         deliveryOver10.setDeliveryAddress(ADDRESS);
         deliveryOver10.setState(false);
         deliveryOver10.setLatitude(1.0);
         deliveryOver10.setLongitude(1.0);
+        deliveryOver10.setCoursier(coursier);
 
         order = new NewOrder();
         order.setId(8);
@@ -188,7 +194,7 @@ public class DeliveryControllerTest {
     public void chooseDeliveryTest() throws Exception {
         DeliveryDTO expectedMock = delivery.toDTO();
         expectedMock.setCreationDate(new Date());
-        expectedMock.setCoursierId(this.coursier.getId());
+        expectedMock.setCoursier(this.coursier);
         when(deliveryServiceMock.assignDelivery(this.delivery.getId(), this.coursier.getId())).thenReturn(expectedMock);
         mockMvc.perform(put(BASE_URI + delivery.getId() + "/?coursierId=" + coursier.getId())
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -201,7 +207,7 @@ public class DeliveryControllerTest {
         verify(deliveryServiceMock, times(1)).assignDelivery(captor.capture(), captor2.capture());
         verifyNoMoreInteractions(deliveryServiceMock);
         assertEquals(captor.getValue().intValue(), delivery.getId());
-        assertEquals(captor2.getValue().intValue(), coursier.getId());
+        assertEquals(captor2.getValue(), coursier.getId());
     }
 
 }

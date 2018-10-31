@@ -30,7 +30,7 @@ public class Coursier {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -45,14 +45,14 @@ public class Coursier {
     private Double longitude;
 
     @Setter(NONE)
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "coursierId")
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "coursier")
     @ToString.Exclude
     private List<Delivery> deliveries = new ArrayList<>();
 
     public Coursier() {
     }
 
-    public CoursierDto toDto(){
+    public CoursierDto toDto() {
         return new CoursierDto(id, name, latitude, longitude);
     }
 

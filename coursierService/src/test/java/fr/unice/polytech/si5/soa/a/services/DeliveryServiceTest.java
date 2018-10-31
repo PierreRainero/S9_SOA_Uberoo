@@ -75,7 +75,7 @@ public class DeliveryServiceTest {
 
         deliveryTodo = new Delivery();
         deliveryTodo.setDeliveryAddress(ADDRESS);
-        //deliveryTodo.setCoursierId(coursier.getId());
+        deliveryTodo.setCoursier(coursier);
         deliveryTodo.setRestaurantId(0);
 
         coursier.addDelivery(deliveryTodo);
@@ -136,11 +136,11 @@ public class DeliveryServiceTest {
         when(iDeliveryDaoMock.updateDelivery(deliveryTodo)).thenReturn(deliveryDone);
         when(iDeliveryDaoMock.findDeliveryById(deliveryTodo.getId())).thenReturn(Optional.of(deliveryTodo));
         coursier.setId(5);
-        deliveryTodo.setCoursierId(coursier.getId());
+        deliveryTodo.setCoursier(coursier);
         when(iCoursierDaoMock.findCoursierById(coursier.getId())).thenReturn(Optional.of(coursier));
         MessageProducer spy = Mockito.spy(messageProducerMock);
         doNothing().when(spy).sendMessage(any(Message.class));
-        deliveryTodo.setCoursierId(coursier.getId());
+        deliveryTodo.setCoursier(coursier);
         DeliveryDTO returnedDelivery = deliveryService.updateDelivery(deliveryTodo.toDTO());
         assertNotEquals(returnedDelivery, deliveryTodo.toDTO());
         assertEquals(returnedDelivery, deliveryDone.toDTO());
@@ -161,11 +161,11 @@ public class DeliveryServiceTest {
 
     @Test
     public void assignDelivery() throws UnknownDeliveryException, UnknownCoursierException {
-        assertNull(deliveryTodo.getCoursierId());
+        assertNull(deliveryTodo.getCoursier().getId());
         assertNull(deliveryTodo.getCreationDate());
         when(iDeliveryDaoMock.findDeliveryById(this.deliveryTodo.getId())).thenReturn(Optional.ofNullable(this.deliveryTodo));
         when(iCoursierDaoMock.findCoursierById(this.coursier.getId())).thenReturn(Optional.ofNullable(this.coursier));
-        this.deliveryTodo.setCoursierId(coursier.getId());
+        this.deliveryTodo.setCoursier(coursier);
         this.deliveryTodo.setCreationDate(new Date());
         this.coursier.addDelivery(this.deliveryTodo);
         when(iCoursierDaoMock.updateCoursier(this.coursier)).thenReturn(this.coursier);

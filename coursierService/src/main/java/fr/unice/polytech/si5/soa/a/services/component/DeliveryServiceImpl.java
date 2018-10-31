@@ -54,9 +54,9 @@ public class DeliveryServiceImpl implements IDeliveryService {
         }
         Delivery delivery = deliveryWrapped.get();
 
-        Optional<Coursier> coursierWrapped = this.coursierDao.findCoursierById(delivery.getCoursierId());
+        Optional<Coursier> coursierWrapped = this.coursierDao.findCoursierById(delivery.getCoursier().getId());
         if (!coursierWrapped.isPresent()){
-            throw new UnknownCoursierException(deliveryToUpdate.getCoursierId().toString());
+            throw new UnknownCoursierException(deliveryToUpdate.getCoursier().getId().toString());
         }
         Coursier coursier = coursierWrapped.get();
         coursier.updateDelivery(delivery);
@@ -118,7 +118,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
         }
         Coursier coursier = coursierWrapped.get();
 
-        delivery.setCoursierId(coursierId);
+        delivery.setCoursier(coursier);
         delivery.setCreationDate(new Date());
         coursier.addDelivery(delivery);
         this.coursierDao.updateCoursier(coursier);

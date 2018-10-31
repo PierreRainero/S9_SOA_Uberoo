@@ -38,90 +38,103 @@ public class DeliveryDaoTest {
     private Delivery deliveryToDo;
     private Delivery deliveryDone;
 
+    private Coursier coursier;
+    private Coursier secondCoursier;
+
     private List<Delivery> deliveries;
 
-    private int coursierId = 9;
-    private int secondCoursierId = 11;
-
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
+
+        this.coursier = new Coursier();
+        coursier.setName("jean");
+        coursier.setAccountNumber("FR XXX XXXX");
+        coursier.setId(9);
+
+        this.secondCoursier = new Coursier();
+        secondCoursier.setName("Paul");
+        secondCoursier.setAccountNumber("DE XXX XXXX");
+        secondCoursier.setId(18);
 
         deliveries = new ArrayList<>();
         deliveryToDo = new Delivery();
         deliveryToDo.setDeliveryAddress("140 sentier des hautes breguières");
-        deliveryToDo.setCoursierId(coursierId);
-
+        deliveryToDo.setCoursier(coursier);
 
         deliveryDone = new Delivery();
         deliveryDone.setDeliveryAddress("5 rue de l'hôpital");
         deliveryDone.state = true;
-        deliveryDone.setCoursierId(secondCoursierId);
+        deliveryDone.setCoursier(secondCoursier);
 
         deliveries.add(deliveryToDo);
         deliveries.add(deliveryDone);
 
         Session session = sessionFactory.openSession();
-        try{
+        try {
+            session.save(coursier);
+            session.save(secondCoursier);
             session.save(deliveryToDo);
             session.save(deliveryDone);
             session.beginTransaction().commit();
-        }catch (SQLGrammarException e){
+        } catch (SQLGrammarException e) {
             session.getTransaction().rollback();
-        }finally {
+        } finally {
             session.close();
         }
     }
 
     @AfterEach
-    public void cleanUp(){
+    public void cleanUp() {
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
-        try{
+        try {
             transaction = session.beginTransaction();
-            
+
             deliveries.forEach(session::delete);
             session.flush();
             transaction.commit();
-            
+
             deliveryToDo = null;
             deliveryDone = null;
-        }catch (SQLGrammarException e){
+        } catch (SQLGrammarException e) {
             session.getTransaction().rollback();
-        }finally {
+        } finally {
             session.close();
         }
     }
 
     @Test
-    public void getDeliveriesToDo(){
+    public void getDeliveriesToDo() {
         List<Delivery> deliveryList = deliveryDao.getDeliveriesToDo();
         assertTrue(deliveryList.size() == 1);
-        assertEquals(deliveryList.get(0),deliveryToDo);
+        assertEquals(deliveryList.get(0), deliveryToDo);
     }
 
     @Test
-    public void updateDelivery(){
+    public void updateDelivery() {
         deliveryToDo.state = true;
         deliveryDao.updateDelivery(deliveryToDo);
         assertTrue(deliveryDao.getDeliveriesToDo().stream().allMatch(delivery -> delivery.state));
     }
 
     @Test
-    public void addDelivery(){
+    public void addDelivery() {
         assertTrue(deliveryDao.getDeliveriesToDo().size() == 1);
         Delivery newDelivery = new Delivery();
         newDelivery.setDeliveryAddress("22 rue des tests unitaires");
-        
+
         deliveryDao.addDelivery(newDelivery);
         List<Delivery> deliveriesToDo = deliveryDao.getDeliveriesToDo();
         assertTrue(deliveriesToDo.size() == 2);
-        assertEquals(deliveriesToDo.get(1),newDelivery);
+        assertEquals(deliveriesToDo.get(1), newDelivery);
         deliveries.add(newDelivery);
     }
 
     @Test
     public void getDeliveriesDoneBy() {
-        assertEquals(this.deliveryDao.getDeliveriesDoneBy(coursierId), Collections.emptyList());
-        assertEquals(this.deliveryDao.getDeliveriesDoneBy(secondCoursierId), Collections.singletonList(deliveryDone));
+        assertEquals(this.deliveryDao.getDeliveriesDoneBy(coursier.getId()), Collections.emptyList());
+        List<Delivery> deliveries = this.deliveryDao.getDeliveriesDoneBy(secondCoursier.getId());
+        assertTrue(deliveries.size() == 1);
+        assertEquals(deliveries.get(0), deliveryDone);
     }
 }

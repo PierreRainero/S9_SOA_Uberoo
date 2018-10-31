@@ -102,11 +102,12 @@ public class DeliveryDaoImpl implements IDeliveryDao {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Delivery> criteria = builder.createQuery(Delivery.class);
         Root<Delivery> root = criteria.from(Delivery.class);
-        criteria.select(root).where(builder.equal(root.get("coursierId"), idCoursier));
+        criteria.select(root);
         Query<Delivery> query = session.createQuery(criteria);
         return query.getResultList()
                 .stream()
                 .filter(Delivery::getState)
+                .filter(delivery -> delivery.getCoursier().getId() == idCoursier)
                 .collect(Collectors.toList());
     }
 }
