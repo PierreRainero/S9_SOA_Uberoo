@@ -4,6 +4,7 @@ import fr.unice.polytech.si5.soa.a.communication.Message;
 import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
+import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
@@ -96,6 +97,12 @@ public class TestConfiguration {
     @Bean
     public ICoursierDao iCoursierDao() {
         return Mockito.mock(ICoursierDao.class);
+    }
+
+    @Qualifier("mock")
+    @Bean
+    public IRestaurantDao iRestaurantDao() {
+        return Mockito.mock(IRestaurantDao.class);
     }
 
     @Qualifier("mock")

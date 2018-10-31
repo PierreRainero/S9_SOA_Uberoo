@@ -53,7 +53,20 @@ public class Coursier {
     }
 
     public CoursierDto toDto() {
-        return new CoursierDto(id, name, latitude, longitude);
+        CoursierDto coursierDto = new CoursierDto();
+        if (id != null) {
+            coursierDto.setId(id);
+        }
+        if (name != null) {
+            coursierDto.setName(name);
+        }
+        if (latitude != null) {
+            coursierDto.setLatitude(latitude);
+        }
+        if (longitude != null) {
+            coursierDto.setLongitude(longitude);
+        }
+        return coursierDto;
     }
 
     public void addDelivery(Delivery delivery) {

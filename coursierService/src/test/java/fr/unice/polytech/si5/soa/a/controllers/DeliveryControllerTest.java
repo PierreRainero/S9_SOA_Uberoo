@@ -194,7 +194,7 @@ public class DeliveryControllerTest {
     public void chooseDeliveryTest() throws Exception {
         DeliveryDTO expectedMock = delivery.toDTO();
         expectedMock.setCreationDate(new Date());
-        expectedMock.setCoursier(this.coursier);
+        expectedMock.setCoursier(this.coursier.toDto());
         when(deliveryServiceMock.assignDelivery(this.delivery.getId(), this.coursier.getId())).thenReturn(expectedMock);
         mockMvc.perform(put(BASE_URI + delivery.getId() + "/?coursierId=" + coursier.getId())
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)

@@ -37,8 +37,8 @@ public class Delivery implements Serializable {
     @ManyToOne(cascade = CascadeType.MERGE)
     private Coursier coursier;
 
-    @Column(name = "restaurant_id")
-    private Integer restaurantId;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private Restaurant restaurant;
 
     @Column(name = "deliveryAddress")
     private String deliveryAddress;
@@ -68,7 +68,7 @@ public class Delivery implements Serializable {
     public Delivery(DeliveryDTO data) {
         this.deliveryAddress = data.getDeliveryAddress();
         this.state = data.isState();
-        this.restaurantId = data.getRestaurantId();
+        this.restaurant = data.getRestaurant().createRestaurant();
         this.coursierGetPaid = data.isCoursierGetPaid();
     }
 
@@ -88,11 +88,11 @@ public class Delivery implements Serializable {
         if (longitude != null) {
             deliveryDTO.setLongitude(longitude);
         }
-        if (restaurantId != null) {
-            deliveryDTO.setRestaurantId(restaurantId);
+        if (restaurant != null) {
+            deliveryDTO.setRestaurant(restaurant.toDto());
         }
         if (coursier != null) {
-            deliveryDTO.setCoursier(coursier);
+            deliveryDTO.setCoursier(coursier.toDto());
         }
         return deliveryDTO;
     }

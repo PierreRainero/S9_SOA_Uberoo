@@ -30,7 +30,6 @@ public class CoursierServiceImpl implements ICoursierService {
     private ICoursierDao coursierDao;
 
     @Autowired
-    private IDeliveryDao deliveryDao;
     private IRestaurantDao restaurantDao;
 
     @Override
@@ -59,7 +58,7 @@ public class CoursierServiceImpl implements ICoursierService {
         Restaurant restaurant = restaurantWrapped.get();
 
         List<Delivery> deliveries = coursier.getDeliveries().stream()
-                .filter(delivery -> delivery.getRestaurantId().equals(idRestaurant))
+                .filter(delivery -> delivery.getRestaurant().getId().equals(idRestaurant))
                 .collect(Collectors.toList());
 
         CoursierStatistics coursierStatistics = new CoursierStatistics();

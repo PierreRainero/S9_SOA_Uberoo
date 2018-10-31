@@ -8,6 +8,7 @@ import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
@@ -64,11 +65,18 @@ public class DeliveryServiceTest {
 
     private Coursier coursier;
 
+    private Restaurant restaurant;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         Mockito.reset(iDeliveryDaoMock);
         Mockito.reset(iCoursierDaoMock);
+
+        restaurant = new Restaurant();
+        restaurant.setId(0);
+        restaurant.setLongitude(0.);
+        restaurant.setLatitude(0.);
 
         coursier = new Coursier();
         coursier.setAccountNumber("FR89 3704 0044 0532 0130 00");
@@ -76,7 +84,7 @@ public class DeliveryServiceTest {
         deliveryTodo = new Delivery();
         deliveryTodo.setDeliveryAddress(ADDRESS);
         deliveryTodo.setCoursier(coursier);
-        deliveryTodo.setRestaurantId(0);
+        deliveryTodo.setRestaurant(restaurant);
 
         coursier.addDelivery(deliveryTodo);
 
