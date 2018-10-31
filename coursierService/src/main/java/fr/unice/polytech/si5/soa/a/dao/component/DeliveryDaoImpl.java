@@ -72,7 +72,7 @@ public class DeliveryDaoImpl implements IDeliveryDao {
 
         Optional<Delivery> result = Optional.empty();
         try {
-            Delivery delivery = (Delivery) session.get(Delivery.class, id);
+            Delivery delivery = session.get(Delivery.class, id);
 
             if (delivery != null) {
                 result = Optional.of(delivery);

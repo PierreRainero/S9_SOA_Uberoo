@@ -3,10 +3,7 @@ package fr.unice.polytech.si5.soa.a.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import org.hibernate.Session;
@@ -86,14 +83,16 @@ public class DeliveryDaoTest {
     @AfterEach
     public void cleanUp() {
         Session session = sessionFactory.openSession();
-        Transaction transaction = null;
+        Transaction transaction;
         try {
             transaction = session.beginTransaction();
-
+            session.delete(coursier);
+            session.delete(secondCoursier);
             deliveries.forEach(session::delete);
             session.flush();
             transaction.commit();
-
+            coursier = null;
+            secondCoursier = null;
             deliveryToDo = null;
             deliveryDone = null;
         } catch (SQLGrammarException e) {
@@ -136,5 +135,28 @@ public class DeliveryDaoTest {
         List<Delivery> deliveries = this.deliveryDao.getDeliveriesDoneBy(secondCoursier.getId());
         assertTrue(deliveries.size() == 1);
         assertEquals(deliveries.get(0), deliveryDone);
+    }
+
+    @Test
+    public void findDeliveryById() throws Exception {
+        Delivery newDelivery = new Delivery();
+        newDelivery.setLongitude(0.8);
+        Session session = sessionFactory.openSession();
+        try {
+            session.save(newDelivery);
+            session.beginTransaction().commit();
+        } catch (SQLGrammarException e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        Optional<Delivery> deliveryWrapped = this.deliveryDao.findDeliveryById(newDelivery.getId());
+        if (deliveryWrapped.isPresent()) {
+            Delivery deliveryFound = deliveryWrapped.get();
+            assertEquals(deliveryFound, newDelivery);
+            deliveries.add(newDelivery);
+        } else {
+            throw new Exception("Not found");
+        }
     }
 }

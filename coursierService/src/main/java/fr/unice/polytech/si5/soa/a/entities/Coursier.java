@@ -24,7 +24,7 @@ import static lombok.AccessLevel.NONE;
 @Entity
 @Data
 @Table(name = "`COURSIER`")
-@EqualsAndHashCode(exclude = {"id"})
+@EqualsAndHashCode(exclude = {"id", "deliveries"})
 @ToString()
 public class Coursier {
     @Id
@@ -45,7 +45,7 @@ public class Coursier {
     private Double longitude;
 
     @Setter(NONE)
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "coursier")
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy = "coursier")
     @ToString.Exclude
     private List<Delivery> deliveries = new ArrayList<>();
 

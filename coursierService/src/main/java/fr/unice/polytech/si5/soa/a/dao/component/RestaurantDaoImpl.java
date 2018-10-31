@@ -9,9 +9,15 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Primary
+@Repository
+@Transactional
 public class RestaurantDaoImpl implements IRestaurantDao {
 
     private static Logger logger = LogManager.getLogger(DeliveryDaoImpl.class);

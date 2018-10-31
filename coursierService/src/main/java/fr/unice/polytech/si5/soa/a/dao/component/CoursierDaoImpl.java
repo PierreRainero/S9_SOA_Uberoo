@@ -26,7 +26,7 @@ public class CoursierDaoImpl implements ICoursierDao {
 
     @Override
     public Optional<Coursier> findCoursierById(Integer idCoursier) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionFactory.openSession();
         Optional<Coursier> result = Optional.empty();
         try {
             Coursier coursier = session.get(Coursier.class, idCoursier);
@@ -41,7 +41,7 @@ public class CoursierDaoImpl implements ICoursierDao {
 
     @Override
     public Coursier updateCoursier(Coursier coursierToUpdate) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionFactory.openSession();
 
         Coursier result = null;
         try{
