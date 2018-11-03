@@ -1,7 +1,6 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
 import fr.unice.polytech.si5.soa.a.communication.Message;
-import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
@@ -17,7 +16,6 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -102,55 +100,35 @@ public class ApplicationConfiguration {
 		return new KafkaTemplate<>(messageProducerFactory());
 	}
 
-//	@Bean
-//	public ProducerFactory<String, String> producerFactory() {
-//		Map<String, Object> configProps = new HashMap<>();
-//		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-//		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-//		configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-//		return new DefaultKafkaProducerFactory<>(configProps);
-//	}
-//
-//	@Bean
-//	public KafkaTemplate<String, String> kafkaTemplate() {
-//		return new KafkaTemplate<>(producerFactory());
-//	}
-
 	@Bean
 	@Primary
 	public MessageListener messageListener() {
 		return new MessageListener();
 	}
 
-//	public ConsumerFactory<String, String> consumerFactory(String groupId) {
-//		Map<String, Object> props = new HashMap<>();
-//		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-//		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-//		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-//		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-//		return new DefaultKafkaConsumerFactory<>(props);
-//	}
-//
-//	@Bean
-//	public ConcurrentKafkaListenerContainerFactory<String, String> topicKafkaListenerContainerFactory() {
-//		ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-//		factory.setConsumerFactory(consumerFactory("coursier"));
-//		return factory;
-//	}
-
-	public ConsumerFactory<String, PaymentConfirmation> paymentConfirmationConsumerFactory(String groupId) {
+	@Bean
+	public Map<String, Object> consumerProperties() {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(PaymentConfirmation.class));
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, "coursier");
+		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		return props;
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, PaymentConfirmation> paymentContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, PaymentConfirmation> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(paymentConfirmationConsumerFactory("coursier"));
+	public ConsumerFactory<String, String> consumerFactory() {
+		return new DefaultKafkaConsumerFactory<>(consumerProperties());
+	}
+
+
+	@Bean
+	public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, String> factory =
+				new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerFactory());
 		factory.setRecordFilterStrategy(record -> !record.value()
-				.getType().equals(PaymentConfirmation.messageType));
+				.contains("type"));
 		return factory;
 	}
 }
