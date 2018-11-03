@@ -51,4 +51,21 @@ public class UserDaoImpl implements IUserDao {
 		return result;
 	}
 
+	@Override
+	/**
+	 * {@inheritDoc}
+	 */
+	public User addUser(User userToAdd) {
+		Session session = sessionFactory.getCurrentSession();
+
+		try {
+			session.save(userToAdd);
+		} catch (SQLGrammarException e) {
+			session.getTransaction().rollback();
+			logger.error("Cannot execute query : addUser", e);
+		}
+
+		return userToAdd;
+	}
+
 }

@@ -33,13 +33,17 @@ public class UserDaoTest {
 	private IUserDao userDao;
 	
 	private User bob;
+	private User jack;
 	
 	@BeforeEach
 	public void setUp() throws Exception {
-		
 		bob = new User();
 		bob.setFirstName("Bob");
 		bob.setLastName("Harington");
+		
+		jack = new User();
+		jack.setFirstName("Jack");
+		jack.setLastName("Balfour");
 		
 		Session session = sessionFactory.openSession();
 		try {
@@ -59,12 +63,17 @@ public class UserDaoTest {
 	    try {
 	    	transaction = session.beginTransaction();
 	    	
+	    	if(jack.getId() != 0) {
+	    		session.delete(jack);
+	    	}
+	    	
 			session.delete(bob);
 			
 			session.flush();
 			transaction.commit();
 
 			bob = null;
+			jack = null;
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
 		} finally {
@@ -87,5 +96,13 @@ public class UserDaoTest {
 		Optional<User> userWrapped = userDao.findUserById(-1);
 		
 		assertFalse(userWrapped.isPresent());
+	}
+	
+	@Test
+	public void addNonExistingUser() {
+		User user = userDao.addUser(jack);
+		assertNotNull(user);
+		assertEquals(jack.getFirstName(), user.getFirstName());
+		assertEquals(jack.getLastName(), user.getLastName());
 	}
 }

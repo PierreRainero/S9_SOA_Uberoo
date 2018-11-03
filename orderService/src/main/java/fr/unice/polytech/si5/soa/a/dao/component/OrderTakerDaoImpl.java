@@ -36,17 +36,17 @@ public class OrderTakerDaoImpl implements IOrderTakerDao {
 	/**
      * {@inheritDoc}
      */
-	public UberooOrder addOrder(UberooOrder commandToAdd) {
+	public UberooOrder addOrder(UberooOrder orderToAdd) {
 		Session session = sessionFactory.getCurrentSession();
 
 		try {
-			session.save(commandToAdd);
+			session.save(orderToAdd);
 		} catch (SQLGrammarException e) {
 			session.getTransaction().rollback();
-			logger.error("Cannot execute query : addCommand", e);
+			logger.error("Cannot execute query : addOrder", e);
 		}
 
-		return commandToAdd;
+		return orderToAdd;
 	}
 
 	@Override

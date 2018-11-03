@@ -18,6 +18,7 @@ import fr.unice.polytech.si5.soa.a.services.ICatalogService;
 import fr.unice.polytech.si5.soa.a.services.IOrderTakerService;
 import fr.unice.polytech.si5.soa.a.services.IPaymentService;
 import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
+import fr.unice.polytech.si5.soa.a.services.IUserService;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -174,5 +175,11 @@ public class TestConfiguration {
 	@Bean
 	public IPaymentService iPaymentService() {
 		return Mockito.mock(IPaymentService.class);
+	}
+	
+	@Qualifier("mock")
+	@Bean
+	public IUserService iUserService() {
+		return Mockito.mock(IUserService.class);
 	}
 }
