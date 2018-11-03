@@ -71,7 +71,7 @@ public class Restaurant implements Serializable {
 	}
 	
 	public RestaurantDTO toDTO() {
-		return new RestaurantDTO(id, name, restaurantAddress, meals.stream().map(ingredient -> ingredient.toDTO()).collect(Collectors.toList()));
+		return new RestaurantDTO(id, name, restaurantAddress);
 	}
 	
 	public void addMeal(Meal meal) {
