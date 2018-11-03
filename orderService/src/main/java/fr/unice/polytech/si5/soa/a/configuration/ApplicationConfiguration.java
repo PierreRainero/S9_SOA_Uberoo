@@ -1,10 +1,8 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
-import fr.unice.polytech.si5.soa.a.communication.bus.*;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageListener;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.Message;
-import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewMeal;
-import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewRestaurant;
-import fr.unice.polytech.si5.soa.a.communication.bus.messages.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.entities.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -16,7 +14,6 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -108,52 +105,29 @@ public class ApplicationConfiguration {
 		return new MessageListener();
 	}
 
-	public ConsumerFactory<String, PaymentConfirmation> consumerPaymentConfirmationFactory(String groupId) {
+	@Bean
+	public Map<String, Object> consumerProperties() {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(PaymentConfirmation.class));
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, "order");
+		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		return props;
+	}
+
+	@Bean
+	public ConsumerFactory<String, String> consumerFactory() {
+		return new DefaultKafkaConsumerFactory<>(consumerProperties());
 	}
 
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, PaymentConfirmation> bankContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, PaymentConfirmation> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(consumerPaymentConfirmationFactory("order"));
+	public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, String> factory =
+				new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerFactory());
 		factory.setRecordFilterStrategy(record -> !record.value()
-				.getType().equals(PaymentConfirmation.messageType));
-		return factory;
-	}
-
-	public ConsumerFactory<String, NewMeal> mealFactory(String groupId) {
-		Map<String, Object> props = new HashMap<>();
-		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(NewMeal.class));
-	}
-
-	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, NewMeal> mealContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, NewMeal> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(mealFactory("order"));
-		factory.setRecordFilterStrategy(record -> !record.value()
-				.getType().equals(NewMeal.messageType));
-		return factory;
-	}
-
-	public ConsumerFactory<String, NewRestaurant> restaurantFactory(String groupId) {
-		Map<String, Object> props = new HashMap<>();
-		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.bootstrapAddress"));
-		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(NewRestaurant.class));
-	}
-
-	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, NewRestaurant> restaurantContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, NewRestaurant> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(restaurantFactory("order"));
-		factory.setRecordFilterStrategy(record -> !record.value()
-				.getType().equals(NewRestaurant.messageType));
+				.contains("type"));
 		return factory;
 	}
 }

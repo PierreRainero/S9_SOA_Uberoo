@@ -15,8 +15,6 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString()
 public class NewFeedback extends Message {
-	public static String messageType = "NEW_FEEDBACK";
-	
 	private String author;
 	private String content;
 	private String mealName;
@@ -33,7 +31,7 @@ public class NewFeedback extends Message {
 	public NewFeedback(FeedbackDTO feedbackData, MealDTO mealData) {
 		super();
 		
-		type = messageType;
+		type = "NEW_FEEDBACK";
 		
 		author = feedbackData.getAuthor().getFirstName() + ' ' + feedbackData.getAuthor().getLastName();
 		content = feedbackData.getContent();

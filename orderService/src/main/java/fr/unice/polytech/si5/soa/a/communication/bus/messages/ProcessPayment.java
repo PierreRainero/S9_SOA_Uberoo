@@ -18,7 +18,6 @@ public class ProcessPayment extends Message {
 	private int id;
 	private String account;
 	private double amount;
-	public static String messageType = "PROCESS_PAYMENT";
 
 	/**
 	 * Default constructor
@@ -33,7 +32,7 @@ public class ProcessPayment extends Message {
 	 * @param payment {@link PaymentDTO} to use to construct the message
 	 */
 	public ProcessPayment(PaymentDTO payment) {
-		type = messageType;
+		type = "PROCESS_PAYMENT";
 
 		this.id = payment.getId();
 		this.account = payment.getAccount();

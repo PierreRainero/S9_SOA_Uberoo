@@ -17,7 +17,6 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString()
 public class NewMeal extends Message {
-	public static String messageType = "NEW_MEAL";
 	private String name;
 	private String restaurantName;
 	private String restaurantAddress;

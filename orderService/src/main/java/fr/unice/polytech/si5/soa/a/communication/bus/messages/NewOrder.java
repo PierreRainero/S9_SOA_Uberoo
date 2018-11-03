@@ -19,8 +19,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper=true)
 @ToString()
 public class NewOrder extends Message {
-	public static String messageType = "NEW_ORDER";
-	
 	private String address;
 	private String restaurantName;
 	private String restaurantAddress;
@@ -43,7 +41,7 @@ public class NewOrder extends Message {
 		
 		food = new ArrayList<>();
 		
-		type = messageType;
+		type = "NEW_ORDER";
 		address = order.getDeliveryAddress();
 
 		for(MealDTO meal : order.getMeals()) {
