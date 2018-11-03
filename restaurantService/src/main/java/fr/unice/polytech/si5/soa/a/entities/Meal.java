@@ -8,6 +8,8 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.lang.NonNull;
 
 import java.io.Serializable;
@@ -58,6 +60,10 @@ public class Meal implements Serializable {
 	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "meal")
 	@ToString.Exclude
 	private List<Feedback> feedbacks = new ArrayList<>();
+    
+    @Fetch(FetchMode.SELECT)
+    @ElementCollection(fetch = FetchType.EAGER)
+	private List<String> tags = new ArrayList<>();
 
     public Meal() {
         // Default constructor for JPA
@@ -69,11 +75,23 @@ public class Meal implements Serializable {
     }
 
     public MealDTO toDTO() {
-        return new MealDTO(id, name, price, ingredients.stream().map(ingredient -> ingredient.toDTO()).collect(Collectors.toList()));
+        return new MealDTO(id, name, price, ingredients.stream().map(ingredient -> ingredient.toDTO()).collect(Collectors.toList()), tags);
     }
     
+    public void addTag(String tag) {
+		if(!tags.contains(tag)) {
+			tags.add(tag);
+		}
+	}
+	
+	public void removeTag(String tag) {
+		tags.remove(tag);
+	}
+    
     public void addIngredient(Ingredient ingredient) {
-    	ingredients.add(ingredient);
+    	if(!ingredients.contains(ingredient)) {
+    		ingredients.add(ingredient);
+    	}
     }
 
     public void removeIngredient(Ingredient ingredient) {

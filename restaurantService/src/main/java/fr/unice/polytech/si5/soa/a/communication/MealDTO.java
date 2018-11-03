@@ -26,16 +26,18 @@ public class MealDTO implements Serializable {
     private String name;
     private double price;
     private List<IngredientDTO> ingredients = new ArrayList<>();
+    private List<String> tags = new ArrayList<>();
 
     public MealDTO() {
         // Default constructor for Jackson databinding
     }
 
-    public MealDTO(int id, String name, double price, List<IngredientDTO> ingredients) {
+    public MealDTO(int id, String name, double price, List<IngredientDTO> ingredients, List<String> tags) {
         this.id = id;
         this.name = name;
         this.ingredients = ingredients;
         this.price = price;
+        this.tags = tags;
     }
 
 }
