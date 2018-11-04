@@ -29,9 +29,9 @@ public class MessageListener {
 
     private CountDownLatch latch = new CountDownLatch(3);
 
-    @KafkaListener(topics = {"${message.topic.name}","${coursier.topic.name}"}, containerFactory =
+    @KafkaListener(topics = {"${coursier.topic.name}"}, containerFactory =
             "kafkaListenerContainerFactory")
-    public void listenMessage(String message) {
+    public void listenMessageCoursier(String message) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Message messageRead = null;
@@ -52,6 +52,28 @@ public class MessageListener {
                     logger.error("Malformed PaymentConfirmation " + e.getMessage(), e);
                 }
                 break;
+            default:
+                break;
+        }
+        latch.countDown();
+    }
+
+
+    @KafkaListener(topics = {"${message.topic.name}"}, containerFactory =
+            "kafkaListenerContainerFactory")
+    public void listenMessage(String message) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        Message messageRead = null;
+        try {
+            messageRead = objectMapper.readValue(message, Message.class);
+        } catch (IOException e) {
+            logger.error("Malformed message received " + e.getMessage(), e);
+        }
+        if (messageRead == null || messageRead.getType() == null)
+            return;
+        logger.info("Received message of type " + messageRead.getType());
+        switch (messageRead.getType()) {
             case "NEW_ORDER":
                 NewOrder newOrder = null;
                 try {
@@ -60,7 +82,6 @@ public class MessageListener {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 break;
             default:
                 break;

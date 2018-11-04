@@ -35,7 +35,7 @@ public class MessageListener {
 	@Autowired
 	private IRestaurantService restaurantService;
 
-	@KafkaListener(topics = {"${message.topic.name}","${bank.topic.name}"}, containerFactory = "kafkaListenerContainerFactory")
+	@KafkaListener(topics = {"${message.topic.name}"}, containerFactory = "kafkaListenerContainerFactory")
 	public void listenMessage(String message) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -65,6 +65,26 @@ public class MessageListener {
 					logger.error("Malformed NewMeal " + e.getMessage(), e);
 				}
 				break;
+			default:
+				break;
+		}
+		latch.countDown();
+	}
+
+	@KafkaListener(topics = {"${bank.topic.name}"}, containerFactory = "kafkaListenerContainerFactory")
+	public void listenBankMessage(String message) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		Message messageRead = null;
+		try {
+			messageRead = objectMapper.readValue(message, Message.class);
+		} catch (IOException e) {
+			logger.error("Malformed message received " + e.getMessage(), e);
+		}
+		if (messageRead == null || messageRead.getType() == null)
+			return;
+		logger.info("Received message of type "+messageRead.getType());
+		switch (messageRead.getType()) {
 			case "PAYMENT_CONFIRMATION":
 				try {
 					PaymentConfirmation paymentConfirmation = objectMapper.readValue(message, PaymentConfirmation.class);

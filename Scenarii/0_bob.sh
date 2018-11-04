@@ -1,4 +1,4 @@
-# TODO: add tags
+# FIXME: Step5 is not ready (coursierService)
 # -- Hostnames ---
 orderService="localhost:9555"
 restaurant="localhost:9777"
@@ -6,15 +6,13 @@ coursierservice="localhost:9888"
 # -- Context ---
 echo "--- Creating context... ---"
 # Creating user bob
-docker exec soa_database mysql -uroot -pteama -e "USE uberoo_orderService; INSERT INTO USER (firstName, lastName) VALUES ('Bob', 'MVP');"
-docker exec soa_database mysql -uroot -pteama -e "USE uberoo_orderService; SELECT id FROM USER WHERE firstName='Bob';" > temp/0/0_bobId.txt
-bob_id=$(tail -1 temp/0/0_bobId.txt)
-
+curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"lastName\":\"Lenon\",\"firstName\":\"Bob\"}" "http://$orderService/users" > temp/0/0_bobId.txt
+bob_id=$(grep -Po '"id": *\K[^,]*' temp/0/0_bobId.txt | head -1)
 # Create a restaurant POST /restaurants
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Asiakeo\",\"restaurantAddress\":\"407 ch. de l'oued\",\"meals\":[]}" "http://$restaurant/restaurants" > temp/0/1_restaurantCreated.txt
 restaurant_id=$(grep -Po '"id": *\K[^,]*' temp/0/1_restaurantCreated.txt | head -1)
 # Create a ramen meal POST /restaurants/{restaurantId}/meals
-curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Ramen\",\"price\":3,\"ingredients\":[\"pork\"]}" "http://$restaurant/restaurants/$restaurant_id/meals" > temp/0/2_mealCreated.txt
+curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Ramen\",\"price\":3,\"ingredients\":[\"pork\"],\"tags\":[\"Asian\"]}" "http://$restaurant/restaurants/$restaurant_id/meals" > temp/0/2_mealCreated.txt
 sleep 2
 # ************** Scenario **************
 echo "*******1- As Bob, a hungry student, I browse the food catalogue offered by Uberoo"
@@ -34,10 +32,9 @@ echo "*******2- I decide to go for an asian meal, ordering a ramen soup"
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"id\": -1, \"meals\": [ {\"name\":\"Ramen\",\"tags\":[\"Asian\"],\"restaurant\":{\"id\":1,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"}} ], \"transmitter\": { \"id\": \"$bob_id\", \"firstName\": \"Bob\", \"lastName\": \"\" }, \"deliveryAddress\": \"930 Route des Colles, 06410 Biot\", \"eta\": null, \"state\": \"WAITING\", \"restaurant\":{\"id\":1,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"} }" "http://localhost:9555/orders" > temp/0/4_orderWithETA.txt
 echo "Result (temp/0/4_orderWithETA.txt):"
 cat temp/0/4_orderWithETA.txt
-echo "Press any key to continue..."
+echo "\nPress any key to continue..."
 read
 
-# WIP: Crash here when doing PUT
 echo "*******3- The system estimates the ETA (e.g., 45 mins) for the food, and I decide to accept it"
 # Acception de l'ETA :
 sed -i 's/WAITING/VALIDATED/g' temp/0/4_orderWithETA.txt
@@ -46,6 +43,7 @@ order_id=$(grep -Po '"id": *\K[^,]*' temp/0/4_orderWithETA.txt | head -1)
 curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 temp/0/4_orderWithETA.txt)" "http://$orderService/orders/$order_id" > temp/0/5_validatedOrder.txt
 echo "Press any key to continue..."
 read
+sleep 2
 restau_id=$(grep -Po '"id": *\K[^,]*' temp/0/5_validatedOrder.txt | tail -1)
 echo "*******4- The restaurant can consult the list of meals to prepare, and start the cooking process"
 curl -X GET --silent "http://$restaurant/restaurants/$restau_id/orders/" > temp/0/6_pendingOrders.txt
