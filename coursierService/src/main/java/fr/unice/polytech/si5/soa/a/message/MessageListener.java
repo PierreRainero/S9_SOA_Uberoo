@@ -3,6 +3,7 @@ package fr.unice.polytech.si5.soa.a.message;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.unice.polytech.si5.soa.a.communication.message.Message;
+import fr.unice.polytech.si5.soa.a.communication.message.NewOrder;
 import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
@@ -49,6 +50,16 @@ public class MessageListener {
 					logger.error("Malformed PaymentConfirmation " + e.getMessage(), e);
 				}
 				break;
+			case "NEW_ORDER":
+				NewOrder newOrder = null;
+				try {
+					newOrder = objectMapper.readValue(message, NewOrder.class);
+					listenNewOrder(newOrder);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				break;
 			default:
 				break;
 		}
@@ -62,6 +73,11 @@ public class MessageListener {
 		} catch (UnknownDeliveryException | CoursierDoesntGetPaidException e) {
 			logger.error("Problem while treating payment confirmation " + e.getMessage());
 		}
+	}
+
+	public void listenNewOrder(NewOrder message) {
+		System.out.println("Received new order for coursier: " + message.getId());
+		//TODO deal with new order and assign coursier
 	}
 
 	public CountDownLatch getLatch() {
