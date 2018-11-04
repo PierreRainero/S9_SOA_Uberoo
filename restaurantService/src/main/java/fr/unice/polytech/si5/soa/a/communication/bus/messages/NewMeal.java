@@ -26,17 +26,13 @@ public class NewMeal extends Message {
 	public static String messageType = "NEW_MEAL";
 
 	
-	public NewMeal(MealDTO meal, String restaurantName, String restaurantAddress, double price) {
-		this(meal, restaurantName, restaurantAddress, price, new ArrayList<>());
-	}
-	
-	public NewMeal(MealDTO meal, String restaurantName, String restaurantAddress, double price, List<String> tags) {
+	public NewMeal(MealDTO meal, String restaurantName, String restaurantAddress) {
 		type = "NEW_MEAL";
 		
 		name = meal.getName();
 		this.restaurantName = restaurantName;
 		this.restaurantAddress = restaurantAddress;
-		this.price = price;
-		this.tags = tags;
+		this.price = meal.getPrice();
+		this.tags = meal.getTags();
 	}
 }
