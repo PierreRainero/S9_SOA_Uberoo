@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.communication.message;
 
+import fr.unice.polytech.si5.soa.a.entities.Coursier;
+
 import java.util.Date;
 
 /**
@@ -10,18 +12,13 @@ import java.util.Date;
 public class OrderDelivered extends Message {
     public String address;
     public static String messageType = "ORDER_DELIVERED";
-
-    public String getAddress() {
-        return address;
-    }
+    private Date date;
+    private Integer deliveryId;
+    private String accountNumber;
 
     public OrderDelivered addAddress(String address) {
         this.address = address;
         return this;
-    }
-
-    public Date getDate() {
-        return date;
     }
 
     public OrderDelivered addDate(Date date) {
@@ -29,31 +26,17 @@ public class OrderDelivered extends Message {
         return this;
     }
 
-    public Integer getDeliveryId() {
-        return deliveryId;
-    }
-
     public OrderDelivered addDeliveryId(Integer deliveryId) {
         this.deliveryId = deliveryId;
         return this;
     }
 
-    private Date date;
-    private Integer deliveryId;
-    private String accountNumber;
-
-    public OrderDelivered() {
-        type = messageType;
-    }
-
-    public OrderDelivered(String address, int deliveryId) {
-        this.date = new Date();
-        this.address = address;
-        this.deliveryId = deliveryId;
-    }
-
     public OrderDelivered addAccount(String accountNumber) {
         this.accountNumber = accountNumber;
         return this;
+    }
+
+    public OrderDelivered() {
+        type = messageType;
     }
 }
