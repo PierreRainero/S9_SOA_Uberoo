@@ -72,6 +72,7 @@ public class Meal implements Serializable {
     public Meal(MealDTO data) {
         this.name = data.getName();
         this.price = data.getPrice();
+        this.tags = data.getTags();
     }
 
     public MealDTO toDTO() {
