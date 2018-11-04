@@ -1,7 +1,8 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
-import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
-import fr.unice.polytech.si5.soa.a.communication.NewOrder;
+import fr.unice.polytech.si5.soa.a.communication.DTO.CancelDataDTO;
+import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.communication.message.NewOrder;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
@@ -22,6 +23,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -191,7 +193,7 @@ public class DeliveryControllerTest {
     }
 
     @Test
-    public void chooseDeliveryTest() throws Exception {
+    public void assignDeliveryTest() throws Exception {
         DeliveryDTO expectedMock = delivery.toDTO();
         expectedMock.setCreationDate(new Date());
         expectedMock.setCoursier(this.coursier.toDto());
@@ -208,6 +210,26 @@ public class DeliveryControllerTest {
         verifyNoMoreInteractions(deliveryServiceMock);
         assertEquals(captor.getValue().intValue(), delivery.getId());
         assertEquals(captor2.getValue(), coursier.getId());
+    }
+
+    @Test
+    public void replaceOrderTest() throws Exception {
+        DeliveryDTO expectedMock = delivery.toDTO();
+        expectedMock.setCancel(true);
+        String reason = "Accident";
+        String reasonContent = "Accident de la route";
+        CancelDataDTO cancelData = new CancelDataDTO(reason, reasonContent, coursier.getId(), delivery.getId());
+        when(deliveryServiceMock.replaceOrder(cancelData)).thenReturn(expectedMock);
+        mockMvc.perform(put(BASE_URI + delivery.getId() + "/?coursierId=" + coursier.getId())
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(cancelData)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+
+        ArgumentCaptor<CancelDataDTO> captor = ArgumentCaptor.forClass(CancelDataDTO.class);
+        verify(deliveryServiceMock, times(1)).replaceOrder(captor.capture());
+        verifyNoMoreInteractions(deliveryServiceMock);
+        assertEquals(captor.getValue(), cancelData);
     }
 
 }

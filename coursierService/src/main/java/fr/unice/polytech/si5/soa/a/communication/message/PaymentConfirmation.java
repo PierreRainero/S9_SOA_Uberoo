@@ -1,4 +1,4 @@
-package fr.unice.polytech.si5.soa.a.communication;
+package fr.unice.polytech.si5.soa.a.communication.message;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,11 +14,11 @@ import lombok.ToString;
 @ToString()
 public class PaymentConfirmation extends Message {
 
-	public static String messageType = "PAYMENT_CONFIRMATION";
-	private int id;
-	private boolean status;
+    public static String messageType = "PAYMENT_CONFIRMATION";
+    private int id;
+    private boolean status;
 
-	public PaymentConfirmation() {
-		type = messageType;
-	}
+    public PaymentConfirmation() {
+        type = messageType;
+    }
 }

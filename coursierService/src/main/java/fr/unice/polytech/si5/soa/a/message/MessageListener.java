@@ -2,8 +2,8 @@ package fr.unice.polytech.si5.soa.a.message;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.unice.polytech.si5.soa.a.communication.Message;
-import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
+import fr.unice.polytech.si5.soa.a.communication.message.Message;
+import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;

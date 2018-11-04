@@ -1,6 +1,6 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
-import fr.unice.polytech.si5.soa.a.communication.Message;
+import fr.unice.polytech.si5.soa.a.communication.message.Message;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;

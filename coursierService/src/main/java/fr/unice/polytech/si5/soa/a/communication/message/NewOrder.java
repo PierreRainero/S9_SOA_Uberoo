@@ -1,5 +1,7 @@
-package fr.unice.polytech.si5.soa.a.communication;
+package fr.unice.polytech.si5.soa.a.communication.message;
 
+import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.communication.DTO.RestaurantDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -31,6 +33,6 @@ public class NewOrder extends Message {
 	}
 
 	public DeliveryDTO createDelivery() {
-		return new DeliveryDTO(id, address, false, new RestaurantDto(restaurantId));
+		return new DeliveryDTO(id, address, false, new RestaurantDTO(restaurantId));
 	}
 }
