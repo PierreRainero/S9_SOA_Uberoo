@@ -19,6 +19,8 @@ import lombok.ToString;
 public class OrderDelivered extends Message {
 	public static String messageType = "ORDER_DELIVERED";
 	
+	private String account;
+	private double amount;
 	private String restaurantName;
 	private String restaurantAddress;
 	private String deliveryAddress;

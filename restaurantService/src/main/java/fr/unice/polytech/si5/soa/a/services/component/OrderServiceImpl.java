@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,10 +12,12 @@ import org.springframework.stereotype.Service;
 
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Meal;
+import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
@@ -38,6 +42,9 @@ public class OrderServiceImpl implements IOrderService {
 	
 	@Autowired
 	private IMealDao mealDao;
+	
+	@Autowired
+	private MessageProducer producer;
 	
 	@Override
 	public RestaurantOrderDTO addOrder(RestaurantOrderDTO orderToAdd) throws UnknowRestaurantException, UnknowMealException {
@@ -91,7 +98,10 @@ public class OrderServiceImpl implements IOrderService {
 		RestaurantOrder order = new RestaurantOrder(orderToAdd);
 		Restaurant restaurant = checkAndFindRestaurant(restaurantName, restaurantAddress);
 		order.setRestaurant(restaurant);
-		createMealsList(order, meals, restaurant);
+		
+		for(Meal meal : createMealsList(meals, restaurant)) {
+			order.addMeal(meal);
+		}
 		
 		return orderDao.addOrder(order).toDTO();
 	}
@@ -106,15 +116,39 @@ public class OrderServiceImpl implements IOrderService {
 		return restaurantWrapped.get();
 	}
 	
-	private void createMealsList(RestaurantOrder order, List<String> meals, Restaurant restaurant) throws UnknowMealException {
+	private List<Meal> createMealsList(List<String> meals, Restaurant restaurant) throws UnknowMealException {
+		List<Meal> resultList = new ArrayList<>();
+		
 		for (String foodName : meals) {
 			Optional<Meal> mealWrapped = mealDao.findMealByNameForRestaurant(foodName, restaurant);
 			
 			if(!mealWrapped.isPresent()) {
 				throw new UnknowMealException("Can't find meal with name = "+foodName);
 			}
-			order.addMeal(mealWrapped.get());
+			resultList.add(mealWrapped.get());
 		}
+		
+		return resultList;
+	}
+
+	@Override
+	public RestaurantOrderDTO deliverOrder(String restaurantName, String restaurantAddres, String deliveryAddress, List<String> meals, Date validationDate) throws UnknowOrderException, UnknowRestaurantException, UnknowMealException {
+		Restaurant restaurant = checkAndFindRestaurant(restaurantName, deliveryAddress);
+		List<Meal> mealAsObjects = createMealsList(meals, restaurant);
+		
+		Optional<RestaurantOrder> orderWrapped = orderDao.findOrderWithMinimumsInfos(restaurant, deliveryAddress, mealAsObjects, validationDate);
+		if(!orderWrapped.isPresent()) {
+			throw new UnknowOrderException("Can't find order");
+		}
+		
+		RestaurantOrder order = orderWrapped.get();
+		order.setState(OrderState.DELIVERED);
+		
+		// TODO
+		// message = PROCESS_PAYMENT
+		// producer.sendMessage(message);
+		
+		return orderDao.updateOrder(order).toDTO();
 	}
 
 }

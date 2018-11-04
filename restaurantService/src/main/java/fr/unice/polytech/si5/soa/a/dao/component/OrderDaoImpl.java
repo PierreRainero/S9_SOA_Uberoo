@@ -1,5 +1,6 @@
 package fr.unice.polytech.si5.soa.a.dao.component;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
+import fr.unice.polytech.si5.soa.a.entities.Meal;
 import fr.unice.polytech.si5.soa.a.entities.OrderState;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.entities.RestaurantOrder;
@@ -102,6 +104,60 @@ public class OrderDaoImpl implements IOrderDao {
 		Query<RestaurantOrder> query = session.createQuery(criteria);
 		
 		return query.getResultList();
+	}
+
+	@Override
+	public Optional<RestaurantOrder> findOrderWithMinimumsInfos(Restaurant restaurant, String deliveryAddress, List<Meal> meals, Date validationDate) {
+		Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<RestaurantOrder> criteria = builder.createQuery(RestaurantOrder.class);
+        Root<RestaurantOrder> root =  criteria.from(RestaurantOrder.class);
+        // TODO 
+        // Add delivery address
+        criteria.select(root).where(
+        		builder.and(
+        				builder.equal(root.get("restaurant"), restaurant),
+        				builder.equal(root.get("validationDate"), validationDate)
+        				));
+        Query<RestaurantOrder> query = session.createQuery(criteria);
+
+        /*
+         * Controlling meals is heavy in SQL, it's faster to do it here :
+         */
+        try {
+        	List<RestaurantOrder> res = query.getResultList();
+
+        	// If there is only one result and there is no meals to control
+        	if(meals.isEmpty() && res.size()==1) {
+        		return Optional.of(res.get(0));
+        	}
+        	
+        	for(RestaurantOrder tmp : res) {
+        		// The number of meals doesn't match
+        		if(tmp.getMeals().size() != meals.size()) {
+        			continue;
+        		}
+        		
+        		boolean isTheOne = true;
+        		for(Meal meal : meals) {
+        			// If one of the meals doesn't match
+            		if(!tmp.getMeals().contains(meal)) {
+            			isTheOne = false;
+            			break;
+            		}
+            	}
+        		// If every filters are green
+        		if(isTheOne) {
+        			return Optional.of(tmp);
+        		}
+        	}
+        	
+        	// If no order matched
+        	return Optional.empty();
+        	
+        }catch(Exception e) {
+            return Optional.empty();
+        }
 	}
 
 }

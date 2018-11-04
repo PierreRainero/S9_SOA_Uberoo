@@ -17,8 +17,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -68,6 +71,7 @@ class OrderDaoTest {
         tacosOrder.addMeal(tacos);
         tacosOrder.addMeal(buritos);
         tacosOrder.setRestaurant(tacosRestaurant);
+        tacosOrder.setValidationDate(new Date());
 
         ramenOrder = new RestaurantOrder();
         ramenOrder.addMeal(ramen);
@@ -208,5 +212,25 @@ class OrderDaoTest {
 
         orders = orderDao.getOrdersToDo(tacosRestaurant);
         assertEquals(0, orders.size());
+    }
+    
+    @Test
+    public void findOrderWithMinimumInfos() {
+    	Optional<RestaurantOrder> order = orderDao.findOrderWithMinimumsInfos(tacosRestaurant, "", tacosOrder.getMeals(), tacosOrder.getValidationDate());
+    	assertTrue(order.isPresent());
+    }
+    
+    @Test
+    public void dontFindOrderWithMinimumInfos() {
+    	Optional<RestaurantOrder> order = orderDao.findOrderWithMinimumsInfos(asianRestaurant, "", tacosOrder.getMeals(), tacosOrder.getValidationDate());
+    	assertFalse(order.isPresent());
+    	
+    	order = orderDao.findOrderWithMinimumsInfos(tacosRestaurant, "", tacosOrder.getMeals(), new Date());
+    	assertFalse(order.isPresent());
+    	
+    	List<Meal> listOfMeals = new ArrayList<>();
+    	listOfMeals.add(buritos);
+    	order = orderDao.findOrderWithMinimumsInfos(tacosRestaurant, "", listOfMeals, tacosOrder.getValidationDate());
+    	assertFalse(order.isPresent());
     }
 }

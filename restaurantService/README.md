@@ -35,7 +35,7 @@ Java 1.8 (JEE) avec les frameworks Spring et Hibernate.
 `{"type":"NEW_FEEDBACK","author":"prenom nom","content":"mon avis","mealName":"Mon plat","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant"}`  
 
 **ORDER_DELIVERED** :  
-`{"type":"ORDER_DELIVERED","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","deliveryAddress":"410 ch de chez moi","food":["plat1","plat2"],"date":"date typé en java"}`  
+`{"type":"ORDER_DELIVERED","restaurantName":"Mon restaurant","restaurantAddress":"25 rue du restaurant","deliveryAddress":"410 ch de chez moi","food":["plat1","plat2"],"date":"date typé en java","account":"numero de compte","amount":10.0}`  
 
 ## Messages transmis au bus
 

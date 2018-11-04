@@ -7,7 +7,8 @@ package fr.unice.polytech.si5.soa.a.entities;
  */
 public enum OrderState {
 	TO_PREPARE("TO PREPARE"),
-	FINISHED("FINISHED");
+	FINISHED("FINISHED"),
+	DELIVERED("DELIVERED");
 	
 	private String details;
 	

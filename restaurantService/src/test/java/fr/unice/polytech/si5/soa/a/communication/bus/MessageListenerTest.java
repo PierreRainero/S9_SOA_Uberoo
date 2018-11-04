@@ -31,7 +31,11 @@ import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewFeedback;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewOrder;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.OrderDelivered;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IMealService;
 import fr.unice.polytech.si5.soa.a.services.IOrderService;
 
@@ -42,6 +46,7 @@ public class MessageListenerTest {
 	private static final String MEAL_NAME = "Ramen soup";
 	private static final String RESTAURANT_NAME = "RizRiz";
 	private static final String RESTAURANT_ADDRESS = "47 avenue des bols";
+	private static final String DELIVERY_ADDRESS = "";
 	
 	@Qualifier("mock")
 	@Autowired
@@ -62,6 +67,7 @@ public class MessageListenerTest {
 	
 	private NewFeedback newFeedbackMessage;
 	private NewOrder newOrderMessage;
+	private OrderDelivered orderDelivered;
 	private Date validationDate;
 	
 	@BeforeEach
@@ -69,6 +75,8 @@ public class MessageListenerTest {
 		MockitoAnnotations.initMocks(this);
 		Mockito.reset(mealServiceMock);
 		Mockito.reset(orderServiceMock);
+		
+		validationDate = new Date();
 		
 		newFeedbackMessage = new NewFeedback();
 		newFeedbackMessage.setAuthor("Bob");
@@ -79,11 +87,19 @@ public class MessageListenerTest {
 		
 		List<String> meals = new ArrayList<>();
 		meals.add(MEAL_NAME);
+		
 		newOrderMessage =  new NewOrder();
 		newOrderMessage.setFood(meals);
 		newOrderMessage.setRestaurantName(RESTAURANT_NAME);
 		newOrderMessage.setRestaurantAddress(RESTAURANT_ADDRESS);
 		newOrderMessage.setDate(validationDate);
+		
+		orderDelivered = new OrderDelivered();
+		orderDelivered.setRestaurantName(RESTAURANT_NAME);
+		orderDelivered.setRestaurantAddress(RESTAURANT_ADDRESS);
+		orderDelivered.setFood(meals);
+		orderDelivered.setDeliveryAddress(DELIVERY_ADDRESS);
+		orderDelivered.setDate(validationDate);
 	}
 	
 	@Test
@@ -136,5 +152,34 @@ public class MessageListenerTest {
 		
 		String restaurantAddress = restaurantAddressCaptor.getValue();
 		assertEquals(RESTAURANT_ADDRESS, restaurantAddress);
+	}
+	
+	@Test
+	public void handleOrderDeliveredMessage() throws Exception {
+		when(orderServiceMock.deliverOrder(anyString(), anyString(), anyString(), anyList(), any(Date.class))).thenReturn(new RestaurantOrderDTO());
+		
+		messageListener.listenOrderDelivered(orderDelivered);
+		
+		ArgumentCaptor<String> restaurantNameCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<String> restaurantAddressCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<String> deliveryAddressCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<Date> dateCaptor = ArgumentCaptor.forClass(Date.class);
+		verify(orderServiceMock, times(1)).deliverOrder(restaurantNameCaptor.capture(), restaurantAddressCaptor.capture(), deliveryAddressCaptor.capture(), listOfStringCaptor.capture(), dateCaptor.capture());
+		
+		String restaurantName = restaurantNameCaptor.getValue();
+		assertEquals(RESTAURANT_NAME, restaurantName);
+		
+		String restaurantAddress = restaurantAddressCaptor.getValue();
+		assertEquals(RESTAURANT_ADDRESS, restaurantAddress);
+		
+		String deliveryAddress = deliveryAddressCaptor.getValue();
+		assertEquals(DELIVERY_ADDRESS, deliveryAddress);
+		
+		List<String> resultList = listOfStringCaptor.getValue();
+		assertNotNull(resultList);
+		assertEquals(1, resultList.size());
+		
+		Date validationReceived = dateCaptor.getValue();
+		assertEquals(validationDate, validationReceived);
 	}
 }

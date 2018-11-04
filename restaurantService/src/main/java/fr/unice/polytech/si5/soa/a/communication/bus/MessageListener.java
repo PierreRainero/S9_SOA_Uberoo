@@ -9,6 +9,7 @@ import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewFeedback;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.NewOrder;
 import fr.unice.polytech.si5.soa.a.communication.bus.messages.OrderDelivered;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowMealException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknowOrderException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknowRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IMealService;
 import fr.unice.polytech.si5.soa.a.services.IOrderService;
@@ -105,7 +106,12 @@ public class MessageListener {
 
 	public void listenOrderDelivered(OrderDelivered orderDelivered) {
 		System.out.println("An order has been delivered ");
-		//TODO
+		
+		try {
+			orderService.deliverOrder(orderDelivered.getRestaurantName(), orderDelivered.getRestaurantAddress(), orderDelivered.getDeliveryAddress(), orderDelivered.getFood(), orderDelivered.getDate());
+		} catch (UnknowOrderException | UnknowRestaurantException | UnknowMealException e) {
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 	public CountDownLatch getLatch() {

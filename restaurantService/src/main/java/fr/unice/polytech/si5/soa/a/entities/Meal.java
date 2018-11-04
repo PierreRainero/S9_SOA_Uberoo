@@ -29,7 +29,7 @@ import static lombok.AccessLevel.NONE;
 @Entity
 @Data
 @Table(name = "`MEALS`")
-@EqualsAndHashCode(exclude={"id"})
+@EqualsAndHashCode(exclude={"id", "ingredients", "feedbacks", "tags", "restaurant"})
 @ToString()
 public class Meal implements Serializable {
     /**
