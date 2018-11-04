@@ -1,11 +1,8 @@
-package fr.unice.polytech.si5.soa.a.communication;
+package fr.unice.polytech.si5.soa.a.communication.DTO;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import fr.unice.polytech.si5.soa.a.entities.Coursier;
-import fr.unice.polytech.si5.soa.a.entities.Delivery;
-import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -24,7 +21,7 @@ public class DeliveryDTO implements Serializable {
      * Generated UID version
      */
     private static final long serialVersionUID = 2206465850241015470L;
-    private RestaurantDto restaurant;
+    private RestaurantDTO restaurant;
     int id;
     private String deliveryAddress;
     private Double latitude;
@@ -33,20 +30,21 @@ public class DeliveryDTO implements Serializable {
     private Date deliveryDate;
     public boolean state = false;
     private boolean coursierGetPaid = false;
-    private CoursierDto coursier;
+    private CoursierDTO coursier;
+    public Boolean cancel = false;
 
     public DeliveryDTO() {
         // Default constructor for Jackson databinding
     }
 
-    public DeliveryDTO(int id, String deliveryAddress, boolean state, RestaurantDto restaurant) {
+    public DeliveryDTO(int id, String deliveryAddress, boolean state, RestaurantDTO restaurant) {
         this.id = id;
         this.deliveryAddress = deliveryAddress;
         this.state = state;
         this.restaurant = restaurant;
     }
 
-    public DeliveryDTO(int id, String deliveryAddress, boolean state, Double latitude, Double longitude, RestaurantDto restaurant, CoursierDto coursier) {
+    public DeliveryDTO(int id, String deliveryAddress, boolean state, Double latitude, Double longitude, RestaurantDTO restaurant, CoursierDTO coursier) {
         this(id, deliveryAddress, state, restaurant);
         this.latitude = latitude;
         this.longitude = longitude;

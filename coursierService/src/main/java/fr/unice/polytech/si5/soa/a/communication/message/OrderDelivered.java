@@ -1,4 +1,4 @@
-package fr.unice.polytech.si5.soa.a.communication;
+package fr.unice.polytech.si5.soa.a.communication.message;
 
 import java.util.Date;
 
@@ -41,11 +41,12 @@ public class OrderDelivered extends Message {
     private Date date;
     private Integer deliveryId;
     private String accountNumber;
+
     public OrderDelivered() {
         type = messageType;
     }
 
-    public OrderDelivered(String address, int deliveryId){
+    public OrderDelivered(String address, int deliveryId) {
         this.date = new Date();
         this.address = address;
         this.deliveryId = deliveryId;

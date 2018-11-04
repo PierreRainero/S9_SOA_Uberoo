@@ -7,7 +7,7 @@ import java.util.Date;
 
 import javax.persistence.*;
 
-import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -45,6 +45,9 @@ public class Delivery implements Serializable {
 
     @Column(name = "state")
     public Boolean state = false;
+
+    @Column(name = "cancel")
+    public Boolean cancel = false;
 
     @Column(name = "latitude")
     private Double latitude;
@@ -93,6 +96,9 @@ public class Delivery implements Serializable {
         }
         if (coursier != null) {
             deliveryDTO.setCoursier(coursier.toDto());
+        }
+        if (cancel != null) {
+            deliveryDTO.setCancel(cancel);
         }
         return deliveryDTO;
     }

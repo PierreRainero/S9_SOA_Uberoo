@@ -1,6 +1,6 @@
 package fr.unice.polytech.si5.soa.a.entities;
 
-import fr.unice.polytech.si5.soa.a.communication.CoursierDto;
+import fr.unice.polytech.si5.soa.a.communication.DTO.CoursierDTO;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -52,21 +52,21 @@ public class Coursier {
     public Coursier() {
     }
 
-    public CoursierDto toDto() {
-        CoursierDto coursierDto = new CoursierDto();
+    public CoursierDTO toDto() {
+        CoursierDTO coursierDTO = new CoursierDTO();
         if (id != null) {
-            coursierDto.setId(id);
+            coursierDTO.setId(id);
         }
         if (name != null) {
-            coursierDto.setName(name);
+            coursierDTO.setName(name);
         }
         if (latitude != null) {
-            coursierDto.setLatitude(latitude);
+            coursierDTO.setLatitude(latitude);
         }
         if (longitude != null) {
-            coursierDto.setLongitude(longitude);
+            coursierDTO.setLongitude(longitude);
         }
-        return coursierDto;
+        return coursierDTO;
     }
 
     public void addDelivery(Delivery delivery) {
@@ -81,5 +81,9 @@ public class Coursier {
             throw new UnknownDeliveryException(updateDelivery.getId());
         }
         sameDelivery.get().setState(updateDelivery.state);
+    }
+
+    public void removeDelivery(Delivery delivery) {
+        this.deliveries.remove(delivery);
     }
 }

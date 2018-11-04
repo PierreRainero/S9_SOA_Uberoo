@@ -1,7 +1,7 @@
 package fr.unice.polytech.si5.soa.a.configuration;
 
-import fr.unice.polytech.si5.soa.a.communication.Message;
-import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
+import fr.unice.polytech.si5.soa.a.communication.message.Message;
+import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;

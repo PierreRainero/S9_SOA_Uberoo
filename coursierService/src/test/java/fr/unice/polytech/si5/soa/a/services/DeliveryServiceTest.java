@@ -1,8 +1,9 @@
 package fr.unice.polytech.si5.soa.a.services;
 
-import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
-import fr.unice.polytech.si5.soa.a.communication.Message;
-import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
+import fr.unice.polytech.si5.soa.a.communication.DTO.CancelDataDTO;
+import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.communication.message.Message;
+import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
@@ -180,6 +181,20 @@ public class DeliveryServiceTest {
         when(iDeliveryDaoMock.updateDelivery(this.deliveryTodo)).thenReturn(this.deliveryTodo);
         DeliveryDTO deliveryDTO = this.deliveryService.assignDelivery(this.deliveryTodo.getId(), coursier.getId());
         assertEquals(this.deliveryTodo.toDTO(), deliveryDTO);
+    }
+
+    @Test
+    public void replaceOrderTest() throws UnknownDeliveryException, UnknownCoursierException {
+        when(iCoursierDaoMock.findCoursierById(coursier.getId())).thenReturn(Optional.of(coursier));
+        when(iCoursierDaoMock.updateCoursier(coursier)).thenReturn(coursier);
+        when(iDeliveryDaoMock.findDeliveryById(deliveryTodo.getId())).thenReturn(Optional.of(deliveryTodo));
+        when(iDeliveryDaoMock.updateDelivery(deliveryTodo)).thenReturn(deliveryTodo);
+        String reasonType = "Accident";
+        String reasonContent = "Accident de la route sur la rue Evariste Galois";
+        CancelDataDTO cancelData = new CancelDataDTO(reasonType, reasonContent, coursier.getId(), deliveryTodo.getId());
+        assertFalse(deliveryTodo.cancel);
+        DeliveryDTO deliveryAfterReplace = this.deliveryService.replaceOrder(cancelData);
+        assertTrue(deliveryAfterReplace.cancel);
     }
 
 }

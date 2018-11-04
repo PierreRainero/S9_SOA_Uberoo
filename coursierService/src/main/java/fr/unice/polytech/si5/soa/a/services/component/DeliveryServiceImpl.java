@@ -1,8 +1,10 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
-import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
-import fr.unice.polytech.si5.soa.a.communication.OrderDelivered;
-import fr.unice.polytech.si5.soa.a.communication.PaymentConfirmation;
+import fr.unice.polytech.si5.soa.a.communication.DTO.CancelDataDTO;
+import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.communication.message.CourseCancelMessage;
+import fr.unice.polytech.si5.soa.a.communication.message.OrderDelivered;
+import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
@@ -123,5 +125,29 @@ public class DeliveryServiceImpl implements IDeliveryService {
         coursier.addDelivery(delivery);
         this.coursierDao.updateCoursier(coursier);
         return this.deliveryDao.updateDelivery(delivery).toDTO();
+    }
+
+    @Override
+    public DeliveryDTO replaceOrder(CancelDataDTO courseCancelMessage) throws UnknownDeliveryException, UnknownCoursierException {
+        Integer deliveryId = courseCancelMessage.getDeliveryId();
+        Optional<Delivery> deliveryWrapped = this.deliveryDao.findDeliveryById(deliveryId);
+        if (deliveryWrapped.isPresent()) {
+            Integer coursierId = courseCancelMessage.getCoursierId();
+            Optional<Coursier> coursierWrapped = this.coursierDao.findCoursierById(coursierId);
+            if (coursierWrapped.isPresent()) {
+                Delivery delivery = deliveryWrapped.get();
+                Coursier coursier = coursierWrapped.get();
+                coursier.removeDelivery(delivery);
+                delivery.setCancel(true);
+                coursierDao.updateCoursier(coursier);
+                deliveryDao.updateDelivery(delivery);
+                messageProducer.sendMessage(courseCancelMessage.createCourseCancelMessage());
+                return delivery.toDTO();
+            } else {
+                throw new UnknownCoursierException(coursierId.toString());
+            }
+        } else {
+            throw new UnknownDeliveryException(deliveryId);
+        }
     }
 }

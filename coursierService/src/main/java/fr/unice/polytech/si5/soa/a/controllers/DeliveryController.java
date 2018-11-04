@@ -1,7 +1,8 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
-import fr.unice.polytech.si5.soa.a.communication.DeliveryDTO;
-import fr.unice.polytech.si5.soa.a.communication.NewOrder;
+import fr.unice.polytech.si5.soa.a.communication.message.CourseCancelMessage;
+import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.communication.message.NewOrder;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,10 +52,15 @@ public class DeliveryController {
             method = RequestMethod.PUT,
             consumes = {"application/JSON; charset=UTF-8"},
             produces = {"application/JSON; charset=UTF-8"})
-    public ResponseEntity<?> chooseDelivery(@RequestParam("coursierId") Integer coursierId,
-                                            @PathVariable("deliveryId") Integer deliveryId) {
+    public ResponseEntity<?> updateDelivery(@RequestParam("coursierId") Integer coursierId,
+                                            @PathVariable("deliveryId") Integer deliveryId,
+                                            @RequestBody CourseCancelMessage courseCancelMessage) {
         try{
-            return ResponseEntity.ok(this.deliveryService.assignDelivery(deliveryId,coursierId));
+            if (courseCancelMessage.isNull()) {
+                return ResponseEntity.ok(this.deliveryService.assignDelivery(deliveryId, coursierId));
+            } else {
+                return ResponseEntity.ok(this.deliveryService.replaceOrder(courseCancelMessage.createCancelDataDTO()));
+            }
         }catch (Exception e){
             logger.error(e.getMessage(), e);
             return ResponseEntity.status(404).body(e.getMessage());

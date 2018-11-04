@@ -1,14 +1,12 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
-import fr.unice.polytech.si5.soa.a.communication.CoursierDto;
+import fr.unice.polytech.si5.soa.a.communication.DTO.CoursierDTO;
 import fr.unice.polytech.si5.soa.a.communication.CoursierStatistics;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
-import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
-import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveriesCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.ICoursierService;
@@ -33,7 +31,7 @@ public class CoursierServiceImpl implements ICoursierService {
     private IRestaurantDao restaurantDao;
 
     @Override
-    public CoursierDto getCoursier(Integer idCoursier) throws UnknownCoursierException {
+    public CoursierDTO getCoursier(Integer idCoursier) throws UnknownCoursierException {
         Optional<Coursier> coursierWrapped = this.coursierDao.findCoursierById(idCoursier);
         if (coursierWrapped.isPresent()){
             return coursierWrapped.get().toDto();

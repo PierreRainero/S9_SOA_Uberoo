@@ -1,6 +1,6 @@
 package fr.unice.polytech.si5.soa.a.entities;
 
-import fr.unice.polytech.si5.soa.a.communication.RestaurantDto;
+import fr.unice.polytech.si5.soa.a.communication.DTO.RestaurantDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -30,7 +30,7 @@ public class Restaurant implements Serializable {
     public Restaurant() {
     }
 
-    public RestaurantDto toDto() {
-        return new RestaurantDto(id, longitude, latitude);
+    public RestaurantDTO toDto() {
+        return new RestaurantDTO(id, longitude, latitude);
     }
 }
