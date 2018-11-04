@@ -44,7 +44,7 @@ public class RestaurantOrder implements Serializable {
 	@Setter(NONE)
 	private int id;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	private List<Meal> meals = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
