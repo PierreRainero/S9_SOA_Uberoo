@@ -1,7 +1,5 @@
 package fr.unice.polytech.si5.soa.a.communication.message;
 
-import fr.unice.polytech.si5.soa.a.entities.Coursier;
-
 import java.util.Date;
 
 /**
