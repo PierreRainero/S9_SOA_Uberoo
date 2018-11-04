@@ -64,7 +64,7 @@ public class MealServiceImpl implements IMealService {
 		}
 		
 		MealDTO result = mealDao.addMeal(mealToInsert).toDTO();
-		NewMeal message = new NewMeal(result, restaurantWrapped.get().getName(), restaurantWrapped.get().getRestaurantAddress(), result.getPrice());
+		NewMeal message = new NewMeal(result, restaurantWrapped.get().getName(), restaurantWrapped.get().getRestaurantAddress());
 		producer.sendMessage(message);
 		
 		return result;
