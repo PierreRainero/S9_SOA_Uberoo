@@ -33,6 +33,6 @@ public class NewOrder extends Message {
 	}
 
 	public DeliveryDTO createDelivery() {
-		return new DeliveryDTO(id, address, false, new RestaurantDTO(restaurantId));
+		return new DeliveryDTO(-1, address, false, new RestaurantDTO(restaurantId));
 	}
 }

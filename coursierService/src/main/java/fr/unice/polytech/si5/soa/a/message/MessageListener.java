@@ -29,7 +29,8 @@ public class MessageListener {
 
     private CountDownLatch latch = new CountDownLatch(3);
 
-    @KafkaListener(topics = {"${coursier.topic.name}"}, containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = {"${message.topic.name}","${coursier.topic.name}"}, containerFactory =
+            "kafkaListenerContainerFactory")
     public void listenMessage(String message) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
