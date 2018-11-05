@@ -25,7 +25,7 @@ echo "As Gail, I can browse the food catalogue by categories so that I can immed
 echo "Press any key to continue..."
 read
 # Récupère tous les plats qui ont le tag 'Asian' :
-curl -X GET --silent "http://$orderService/meals?tags=Asian" > temp/2/4_resultOfMealsResearch.txt
+curl -X GET --silent "http://$orderService/meals?tag=Asian" > temp/2/4_resultOfMealsResearch.txt
 echo "Result (temp/2/4_resultOfMealsResearch.txt):"
 cat temp/2/4_resultOfMealsResearch.txt
 echo "Press any key to continue..."
