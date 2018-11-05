@@ -99,7 +99,7 @@ public class MessageListener {
     }
 
     public void listenNewOrder(NewOrder message) {
-        System.out.println("Received new order for coursier: " + message.getId());
+        System.out.println("Received new order from restaurant : " + message.getRestaurantName());
         DeliveryDTO deliveryDTO = message.createDelivery();
         deliveryService.addDelivery(deliveryDTO);
     }

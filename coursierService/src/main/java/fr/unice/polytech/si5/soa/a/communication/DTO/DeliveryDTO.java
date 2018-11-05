@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.communication.DTO;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +15,7 @@ import lombok.ToString;
  * @author PierreRainero
  */
 @Data
-@EqualsAndHashCode(exclude = {"id", "coursier", "restaurant"})
+@EqualsAndHashCode(exclude = {"id", "coursier", "restaurant", "food"})
 @ToString()
 public class DeliveryDTO implements Serializable {
     /**
@@ -32,22 +33,15 @@ public class DeliveryDTO implements Serializable {
     private boolean coursierGetPaid = false;
     private CoursierDTO coursier;
     public Boolean cancel = false;
+    private List<String> food;
 
     public DeliveryDTO() {
         // Default constructor for Jackson databinding
     }
 
-    public DeliveryDTO(int id, String deliveryAddress, boolean state, RestaurantDTO restaurant) {
-        this.id = id;
-        this.deliveryAddress = deliveryAddress;
-        this.state = state;
+    public DeliveryDTO(String address, List<String> food, RestaurantDTO restaurant) {
+        this.deliveryAddress = address;
+        this.food = food;
         this.restaurant = restaurant;
-    }
-
-    public DeliveryDTO(int id, String deliveryAddress, boolean state, Double latitude, Double longitude, RestaurantDTO restaurant, CoursierDTO coursier) {
-        this(id, deliveryAddress, state, restaurant);
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.coursier = coursier;
     }
 }

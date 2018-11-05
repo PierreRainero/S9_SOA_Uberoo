@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.controllers;
 
 import fr.unice.polytech.si5.soa.a.communication.DTO.CancelDataDTO;
 import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.communication.DTO.RestaurantDTO;
 import fr.unice.polytech.si5.soa.a.communication.message.NewOrder;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
@@ -88,6 +89,14 @@ public class DeliveryControllerTest {
         delivery.setCoursierGetPaid(false);
         delivery.setCoursier(coursier);
 
+        String restaurantName = "Macdonald";
+        String restaurantAddress = "4 rue de la malbouffe";
+
+        RestaurantDTO restaurantDTO = new RestaurantDTO(restaurantName, restaurantAddress);
+
+
+        delivery.setRestaurant(restaurantDTO.createRestaurant());
+
         deliveryDone = new Delivery();
         deliveryDone.setDeliveryAddress(ADDRESS);
         deliveryDone.setState(true);
@@ -108,7 +117,8 @@ public class DeliveryControllerTest {
         deliveryOver10.setCoursier(coursier);
 
         order = new NewOrder();
-        order.setId(8);
+        order.setRestaurantName(restaurantName);
+        order.setRestaurantAddress(restaurantAddress);
         order.setAddress(ADDRESS);
         order.setFood(Arrays.asList("Sushi", "Maki"));
         order.setType("Sushi");
@@ -208,7 +218,7 @@ public class DeliveryControllerTest {
         ArgumentCaptor<Integer> captor2 = ArgumentCaptor.forClass(Integer.class);
         verify(deliveryServiceMock, times(1)).assignDelivery(captor.capture(), captor2.capture());
         verifyNoMoreInteractions(deliveryServiceMock);
-        assertEquals(captor.getValue().intValue(), delivery.getId());
+        assertEquals(captor.getValue(), delivery.getId());
         assertEquals(captor2.getValue(), coursier.getId());
     }
 

@@ -27,10 +27,16 @@ public class Restaurant implements Serializable {
     @Column(name = "latitude")
     private Double latitude;
 
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "address")
+    private String address;
+
     public Restaurant() {
     }
 
     public RestaurantDTO toDto() {
-        return new RestaurantDTO(id, longitude, latitude);
+        return new RestaurantDTO(id, longitude, latitude, name, address);
     }
 }
