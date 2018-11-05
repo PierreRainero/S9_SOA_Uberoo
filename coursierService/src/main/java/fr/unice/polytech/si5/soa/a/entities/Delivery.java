@@ -9,6 +9,9 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -66,8 +69,8 @@ public class Delivery implements Serializable {
     @Column(name = "delivery_date")
     private Date deliveryDate;
 
-    @Column(name = "food")
-    @ElementCollection(targetClass = String.class)
+    @Fetch(FetchMode.SELECT)
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> food = new ArrayList<>();
 
     public Delivery() {
