@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @Primary
 @Service("CoursierService")
 public class CoursierServiceImpl implements ICoursierService {
-
     @Autowired
     private ICoursierDao coursierDao;
 
@@ -73,4 +72,9 @@ public class CoursierServiceImpl implements ICoursierService {
         coursierStatistics.setSpeed(speed);
         return coursierStatistics;
     }
+
+	@Override
+	public CoursierDTO addCoursier(CoursierDTO coursiertoAdd) {
+		return coursierDao.addCoursier(new Coursier(coursiertoAdd)).toDto();
+	}
 }

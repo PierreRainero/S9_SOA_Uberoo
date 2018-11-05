@@ -80,6 +80,7 @@ public class Delivery implements Serializable {
     public Delivery(DeliveryDTO data) {
         this.deliveryAddress = data.getDeliveryAddress();
         this.food = data.getFood();
+        creationDate = data.getCreationDate();
     }
 
     public DeliveryDTO toDTO() {

@@ -28,20 +28,6 @@ public class DeliveryController {
     private IDeliveryService deliveryService;
 
     @RequestMapping(value = "",
-            method = RequestMethod.POST,
-            consumes = {"application/JSON; charset=UTF-8"},
-            produces = {"application/JSON; charset=UTF-8"})
-    public ResponseEntity<?> addOrder(@RequestBody NewOrder order) {
-        DeliveryDTO delivery = order.createDelivery();
-        try {
-			return ResponseEntity.ok(deliveryService.addDelivery(delivery));
-		} catch (UnknownRestaurantException e) {
-			logger.error(e.getMessage(), e);
-            return ResponseEntity.status(404).body(e.getMessage());
-		}
-    }
-
-    @RequestMapping(value = "",
             method = RequestMethod.PUT,
             consumes = {"application/JSON; charset=UTF-8"},
             produces = {"application/JSON; charset=UTF-8"})

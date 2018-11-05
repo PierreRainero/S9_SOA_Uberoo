@@ -12,6 +12,7 @@ import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
+import fr.unice.polytech.si5.soa.a.exceptions.NoAvailableCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
@@ -146,7 +147,7 @@ public class DeliveryServiceTest {
     }
 
     //@Test
-    public void addDelivery() throws UnknownRestaurantException {
+    public void addDelivery() throws UnknownRestaurantException, NoAvailableCoursierException {
     	when(iDeliveryDaoMock.addDelivery(any())).thenReturn(deliveryTodo);
     	when(restaurantDaoMock.findRestaurant(anyString(), anyString())).thenReturn(Optional.of(restaurant));
         DeliveryDTO returnedDelivery = deliveryService.addDelivery(deliveryTodo.toDTO());

@@ -140,24 +140,6 @@ public class DeliveryControllerTest {
     }
 
     @Test
-    public void addDeliveryTest() throws Exception, UnknownRestaurantException {
-        when(deliveryServiceMock.addDelivery(any(DeliveryDTO.class))).thenReturn(delivery.toDTO());
-        mockMvc.perform(post(BASE_URI)
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(order)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
-
-        ArgumentCaptor<DeliveryDTO> captor = ArgumentCaptor.forClass(DeliveryDTO.class);
-        verify(deliveryServiceMock, times(1)).addDelivery(captor.capture());
-        verifyNoMoreInteractions(deliveryServiceMock);
-
-        DeliveryDTO captorValue = captor.getValue();
-        assertNotNull(captorValue);
-        assertEquals(captorValue, delivery.toDTO());
-    }
-
-    @Test
     public void updateDeliveryStateCorrectly() throws Exception {
         when(deliveryServiceMock.updateDelivery(any(DeliveryDTO.class))).thenReturn(deliveryDone.toDTO());
 

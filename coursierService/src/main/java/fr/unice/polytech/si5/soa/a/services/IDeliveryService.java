@@ -8,6 +8,7 @@ import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
 import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
+import fr.unice.polytech.si5.soa.a.exceptions.NoAvailableCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
@@ -18,7 +19,7 @@ import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
  * @author		PierreRainero
  */
 public interface IDeliveryService {
-	DeliveryDTO addDelivery(DeliveryDTO deliveryToAdd) throws UnknownRestaurantException;
+	DeliveryDTO addDelivery(DeliveryDTO deliveryToAdd) throws UnknownRestaurantException, NoAvailableCoursierException;
 	DeliveryDTO updateDelivery(DeliveryDTO deliveryToUpdate) throws UnknownCoursierException, UnknownDeliveryException;
 	List<DeliveryDTO> getDeliveriesToDo();
     List<DeliveryDTO> getDeliveriesToDo(Double latitude, Double longitude);

@@ -1,6 +1,8 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
-import fr.unice.polytech.si5.soa.a.exceptions.EmptyDeliveriesCoursierException;
+import fr.unice.polytech.si5.soa.a.communication.DTO.CoursierDTO;
+import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
+import fr.unice.polytech.si5.soa.a.communication.message.NewOrder;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.ICoursierService;
@@ -9,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,12 +21,19 @@ import javax.ws.rs.QueryParam;
 @RestController
 @RequestMapping("/coursiers")
 public class CoursierController {
-
     private static Logger logger = LogManager.getLogger(DeliveryController.class);
 
     @Autowired
     private ICoursierService coursierService;
 
+    @RequestMapping(value = "",
+            method = RequestMethod.POST,
+            consumes = {"application/JSON; charset=UTF-8"},
+            produces = {"application/JSON; charset=UTF-8"})
+    public ResponseEntity<?> addOrder(@RequestBody CoursierDTO coursier) {
+        return ResponseEntity.ok(coursierService.addCoursier(coursier));
+    }
+    
     @RequestMapping(value = "/{idCoursier}",
             method = RequestMethod.GET,
             produces = {"application/JSON; charset=UTF-8"})

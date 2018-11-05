@@ -14,6 +14,9 @@ restaurant_id=$(grep -Po '"id": *\K[^,]*' temp/0/1_restaurantCreated.txt | head 
 # Create a ramen meal POST /restaurants/{restaurantId}/meals
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Ramen\",\"price\":3,\"ingredients\":[\"pork\"],\"tags\":[\"Asian\"]}" "http://$restaurant/restaurants/$restaurant_id/meals" > temp/0/2_mealCreated.txt
 sleep 2
+# Create a coursier POST /coursiers
+curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Jamie\",\"accountNumber\":\"FR89 3704 0044 0532 0130 00\",\"latitude\":0.0, \"longitude\":0.0}" "http://$coursierservice/coursiers" > temp/0/22_coursierCreated.txt
+sleep 2
 # ************** Scenario **************
 echo "*******1- As Bob, a hungry student, I browse the food catalogue offered by Uberoo"
 echo "Press any key to continue..."

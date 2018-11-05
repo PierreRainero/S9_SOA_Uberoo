@@ -12,6 +12,7 @@ import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
+import fr.unice.polytech.si5.soa.a.exceptions.NoAvailableCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
@@ -50,14 +51,20 @@ public class DeliveryServiceImpl implements IDeliveryService {
     private MessageProducer messageProducer;
 
     @Override
-    public DeliveryDTO addDelivery(DeliveryDTO deliveryToAdd) throws UnknownRestaurantException {
+    public DeliveryDTO addDelivery(DeliveryDTO deliveryToAdd) throws UnknownRestaurantException, NoAvailableCoursierException {
     	Delivery delivery = new Delivery(deliveryToAdd);
     	Optional<Restaurant> restaurantWrapped = restaurantDao.findRestaurant(deliveryToAdd.getRestaurant().getName(), deliveryToAdd.getRestaurant().getAddress());
     	if(!restaurantWrapped.isPresent()) {
         	throw new UnknownRestaurantException("Cant find restaurant");
         }
         delivery.setRestaurant(restaurantWrapped.get());
-    	
+        
+        Optional<Coursier> coursierWrapped = coursierDao.getNearestCoursier(delivery.getDeliveryAddress());
+        if(!coursierWrapped.isPresent()) {
+        	throw new NoAvailableCoursierException("Cant find coursier near to the delivery address");
+        }
+        delivery.setCoursier(coursierWrapped.get());
+        
     	return deliveryDao.addDelivery(delivery).toDTO();
     }
 

@@ -8,6 +8,7 @@ import fr.unice.polytech.si5.soa.a.communication.message.NewOrder;
 import fr.unice.polytech.si5.soa.a.communication.message.NewRestaurant;
 import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
+import fr.unice.polytech.si5.soa.a.exceptions.NoAvailableCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
@@ -124,7 +125,7 @@ public class MessageListener {
         DeliveryDTO deliveryDTO = message.createDelivery();
         try {
 			deliveryService.addDelivery(deliveryDTO);
-		} catch (UnknownRestaurantException e) {
+		} catch (UnknownRestaurantException | NoAvailableCoursierException e) {
 			logger.error("Problem while treating new restaurant message " + e.getMessage());
 		}
     }

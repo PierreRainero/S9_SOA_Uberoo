@@ -51,6 +51,11 @@ public class Coursier {
 
     public Coursier() {
     }
+    
+    public Coursier(CoursierDTO data) {
+    	name = data.getName();
+    	accountNumber = data.getAccountNumber();
+    }
 
     public CoursierDTO toDto() {
         CoursierDTO coursierDTO = new CoursierDTO();
