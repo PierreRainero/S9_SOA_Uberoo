@@ -1,5 +1,6 @@
 package fr.unice.polytech.si5.soa.a.controllers;
 
+import fr.unice.polytech.si5.soa.a.communication.FeedbackDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +77,22 @@ public class RestaurantController {
 			return ResponseEntity.status(404).body(e.getMessage());
 		}
 	}
+
+    @RequestMapping(value = "/{restaurantId}/meals/{mealId}/feedbacks",
+            method = RequestMethod.POST,
+            consumes = {HEADERS},
+            produces = {HEADERS})
+    public ResponseEntity<?> addFeedback(@PathVariable("restaurantId") String restaurantId,
+                                         @PathVariable("mealId") String mealId, @RequestBody FeedbackDTO feedback) {
+        int convertedId = Integer.parseInt(restaurantId);
+
+        try {
+            return ResponseEntity.ok(mealService.addFeedback(feedback, Integer.parseInt(mealId)));
+        } catch (UnknowMealException e) {
+            logger.error(e.getMessage(), e);
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
 
 	@RequestMapping(value = "/",
 			method = RequestMethod.GET,
