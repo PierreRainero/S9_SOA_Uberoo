@@ -1,5 +1,5 @@
-/*
- * Copyright 2011-2018 GatlingCorp (https://gatling.io)
+/**
+ * Copyright 2011-2018 GatlingCorp (http://gatling.io)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package computerdatabase.advanced
 
 import io.gatling.core.Predef._
@@ -66,8 +65,8 @@ class AdvancedSimulationStep04 extends Simulation {
         .formParam("company", "37"))
   }
 
-  val httpProtocol = http
-    .baseUrl("http://computer-database.gatling.io")
+  val httpConf = http
+    .baseURL("http://computer-database.gatling.io")
     .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
     .doNotTrackHeader("1")
     .acceptLanguageHeader("en-US,en;q=0.5")
@@ -78,7 +77,7 @@ class AdvancedSimulationStep04 extends Simulation {
   val admins = scenario("Admins").exec(Search.search, Browse.browse, Edit.edit)
 
   setUp(
-    users.inject(rampUsers(10) during (10 seconds)),
-    admins.inject(rampUsers(2) during (10 seconds))
-  ).protocols(httpProtocol)
+    users.inject(rampUsers(10) over (10 seconds)),
+    admins.inject(rampUsers(2) over (10 seconds))
+  ).protocols(httpConf)
 }
