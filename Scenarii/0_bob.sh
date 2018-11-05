@@ -1,4 +1,3 @@
-# FIXME: Step5 is not ready (coursierService)
 # -- Hostnames ---
 orderService="localhost:9555"
 restaurant="localhost:9777"

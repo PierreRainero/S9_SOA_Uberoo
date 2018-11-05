@@ -9,11 +9,11 @@ echo "--- Creating context ... ---"
 
 # Create gaile
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"lastName\":\"Oho\",\"firstName\":\"Gail\"}" "http://$orderService/users" > temp/6/0_gailId.txt
-gail_id=$(grep -Po '"id": *\K[^,]*' temp/1/0_gailId.txt | head -1)
+gail_id=$(grep -Po '"id": *\K[^,]*' temp/6/0_gailId.txt | head -1)
 
 # Create a restaurant
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Asiakeo\",\"restaurantAddress\":\"407 ch. de l'oued\",\"meals\":[]}" "http://$restaurant/restaurants" > temp/6/1_restaurantCreated.txt
-restaurant_id=$(grep -Po '"id": *\K[^,]*' temp/1/1_restaurantCreated.txt | head -1)
+restaurant_id=$(grep -Po '"id": *\K[^,]*' temp/6/1_restaurantCreated.txt | head -1)
 
 # Create a ramen meal POST /restaurants/{restaurantId}/meals
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Ramen\",\"price\":3,\"ingredients\":[\"pork\"],\"tags\":[\"Asian\"]}" "http://$restaurant/restaurants/$restaurant_id/meals" > temp/6/2_mealCreated.txt
@@ -21,7 +21,7 @@ sleep 2
 
 # Récupère les restaurants disponibles
 curl -X GET --silent "http://$orderService/restaurants" > temp/6/3_resultOfRestaurants.txt
-restau_id=$(grep -Po '"id": *\K[^,]*' temp/1/3_resultOfRestaurants.txt | tail -1)
+restau_id=$(grep -Po '"id": *\K[^,]*' temp/6/3_resultOfRestaurants.txt | tail -1)
 
 # Récupère tous les plats d'un restaurant spécifique
 curl -X GET --silent "http://$orderService/restaurants/$restau_id/meals" > temp/6/4_resultOfMeals.txt
