@@ -1,1 +1,1 @@
-{"id":1,"name":"Jamie","latitude":null,"longitude":null,"accountNumber":null}
+{"id":1,"name":"Jamie","latitude":0.0,"longitude":0.0,"accountNumber":null}
