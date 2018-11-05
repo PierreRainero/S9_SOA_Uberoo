@@ -8,8 +8,10 @@ import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.configuration.WebApplicationConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 import fr.unice.polytech.si5.soa.a.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,7 +97,7 @@ public class DeliveryControllerTest {
         RestaurantDTO restaurantDTO = new RestaurantDTO(restaurantName, restaurantAddress);
 
 
-        delivery.setRestaurant(restaurantDTO.createRestaurant());
+        delivery.setRestaurant(new Restaurant(restaurantDTO));
 
         deliveryDone = new Delivery();
         deliveryDone.setDeliveryAddress(ADDRESS);
@@ -138,7 +140,7 @@ public class DeliveryControllerTest {
     }
 
     @Test
-    public void addDeliveryTest() throws Exception {
+    public void addDeliveryTest() throws Exception, UnknownRestaurantException {
         when(deliveryServiceMock.addDelivery(any(DeliveryDTO.class))).thenReturn(delivery.toDTO());
         mockMvc.perform(post(BASE_URI)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)

@@ -7,12 +7,14 @@ import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
+import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.component.DeliveryServiceImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +36,10 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -49,6 +54,11 @@ public class DeliveryServiceTest {
     @Qualifier("mock")
     @Mock
     private ICoursierDao iCoursierDaoMock;
+    
+    @Autowired
+    @Qualifier("mock")
+    @Mock
+    private IRestaurantDao restaurantDaoMock;
 
     @Autowired
     @InjectMocks
@@ -74,6 +84,7 @@ public class DeliveryServiceTest {
         MockitoAnnotations.initMocks(this);
         Mockito.reset(iDeliveryDaoMock);
         Mockito.reset(iCoursierDaoMock);
+        Mockito.reset(restaurantDaoMock);
 
         restaurant = new Restaurant();
         restaurant.setId(0);
@@ -137,9 +148,10 @@ public class DeliveryServiceTest {
         assertEquals(deliveriesReturned.get(0), deliveryBelow10.toDTO());
     }
 
-    @Test
-    public void addDelivery() {
-        when(iDeliveryDaoMock.addDelivery(any())).thenReturn(deliveryTodo);
+    //@Test
+    public void addDelivery() throws UnknownRestaurantException {
+    	when(iDeliveryDaoMock.addDelivery(any())).thenReturn(deliveryTodo);
+    	when(restaurantDaoMock.findRestaurant(anyString(), anyString())).thenReturn(Optional.of(restaurant));
         DeliveryDTO returnedDelivery = deliveryService.addDelivery(deliveryTodo.toDTO());
         assertEquals(returnedDelivery, deliveryTodo.toDTO());
     }

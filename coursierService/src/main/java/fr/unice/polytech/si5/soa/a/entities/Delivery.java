@@ -77,7 +77,6 @@ public class Delivery implements Serializable {
     public Delivery(DeliveryDTO data) {
         this.deliveryAddress = data.getDeliveryAddress();
         this.food = data.getFood();
-        this.restaurant = data.getRestaurant().createRestaurant();
     }
 
     public DeliveryDTO toDTO() {

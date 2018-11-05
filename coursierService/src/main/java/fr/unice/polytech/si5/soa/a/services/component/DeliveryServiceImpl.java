@@ -7,13 +7,17 @@ import fr.unice.polytech.si5.soa.a.communication.message.OrderDelivered;
 import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
+import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
+import fr.unice.polytech.si5.soa.a.entities.Restaurant;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
+import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
 import fr.unice.polytech.si5.soa.a.utils.Geoposition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -33,19 +37,28 @@ import java.util.stream.Collectors;
 @Primary
 @Service("DeliveryService")
 public class DeliveryServiceImpl implements IDeliveryService {
-
     @Autowired
     private IDeliveryDao deliveryDao;
 
     @Autowired
     private ICoursierDao coursierDao;
+    
+    @Autowired
+    private IRestaurantDao restaurantDao;
 
     @Autowired
     private MessageProducer messageProducer;
 
     @Override
-    public DeliveryDTO addDelivery(DeliveryDTO deliveryToAdd) {
-        return deliveryDao.addDelivery(new Delivery(deliveryToAdd)).toDTO();
+    public DeliveryDTO addDelivery(DeliveryDTO deliveryToAdd) throws UnknownRestaurantException {
+    	Delivery delivery = new Delivery(deliveryToAdd);
+    	Optional<Restaurant> restaurantWrapped = restaurantDao.findRestaurant(deliveryToAdd.getRestaurant().getName(), deliveryToAdd.getRestaurant().getAddress());
+    	if(!restaurantWrapped.isPresent()) {
+        	throw new UnknownRestaurantException("Cant find restaurant");
+        }
+        delivery.setRestaurant(restaurantWrapped.get());
+    	
+    	return deliveryDao.addDelivery(delivery).toDTO();
     }
 
     @Override

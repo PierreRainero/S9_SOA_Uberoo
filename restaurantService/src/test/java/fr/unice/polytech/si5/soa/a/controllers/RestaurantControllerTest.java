@@ -174,6 +174,18 @@ public class RestaurantControllerTest {
 	     Integer mealId = mealIdCaptor.getValue();
 	     assertEquals(new Integer(2), mealId);
 	}
+
+	@Test
+	public void getAllRestaurantsUsingHTTPGet() throws Exception {
+		List<RestaurantDTO> resultMocked = new ArrayList<>();
+		resultMocked.add(asianRestaurant.toDTO());
+		when(restaurantServiceMock.getAllRestaurants()).thenReturn(resultMocked);
+
+		mockMvc.perform(get(BASE_URI+"/")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+		).andExpect(status().isOk())
+				.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8));
+	}
 	
 	@Test
 	public void searchFeedbackForNonExistingMealUsingHTTPPost() throws Exception {

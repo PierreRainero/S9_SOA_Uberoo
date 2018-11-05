@@ -5,10 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
 import fr.unice.polytech.si5.soa.a.communication.message.Message;
 import fr.unice.polytech.si5.soa.a.communication.message.NewOrder;
+import fr.unice.polytech.si5.soa.a.communication.message.NewRestaurant;
 import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
+import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,9 @@ public class MessageListener {
     private static Logger logger = LogManager.getLogger(MessageListener.class);
     @Autowired
     private IDeliveryService deliveryService;
+    
+    @Autowired
+    private IRestaurantService restaurantService;
 
     private CountDownLatch latch = new CountDownLatch(3);
 
@@ -83,10 +90,24 @@ public class MessageListener {
                     e.printStackTrace();
                 }
                 break;
+            case "NEW_RESTAURANT":
+                NewRestaurant newRestaurant = null;
+                try {
+                	newRestaurant = objectMapper.readValue(message, NewRestaurant.class);
+                	listenNewRestaurant(newRestaurant);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             default:
                 break;
         }
         latch.countDown();
+    }
+    
+    public void listenNewRestaurant(NewRestaurant newRestaurant){
+    	System.out.println("Received new restaurant for coursier");
+    	restaurantService.addRestaurant(newRestaurant.createRestaurant());
     }
 
     public void listenPaymentConfirmation(PaymentConfirmation message) {
@@ -101,7 +122,11 @@ public class MessageListener {
     public void listenNewOrder(NewOrder message) {
         System.out.println("Received new order from restaurant : " + message.getRestaurantName());
         DeliveryDTO deliveryDTO = message.createDelivery();
-        deliveryService.addDelivery(deliveryDTO);
+        try {
+			deliveryService.addDelivery(deliveryDTO);
+		} catch (UnknownRestaurantException e) {
+			logger.error("Problem while treating new restaurant message " + e.getMessage());
+		}
     }
 
     public CountDownLatch getLatch() {
