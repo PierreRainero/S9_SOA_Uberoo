@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import fr.unice.polytech.si5.soa.a.communication.MealDTO;
 import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
 import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.ProcessPayment;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
@@ -132,7 +133,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public RestaurantOrderDTO deliverOrder(String restaurantName, String restaurantAddres, String deliveryAddress, List<String> meals, Date validationDate) throws UnknowOrderException, UnknowRestaurantException, UnknowMealException {
+	public RestaurantOrderDTO deliverOrder(String restaurantName, String restaurantAddres, String deliveryAddress, List<String> meals, Date validationDate, String account, double amount) throws UnknowOrderException, UnknowRestaurantException, UnknowMealException {
 		Restaurant restaurant = checkAndFindRestaurant(restaurantName, deliveryAddress);
 		List<Meal> mealAsObjects = createMealsList(meals, restaurant);
 		
@@ -143,12 +144,12 @@ public class OrderServiceImpl implements IOrderService {
 		
 		RestaurantOrder order = orderWrapped.get();
 		order.setState(OrderState.DELIVERED);
+		RestaurantOrderDTO result = orderDao.updateOrder(order).toDTO();
 		
-		// TODO
-		// message = PROCESS_PAYMENT
-		// producer.sendMessage(message);
+		ProcessPayment message = new ProcessPayment(account, amount);
+		producer.sendMessage(message);
 		
-		return orderDao.updateOrder(order).toDTO();
+		return result;
 	}
 
 }

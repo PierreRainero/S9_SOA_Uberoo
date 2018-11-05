@@ -19,7 +19,8 @@ public interface IOrderService {
 	RestaurantOrderDTO addOrder(RestaurantOrderDTO orderToAdd, List<String> meals, String restaurantName, String restaurantAddress) throws UnknowRestaurantException, UnknowMealException;
 	
 	RestaurantOrderDTO updateOrder(RestaurantOrderDTO orderToUpdate) throws UnknowOrderException;
-	RestaurantOrderDTO deliverOrder(String restaurantName, String restaurantAddres, String deliveryAddress, List<String> meals, Date validationDate) throws UnknowOrderException, UnknowRestaurantException, UnknowMealException;
+	RestaurantOrderDTO deliverOrder(String restaurantName, String restaurantAddres, String deliveryAddress, List<String> meals,
+			Date validationDate, String account, double amount) throws UnknowOrderException, UnknowRestaurantException, UnknowMealException;
 	
 	List<RestaurantOrderDTO> getOrdersToDo(int restaurantId) throws UnknowRestaurantException;
 }

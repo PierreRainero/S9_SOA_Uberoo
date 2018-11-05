@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -156,7 +157,7 @@ public class MessageListenerTest {
 	
 	@Test
 	public void handleOrderDeliveredMessage() throws Exception {
-		when(orderServiceMock.deliverOrder(anyString(), anyString(), anyString(), anyList(), any(Date.class))).thenReturn(new RestaurantOrderDTO());
+		when(orderServiceMock.deliverOrder(anyString(), anyString(), anyString(), anyList(), any(Date.class), anyString(), anyDouble())).thenReturn(new RestaurantOrderDTO());
 		
 		messageListener.listenOrderDelivered(orderDelivered);
 		
@@ -164,7 +165,9 @@ public class MessageListenerTest {
 		ArgumentCaptor<String> restaurantAddressCaptor = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<String> deliveryAddressCaptor = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<Date> dateCaptor = ArgumentCaptor.forClass(Date.class);
-		verify(orderServiceMock, times(1)).deliverOrder(restaurantNameCaptor.capture(), restaurantAddressCaptor.capture(), deliveryAddressCaptor.capture(), listOfStringCaptor.capture(), dateCaptor.capture());
+		ArgumentCaptor<String> accountCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<Double> amountCaptor = ArgumentCaptor.forClass(Double.class);
+		verify(orderServiceMock, times(1)).deliverOrder(restaurantNameCaptor.capture(), restaurantAddressCaptor.capture(), deliveryAddressCaptor.capture(), listOfStringCaptor.capture(), dateCaptor.capture(), accountCaptor.capture(), amountCaptor.capture());
 		
 		String restaurantName = restaurantNameCaptor.getValue();
 		assertEquals(RESTAURANT_NAME, restaurantName);
