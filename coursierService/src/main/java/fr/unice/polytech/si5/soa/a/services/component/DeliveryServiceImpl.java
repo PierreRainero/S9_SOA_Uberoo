@@ -2,7 +2,6 @@ package fr.unice.polytech.si5.soa.a.services.component;
 
 import fr.unice.polytech.si5.soa.a.communication.DTO.CancelDataDTO;
 import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
-import fr.unice.polytech.si5.soa.a.communication.message.CourseCancelMessage;
 import fr.unice.polytech.si5.soa.a.communication.message.OrderDelivered;
 import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
@@ -11,14 +10,9 @@ import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
 import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
-import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
-import fr.unice.polytech.si5.soa.a.exceptions.NoAvailableCoursierException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
-import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
+import fr.unice.polytech.si5.soa.a.exceptions.*;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
-import fr.unice.polytech.si5.soa.a.services.IRestaurantService;
 import fr.unice.polytech.si5.soa.a.utils.Geoposition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -84,12 +78,14 @@ public class DeliveryServiceImpl implements IDeliveryService {
         coursier.updateDelivery(delivery);
         delivery.setState(deliveryToUpdate.isState());
         delivery.setDeliveryDate(new Date());
-	    OrderDelivered orderDelivered = new OrderDelivered()
-                .addAddress(delivery.getDeliveryAddress())
-                .addDate(new Date())
-                .addDeliveryId(delivery.getId())
-                .addAccount(coursier.getAccountNumber());
-
+	    OrderDelivered orderDelivered = new OrderDelivered();
+        orderDelivered.setAddress(delivery.getDeliveryAddress());
+        orderDelivered.setDate(new Date());
+        orderDelivered.setDeliveryId(delivery.getId());
+        orderDelivered.setAccount(coursier.getAccountNumber());
+        orderDelivered.setFood(delivery.getFood());
+        orderDelivered.setRestaurantName(delivery.getRestaurant().getName());
+        orderDelivered.setRestaurantAddress(delivery.getRestaurant().getAddress());
         messageProducer.sendMessage(orderDelivered);
         coursierDao.updateCoursier(coursier);
         return deliveryDao.updateDelivery(delivery).toDTO();

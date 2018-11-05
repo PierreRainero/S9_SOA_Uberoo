@@ -53,9 +53,10 @@ echo "*******4- The restaurant can consult the list of meals to prepare, and sta
 curl -X GET --silent "http://$restaurant/restaurants/$restau_id/orders/" > temp/7/6_pendingOrders.txt
 echo "Press any key to continue..."
 read
-
 echo "*******5- A coursier is assigned to my order, and deliver it on the campus"
 curl -X GET --silent "http://$coursierservice/deliveries" > temp/7/7_pendingDeliveries.txt
+echo "Pending deliveries:\n"
+cat temp/7/7_pendingDeliveries.txt
 echo "Press any key to continue..."
 read
 echo "*******6- Later, the coursier just delivered the order"
@@ -64,6 +65,11 @@ sed -i 's/"state":false/"state":true/g' temp/7/8_delivered_delivery.txt
 json=$(cat temp/7/8_delivered_delivery.txt)
 json=${json:1: -1}
 curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "$json" "http://$coursierservice/deliveries/" > temp/7/9_delivered_delivery_response.txt
+echo "Press any key to continue..."
+read
 echo "*******7- The order is not to do anymore"
 curl -X GET --silent "http://$coursierservice/deliveries" > temp/7/10_pendingDeliveries.txt
+cat temp/7/10_pendingDeliveries.txt
+echo "Press any key to finish..."
+read
 # **********************************************************************
