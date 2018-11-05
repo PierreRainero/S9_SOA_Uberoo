@@ -26,4 +26,12 @@ public interface IUserDao {
 	 * @return the user wrapped in an {@link Optional} if the user exists, Optional.empty() otherwise
 	 */
 	Optional<User> findUserById(int userId);
+	
+	/**
+	 * Find an user using his lastname and his firstname
+	 * @param userFirstName firstname of the searched user
+	 * @param userLastName lastname of the searched user
+	 * @return the user wrapped in an {@link Optional} if the user exists, Optional.empty() otherwise
+	 */
+	Optional<User> findUserByName(String userFirstName, String userLastName);
 }

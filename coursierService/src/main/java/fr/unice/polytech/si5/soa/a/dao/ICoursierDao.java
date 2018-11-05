@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface ICoursierDao {
 	Coursier addCoursier(Coursier coursier);
+	Optional<Coursier> findCoursierByName(String name);
     Optional<Coursier> findCoursierById(Integer idCoursier);
     Coursier updateCoursier(Coursier coursier);
     Optional<Coursier> getNearestCoursier(String address);

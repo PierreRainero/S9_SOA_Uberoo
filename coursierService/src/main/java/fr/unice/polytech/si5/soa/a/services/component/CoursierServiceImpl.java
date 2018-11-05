@@ -75,6 +75,11 @@ public class CoursierServiceImpl implements ICoursierService {
 
 	@Override
 	public CoursierDTO addCoursier(CoursierDTO coursiertoAdd) {
+		Optional<Coursier> existingCoursier = coursierDao.findCoursierByName(coursiertoAdd.getName());
+		if(existingCoursier.isPresent()) {
+			return existingCoursier.get().toDto();
+		}
+		
 		return coursierDao.addCoursier(new Coursier(coursiertoAdd)).toDto();
 	}
 }

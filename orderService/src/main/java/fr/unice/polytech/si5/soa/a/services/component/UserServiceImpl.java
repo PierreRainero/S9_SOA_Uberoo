@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,11 @@ public class UserServiceImpl implements IUserService {
 	 * {@inheritDoc}
 	 */
 	public UserDTO addUser(UserDTO user) {
+		Optional<User> existingUser = userDao.findUserByName(user.getFirstName(), user.getLastName());
+		if(existingUser.isPresent()) {
+			return existingUser.get().toDTO();
+		}
+		
 		return userDao.addUser(new User(user)).toDTO();
 	}
 }

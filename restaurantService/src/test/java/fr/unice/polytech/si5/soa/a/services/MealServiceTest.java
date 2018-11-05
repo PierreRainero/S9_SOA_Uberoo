@@ -113,6 +113,7 @@ public class MealServiceTest {
 	@Test
 	public void addMealWithNonExistingRestaurant() throws Exception {
 		when(restaurantDaoMock.findRestaurantById(anyInt())).thenReturn(Optional.empty());
+		when(mealDaoMock.findMealByNameForRestaurant(anyString(), any(Restaurant.class))).thenReturn(Optional.empty());
 
 		assertThrows(UnknowRestaurantException.class, () -> {
 			mealService.addMeal(ramen.toDTO(), asianRestaurant.getId());

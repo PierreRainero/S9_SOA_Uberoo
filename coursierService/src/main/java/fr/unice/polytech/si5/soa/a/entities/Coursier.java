@@ -55,6 +55,8 @@ public class Coursier {
     public Coursier(CoursierDTO data) {
     	name = data.getName();
     	accountNumber = data.getAccountNumber();
+    	latitude = data.getLatitude();
+    	longitude = data.getLongitude();
     }
 
     public CoursierDTO toDto() {

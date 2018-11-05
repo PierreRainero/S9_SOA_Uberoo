@@ -57,6 +57,7 @@ public class MealDaoImpl implements IMealDao {
 
 	@Override
 	public Meal addMeal(Meal meal) {
+		
 		Session session = sessionFactory.getCurrentSession();
 
 		try {

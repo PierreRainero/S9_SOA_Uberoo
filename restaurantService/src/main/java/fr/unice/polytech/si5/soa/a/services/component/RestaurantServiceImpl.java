@@ -44,11 +44,18 @@ public class RestaurantServiceImpl implements IRestaurantService {
 
 	@Override
 	public RestaurantDTO addRestaurant(RestaurantDTO restaurant) {
-		RestaurantDTO result = restaurantDao.addRestaurant(new Restaurant(restaurant)).toDTO();
-		NewRestaurant message = new NewRestaurant(result);
-		producer.sendMessage(message);
+		Optional<Restaurant> existingRestaurant = restaurantDao.findRestaurant(restaurant.getName(), restaurant.getRestaurantAddress());
 		
-		return result;
+		if(existingRestaurant.isPresent()) {
+			return existingRestaurant.get().toDTO();
+		}else {
+			RestaurantDTO result = restaurantDao.addRestaurant(new Restaurant(restaurant)).toDTO();
+			
+			NewRestaurant message = new NewRestaurant(result);
+			producer.sendMessage(message);
+			
+			return result;
+		}
 	}
 
 	@Override

@@ -80,6 +80,7 @@ public class Meal implements Serializable {
 	public Meal(MealDTO mealDatas) {
 		this.name = mealDatas.getName();
 		this.tags = mealDatas.getTags();
+		this.price = mealDatas.getPrice();
 	}
 	
 	/**

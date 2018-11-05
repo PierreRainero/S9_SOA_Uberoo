@@ -2,7 +2,6 @@ package fr.unice.polytech.si5.soa.a.dao.component;
 
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
-import fr.unice.polytech.si5.soa.a.entities.Delivery;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -89,5 +88,24 @@ public class CoursierDaoImpl implements ICoursierDao {
         }else {
         	return Optional.of(res.get(0));
         }
+	}
+
+	@Override
+	public Optional<Coursier> findCoursierByName(String name) {
+		Session session = sessionFactory.getCurrentSession();
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<Coursier> criteria = builder.createQuery(Coursier.class);
+		Root<Coursier> root =  criteria.from(Coursier.class);
+		criteria.select(root).where(
+				builder.and(
+						builder.equal(root.get("name"), name)
+						));
+		Query<Coursier> query = session.createQuery(criteria);
+		
+		try {
+			return Optional.of(query.getSingleResult());
+		}catch(Exception e) {
+			return Optional.empty();
+		}
 	}
 }
