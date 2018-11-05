@@ -14,18 +14,22 @@ public class RestaurantDTO implements Serializable {
     private Integer id;
     private Double latitude;
     private Double longitude;
+    private String name;
+    private String address;
 
     public RestaurantDTO() {
     }
 
-    public RestaurantDTO(Integer id) {
-        this.id = id;
+    public RestaurantDTO(String restaurantName, String restaurantAddress) {
+        this.name = restaurantName;
+        this.address = restaurantAddress;
     }
 
-    public RestaurantDTO(Integer id, Double latitude, Double longitude) {
-        this(id);
-        this.latitude = latitude;
+    public RestaurantDTO(Integer id, Double longitude, Double latitude, String name, String address) {
+        this(name, address);
+        this.id = id;
         this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public Restaurant createRestaurant() {
@@ -38,6 +42,12 @@ public class RestaurantDTO implements Serializable {
         }
         if (longitude != null) {
             restaurant.setLongitude(longitude);
+        }
+        if (name != null) {
+            restaurant.setName(name);
+        }
+        if (address != null) {
+            restaurant.setAddress(address);
         }
         return restaurant;
     }

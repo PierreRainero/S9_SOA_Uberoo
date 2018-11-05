@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,21 +19,22 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString()
 public class NewOrder extends Message {
-	public String address;
-	private Integer restaurantId;
-	public List<String> food;
-	public Integer id;
-	public static String messageType = "NEW_ORDER";
+    public String address;
+    private String restaurantName;
+    private String restaurantAddress;
+    public List<String> food;
+    private Date date;
+    public static String messageType = "NEW_ORDER";
 
-	/**
-	 * Default constructor
-	 */
-	public NewOrder() {
-		type = messageType;
-		// Default constructor for Jackson databinding
-	}
+    /**
+     * Default constructor
+     */
+    public NewOrder() {
+        type = messageType;
+        // Default constructor for Jackson databinding
+    }
 
-	public DeliveryDTO createDelivery() {
-		return new DeliveryDTO(-1, address, false, new RestaurantDTO(restaurantId));
-	}
+    public DeliveryDTO createDelivery() {
+        return new DeliveryDTO(address, food, new RestaurantDTO(restaurantName, restaurantAddress));
+    }
 }

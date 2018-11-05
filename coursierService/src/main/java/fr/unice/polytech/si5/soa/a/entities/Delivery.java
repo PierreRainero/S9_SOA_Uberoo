@@ -3,7 +3,9 @@ package fr.unice.polytech.si5.soa.a.entities;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -21,7 +23,7 @@ import lombok.ToString;
 @Entity
 @Data
 @Table(name = "`DELIVERY`")
-@EqualsAndHashCode(exclude = {"id", "coursier"})
+@EqualsAndHashCode(exclude = {"id", "coursier", "food"})
 @ToString()
 public class Delivery implements Serializable {
     /**
@@ -32,7 +34,7 @@ public class Delivery implements Serializable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     private Coursier coursier;
@@ -64,21 +66,25 @@ public class Delivery implements Serializable {
     @Column(name = "delivery_date")
     private Date deliveryDate;
 
+    @Column(name = "food")
+    @ElementCollection(targetClass = String.class)
+    private List<String> food = new ArrayList<>();
+
     public Delivery() {
         // Default constructor for JPA
     }
 
     public Delivery(DeliveryDTO data) {
         this.deliveryAddress = data.getDeliveryAddress();
-        this.state = data.isState();
+        this.food = data.getFood();
         this.restaurant = data.getRestaurant().createRestaurant();
-        this.coursierGetPaid = data.isCoursierGetPaid();
     }
 
     public DeliveryDTO toDTO() {
         DeliveryDTO deliveryDTO = new DeliveryDTO();
-        deliveryDTO.setId(id);
-
+        if (id != null) {
+            deliveryDTO.setId(id);
+        }
         if (deliveryAddress != null) {
             deliveryDTO.setDeliveryAddress(deliveryAddress);
         }
@@ -99,6 +105,9 @@ public class Delivery implements Serializable {
         }
         if (cancel != null) {
             deliveryDTO.setCancel(cancel);
+        }
+        if (!food.isEmpty()) {
+            deliveryDTO.setFood(food);
         }
         return deliveryDTO;
     }

@@ -20,6 +20,7 @@ echo "Press any key to continue..."
 read
 # Récupère les plats du catalogue de la catégorie "Asian" :
 curl -X GET --silent "http://$orderService/meals" > temp/0/3_resultOfCatalog.txt
+restaurant_id_for_orderService=$(grep -Po '"id": *\K[^,]*' temp/0/3_resultOfCatalog.txt | head -1)
 echo "Result (temp/0/3_resultOfCatalog.txt):"
 cat temp/0/3_resultOfCatalog.txt
 echo "Press any key to continue..."
@@ -29,7 +30,7 @@ echo "*******2- I decide to go for an asian meal, ordering a ramen soup"
 # Information complémentaire (identifiant de l'utilisateur) non nécessaire au scénario mais nécessaire pour le système :
 
 # Envoi de la commande au système et récupération de l'ETA
-curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"id\": -1, \"meals\": [ {\"name\":\"Ramen\",\"tags\":[\"Asian\"],\"restaurant\":{\"id\":1,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"}} ], \"transmitter\": { \"id\": \"$bob_id\", \"firstName\": \"Bob\", \"lastName\": \"\" }, \"deliveryAddress\": \"930 Route des Colles, 06410 Biot\", \"eta\": null, \"state\": \"WAITING\", \"restaurant\":{\"id\":1,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"} }" "http://localhost:9555/orders" > temp/0/4_orderWithETA.txt
+curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"id\": -1, \"meals\": [ {\"name\":\"Ramen\",\"tags\":[\"Asian\"],\"restaurant\":{\"id\":$restaurant_id_for_orderService,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"}} ], \"transmitter\": { \"id\": \"$bob_id\", \"firstName\": \"Bob\", \"lastName\": \"\" }, \"deliveryAddress\": \"930 Route des Colles, 06410 Biot\", \"eta\": null, \"state\": \"WAITING\", \"restaurant\":{\"id\":$restaurant_id_for_orderService,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"} }" "http://$orderService/orders" > temp/0/4_orderWithETA.txt
 echo "Result (temp/0/4_orderWithETA.txt):"
 cat temp/0/4_orderWithETA.txt
 echo "\nPress any key to continue..."

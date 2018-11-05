@@ -33,6 +33,7 @@ import java.util.*;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -81,8 +82,10 @@ public class DeliveryServiceTest {
 
         coursier = new Coursier();
         coursier.setAccountNumber("FR89 3704 0044 0532 0130 00");
+        coursier.setId(10);
 
         deliveryTodo = new Delivery();
+        deliveryTodo.setId(10);
         deliveryTodo.setDeliveryAddress(ADDRESS);
         deliveryTodo.setCoursier(coursier);
         deliveryTodo.setRestaurant(restaurant);
@@ -91,6 +94,7 @@ public class DeliveryServiceTest {
 
         deliveryDone = new Delivery();
         deliveryDone.setState(true);
+        deliveryDone.setId(11);
         deliveryDone.setDeliveryAddress(ADDRESS);
 
         deliveryBelow10 = new Delivery();
@@ -170,7 +174,6 @@ public class DeliveryServiceTest {
 
     @Test
     public void assignDelivery() throws UnknownDeliveryException, UnknownCoursierException {
-        assertNull(deliveryTodo.getCoursier().getId());
         assertNull(deliveryTodo.getCreationDate());
         when(iDeliveryDaoMock.findDeliveryById(this.deliveryTodo.getId())).thenReturn(Optional.ofNullable(this.deliveryTodo));
         when(iCoursierDaoMock.findCoursierById(this.coursier.getId())).thenReturn(Optional.ofNullable(this.coursier));
