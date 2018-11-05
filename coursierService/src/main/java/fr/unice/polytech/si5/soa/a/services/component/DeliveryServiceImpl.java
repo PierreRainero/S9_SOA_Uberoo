@@ -84,6 +84,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
         orderDelivered.setDeliveryId(delivery.getId());
         orderDelivered.setAccount(coursier.getAccountNumber());
         orderDelivered.setFood(delivery.getFood());
+        orderDelivered.setAmount(5.0);//Comission pour un coursier sous exploité
         orderDelivered.setRestaurantName(delivery.getRestaurant().getName());
         orderDelivered.setRestaurantAddress(delivery.getRestaurant().getAddress());
         messageProducer.sendMessage(orderDelivered);
