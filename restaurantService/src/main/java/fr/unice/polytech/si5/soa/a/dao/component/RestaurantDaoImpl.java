@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.dao.component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -85,6 +87,20 @@ public class RestaurantDaoImpl implements IRestaurantDao {
 		}
 
 		return restaurant;
+	}
+
+	@Override
+	public List<Restaurant> getAllRestaurants() {
+		Session session = sessionFactory.getCurrentSession();
+
+		List<Restaurant> result = new ArrayList<>();
+		try {
+			return session.createCriteria(Restaurant.class).list();
+		} catch (SQLGrammarException e) {
+			logger.error("Cannot execute query : findRestaurantByRestaurant", e);
+		}
+
+		return result;
 	}
 	
 }

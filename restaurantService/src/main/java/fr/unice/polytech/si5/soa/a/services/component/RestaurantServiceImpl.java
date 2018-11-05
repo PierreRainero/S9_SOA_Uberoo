@@ -1,5 +1,7 @@
 package fr.unice.polytech.si5.soa.a.services.component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,4 +61,15 @@ public class RestaurantServiceImpl implements IRestaurantService {
 		
 		return restaurantWrapped.get().toDTO();
 	}
+
+    @Override
+    public List<RestaurantDTO> getAllRestaurants() {
+        List<Restaurant> restaurants = restaurantDao.getAllRestaurants();
+        List<RestaurantDTO> restaurantsDTO = new ArrayList<>();
+        for (Restaurant r : restaurants) {
+            restaurantsDTO.add(r.toDTO());
+        }
+
+        return restaurantsDTO;
+    }
 }
