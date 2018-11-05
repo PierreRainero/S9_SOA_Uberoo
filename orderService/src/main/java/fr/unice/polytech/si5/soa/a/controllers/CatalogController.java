@@ -51,7 +51,6 @@ public class CatalogController {
 	
 	@RequestMapping(value = "/restaurants/{restaurantId}"+BASE_URI,
 			method = RequestMethod.GET,
-			consumes = {HEADERS},
 			produces = {HEADERS})
 	public ResponseEntity<?> findMealsByRestaurant(@PathVariable("restaurantId") String id) {
 		int convertedId = Integer.parseInt(id);
