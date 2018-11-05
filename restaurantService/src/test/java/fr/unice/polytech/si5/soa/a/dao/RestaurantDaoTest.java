@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.Session;
@@ -21,6 +22,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.entities.Restaurant;
+
+import javax.validation.constraints.Max;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TestConfiguration.class})
@@ -103,5 +106,11 @@ public class RestaurantDaoTest {
 		
 		assertTrue(restaurant.isPresent());
 		assertEquals(asianRestaurant.getId(), restaurant.get().getId());
+	}
+
+	@Test
+	public void getAllRestaurants() {
+		List<Restaurant> restaurants = restaurantDao.getAllRestaurants();
+		assertEquals(asianRestaurant.getId(), restaurants.get(0).getId());
 	}
 }
