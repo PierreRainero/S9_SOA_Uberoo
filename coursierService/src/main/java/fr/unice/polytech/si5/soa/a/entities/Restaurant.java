@@ -32,8 +32,14 @@ public class Restaurant implements Serializable {
 
     @Column(name = "address")
     private String address;
-
+    
     public Restaurant() {
+    	
+    }
+
+    public Restaurant(RestaurantDTO data) {
+    	name =  data.getName();
+    	address = data.getAddress();
     }
 
     public RestaurantDTO toDto() {

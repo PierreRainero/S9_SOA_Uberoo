@@ -3,6 +3,7 @@ package fr.unice.polytech.si5.soa.a.controllers;
 import fr.unice.polytech.si5.soa.a.communication.message.CourseCancelMessage;
 import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
 import fr.unice.polytech.si5.soa.a.communication.message.NewOrder;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,7 +33,12 @@ public class DeliveryController {
             produces = {"application/JSON; charset=UTF-8"})
     public ResponseEntity<?> addOrder(@RequestBody NewOrder order) {
         DeliveryDTO delivery = order.createDelivery();
-        return ResponseEntity.ok(deliveryService.addDelivery(delivery));
+        try {
+			return ResponseEntity.ok(deliveryService.addDelivery(delivery));
+		} catch (UnknownRestaurantException e) {
+			logger.error(e.getMessage(), e);
+            return ResponseEntity.status(404).body(e.getMessage());
+		}
     }
 
     @RequestMapping(value = "",

@@ -10,6 +10,7 @@ import fr.unice.polytech.si5.soa.a.entities.Delivery;
 import fr.unice.polytech.si5.soa.a.exceptions.CoursierDoesntGetPaidException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
+import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
 
 /**
  * Class name	IDeliveryService
@@ -17,7 +18,7 @@ import fr.unice.polytech.si5.soa.a.exceptions.UnknownDeliveryException;
  * @author		PierreRainero
  */
 public interface IDeliveryService {
-	DeliveryDTO addDelivery(DeliveryDTO deliveryToAdd);
+	DeliveryDTO addDelivery(DeliveryDTO deliveryToAdd) throws UnknownRestaurantException;
 	DeliveryDTO updateDelivery(DeliveryDTO deliveryToUpdate) throws UnknownCoursierException, UnknownDeliveryException;
 	List<DeliveryDTO> getDeliveriesToDo();
     List<DeliveryDTO> getDeliveriesToDo(Double latitude, Double longitude);
