@@ -108,7 +108,8 @@ public class MessageListener {
 		System.out.println("An order has been delivered ");
 		
 		try {
-			orderService.deliverOrder(orderDelivered.getRestaurantName(), orderDelivered.getRestaurantAddress(), orderDelivered.getDeliveryAddress(), orderDelivered.getFood(), orderDelivered.getDate());
+			orderService.deliverOrder(orderDelivered.getRestaurantName(), orderDelivered.getRestaurantAddress(), orderDelivered.getDeliveryAddress(),
+					orderDelivered.getFood(), orderDelivered.getDate(), orderDelivered.getAccount(), orderDelivered.getAmount());
 		} catch (UnknowOrderException | UnknowRestaurantException | UnknowMealException e) {
 			logger.error(e.getMessage(), e);
 		}

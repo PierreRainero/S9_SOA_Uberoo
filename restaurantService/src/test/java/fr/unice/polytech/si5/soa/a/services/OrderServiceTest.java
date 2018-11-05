@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -29,6 +30,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.unice.polytech.si5.soa.a.communication.RestaurantOrderDTO;
+import fr.unice.polytech.si5.soa.a.communication.bus.MessageProducer;
+import fr.unice.polytech.si5.soa.a.communication.bus.messages.Message;
 import fr.unice.polytech.si5.soa.a.configuration.TestConfiguration;
 import fr.unice.polytech.si5.soa.a.dao.IMealDao;
 import fr.unice.polytech.si5.soa.a.dao.IOrderDao;
@@ -61,6 +64,10 @@ public class OrderServiceTest {
 	private IMealDao mealDaoMock;
 	
 	@Autowired
+	@Mock
+	private MessageProducer messageProducerMock;
+	
+	@Autowired
 	@InjectMocks
 	private OrderServiceImpl orderService;
 	
@@ -74,6 +81,7 @@ public class OrderServiceTest {
 		Mockito.reset(orderDaoMock);
 		Mockito.reset(restaurantDaoMock);
 		Mockito.reset(mealDaoMock);
+		Mockito.reset(messageProducerMock);
 		
 		asianRestaurant = new Restaurant();
     	asianRestaurant.setName("RizRiz");
@@ -206,12 +214,14 @@ public class OrderServiceTest {
 	public void deliverAnOrder() throws Exception {
 		when(restaurantDaoMock.findRestaurant(anyString(), anyString())).thenReturn(Optional.of(asianRestaurant));
 		when(mealDaoMock.findMealByNameForRestaurant(anyString(), any(Restaurant.class))).thenReturn(Optional.of(ramen));
-		//when(orderDaoMock.findOrderWithMinimumsInfos(any(Restaurant.class), anyString(), anyList(), any(Date.class))).thenReturn(Optional.of(ramenOrder));
 		doReturn(Optional.of(ramenOrder)).when(orderDaoMock).findOrderWithMinimumsInfos(any(Restaurant.class), anyString(), anyList(), any(Date.class));
 		when(orderDaoMock.updateOrder(any(RestaurantOrder.class))).thenReturn(ramenOrder);
+		MessageProducer spy = Mockito.spy(messageProducerMock);
+		doNothing().when(spy).sendMessage(any(Message.class));
 		
 		assertEquals(OrderState.TO_PREPARE, ramenOrder.getState());
-		RestaurantOrderDTO orderReceived = orderService.deliverOrder(asianRestaurant.getName(), asianRestaurant.getRestaurantAddress(), "", ramenOrder.getMeals().stream().map(meal -> meal.getName()).collect(Collectors.toList()), ramenOrder.getValidationDate());
+		RestaurantOrderDTO orderReceived = orderService.deliverOrder(asianRestaurant.getName(), asianRestaurant.getRestaurantAddress(), "",
+				ramenOrder.getMeals().stream().map(meal -> meal.getName()).collect(Collectors.toList()), ramenOrder.getValidationDate(), "", 0);
 		assertNotNull(orderReceived);
 		assertEquals(1, orderReceived.getMeals().size());
 		assertEquals(OrderState.DELIVERED, orderReceived.getState());
@@ -225,7 +235,8 @@ public class OrderServiceTest {
 		when(orderDaoMock.updateOrder(any(RestaurantOrder.class))).thenReturn(ramenOrder);
 		
 		assertThrows(UnknowRestaurantException.class, () -> {
-			orderService.deliverOrder(asianRestaurant.getName(), asianRestaurant.getRestaurantAddress(), "", ramenOrder.getMeals().stream().map(meal -> meal.getName()).collect(Collectors.toList()), ramenOrder.getValidationDate());
+			orderService.deliverOrder(asianRestaurant.getName(), asianRestaurant.getRestaurantAddress(), "", ramenOrder.getMeals().stream().map(meal -> meal.getName()).collect(Collectors.toList()),
+					ramenOrder.getValidationDate(), "", 0);
 		});
 	}
 	
@@ -237,7 +248,8 @@ public class OrderServiceTest {
 		when(orderDaoMock.updateOrder(any(RestaurantOrder.class))).thenReturn(ramenOrder);
 		
 		assertThrows(UnknowMealException.class, () -> {
-			orderService.deliverOrder(asianRestaurant.getName(), asianRestaurant.getRestaurantAddress(), "", ramenOrder.getMeals().stream().map(meal -> meal.getName()).collect(Collectors.toList()), ramenOrder.getValidationDate());
+			orderService.deliverOrder(asianRestaurant.getName(), asianRestaurant.getRestaurantAddress(), "", ramenOrder.getMeals().stream().map(meal -> meal.getName()).collect(Collectors.toList()),
+					ramenOrder.getValidationDate(), "", 0);
 		});
 	}
 	
@@ -249,7 +261,8 @@ public class OrderServiceTest {
 		when(orderDaoMock.updateOrder(any(RestaurantOrder.class))).thenReturn(ramenOrder);
 		
 		assertThrows(UnknowOrderException.class, () -> {
-			orderService.deliverOrder(asianRestaurant.getName(), asianRestaurant.getRestaurantAddress(), "", ramenOrder.getMeals().stream().map(meal -> meal.getName()).collect(Collectors.toList()), ramenOrder.getValidationDate());
+			orderService.deliverOrder(asianRestaurant.getName(), asianRestaurant.getRestaurantAddress(), "", ramenOrder.getMeals().stream().map(meal -> meal.getName()).collect(Collectors.toList()),
+					ramenOrder.getValidationDate(), "", 0);
 		});
 	}
 }
