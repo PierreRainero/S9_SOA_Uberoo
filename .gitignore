@@ -34,3 +34,5 @@ local.properties
 .texlipse
 __pycache__
 venv
+# Load testing
+loadTesting/results/
