@@ -4,7 +4,7 @@ restaurant="localhost:9777"
 coursierservice="localhost:9888"
 # -- Context ---
 echo "--- Creating context... ---"
-# Creating gaile bob
+# Creating gail
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"lastName\":\"Oho\",\"firstName\":\"Gail\"}" "http://$orderService/users" > temp/1/0_gailId.txt
 gail_id=$(grep -Po '"id": *\K[^,]*' temp/1/0_gailId.txt | head -1)
 # Create a restaurant POST /restaurants
