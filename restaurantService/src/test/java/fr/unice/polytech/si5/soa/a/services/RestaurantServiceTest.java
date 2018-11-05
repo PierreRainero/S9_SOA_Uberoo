@@ -9,6 +9,8 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -97,6 +99,17 @@ public class RestaurantServiceTest {
 		RestaurantDTO restaurant = restaurantService.findRestaurantById(asianRestaurant.getId());
 		assertNotNull(restaurant);
 		assertEquals(asianRestaurant.getName(), restaurant.getName());
+	}
+
+	@Test
+	public void getAllRestaurants() throws Exception  {
+		List<Restaurant> liste = new ArrayList<>();
+		liste.add(asianRestaurant);
+		when(restaurantDaoMock.getAllRestaurants()).thenReturn(liste);
+
+		List<RestaurantDTO> restaurants = restaurantService.getAllRestaurants();
+		assertEquals(1, restaurants.size());
+		assertEquals(asianRestaurant.getName(), restaurants.get(0).getName());
 	}
 	
 	@Test

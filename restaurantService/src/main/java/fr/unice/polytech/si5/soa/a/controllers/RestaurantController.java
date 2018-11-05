@@ -76,4 +76,13 @@ public class RestaurantController {
 			return ResponseEntity.status(404).body(e.getMessage());
 		}
 	}
+
+	@RequestMapping(value = "/",
+			method = RequestMethod.GET,
+			consumes = {HEADERS},
+			produces = {HEADERS})
+	public ResponseEntity<?> getAllRestaurants() {
+		return ResponseEntity.ok(restaurantService.getAllRestaurants());
+	}
+
 }
