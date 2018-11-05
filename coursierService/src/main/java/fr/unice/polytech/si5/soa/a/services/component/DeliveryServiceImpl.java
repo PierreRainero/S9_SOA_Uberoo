@@ -79,7 +79,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
         delivery.setState(deliveryToUpdate.isState());
         delivery.setDeliveryDate(new Date());
 	    OrderDelivered orderDelivered = new OrderDelivered();
-        orderDelivered.setAddress(delivery.getDeliveryAddress());
+        orderDelivered.setDeliveryAddress(delivery.getDeliveryAddress());
         orderDelivered.setDate(new Date());
         orderDelivered.setDeliveryId(delivery.getId());
         orderDelivered.setAccount(coursier.getAccountNumber());

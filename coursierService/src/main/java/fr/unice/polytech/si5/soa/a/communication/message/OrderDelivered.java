@@ -17,7 +17,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString()
 public class OrderDelivered extends Message {
-	public String address;
 	public static String messageType = "ORDER_DELIVERED";
 	private Date date;
 	private Integer deliveryId;
