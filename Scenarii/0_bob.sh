@@ -21,7 +21,7 @@ echo "*******1- As Bob, a hungry student, I browse the food catalogue offered by
 echo "Press any key to continue..."
 read
 # Récupère les plats du catalogue de la catégorie "Asian" :
-curl -X GET --silent "http://$orderService/meals" > temp/0/3_resultOfCatalog.txt
+curl -X GET --silent "http://$orderService/meals?tag=Asian" > temp/0/3_resultOfCatalog.txt
 restaurant_id_for_orderService=$(grep -Po '"id": *\K[^,]*' temp/0/3_resultOfCatalog.txt | head -1)
 echo "Result (temp/0/3_resultOfCatalog.txt):"
 cat temp/0/3_resultOfCatalog.txt
