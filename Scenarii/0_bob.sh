@@ -59,15 +59,3 @@ echo "Press any key to finish..."
 read
 
 # **********************************************************************
-#echo "--- Cleaning context... ---"
-# -- Clean context --
-#docker exec soa_database mysql -uroot -pteama  -e "USE uberoo_orderService; DELETE FROM UBEROOORDER_MEAL; DELETE FROM UBEROOORDER; DELETE FROM Meal_tags; DELETE FROM MEAL; DELETE FROM USER;"
-#echo "--- Context cleaned ---"
-
-
-### OLD
-#docker exec soa_database mysql -uroot -pteama -e \
-#"USE uberoo_orderService; INSERT INTO RESTAURANT (name, restaurantAddress) VALUES ('Asiakeo','690 Route de Grasse, 06600 Antibes');
-#INSERT INTO MEAL (name,price,restaurant_id) VALUES ('Ramen',3.0,(SELECT id FROM RESTAURANT WHERE name = 'Asiakeo'));
-#INSERT INTO Meal_tags VALUES ((SELECT id FROM MEAL WHERE name = 'Ramen'), 'Asian');"
-#echo "--- Context created ---"

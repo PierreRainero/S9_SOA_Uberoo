@@ -96,11 +96,11 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 		}
 
 		UberooOrder order = orderWrapped.get();
-		order.setState(orderToUpdate.getState());
 		
 		if(orderToUpdate.getState().equals(OrderState.VALIDATED) && order.getState().equals(OrderState.WAITING)) {
 			order.setValidationDate(new Date());
 		}
+		order.setState(orderToUpdate.getState());
 
 		order = orderDao.updateOrder(order);
 		OrderDTO result = order.toDTO();

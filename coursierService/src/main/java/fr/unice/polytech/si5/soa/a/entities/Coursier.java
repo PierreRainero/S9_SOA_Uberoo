@@ -73,6 +73,9 @@ public class Coursier {
         if (longitude != null) {
             coursierDTO.setLongitude(longitude);
         }
+        if(accountNumber!=null){
+            coursierDTO.setAccountNumber(accountNumber);
+        }
         return coursierDTO;
     }
 
