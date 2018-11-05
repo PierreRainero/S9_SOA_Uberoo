@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 echo "As Jamie, I want to know the orders that will have to be delivered around me, so that I can choose one and go to the restaurant to begin the course."
-# -- HostNames ---
+# WIP:-- HostNames ---
 coursierservice="localhost:9888"
 orderService="localhost:9555"
 restaurant="localhost:9777"

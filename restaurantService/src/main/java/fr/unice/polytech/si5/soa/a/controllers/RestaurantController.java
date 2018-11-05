@@ -63,7 +63,6 @@ public class RestaurantController {
 	
 	@RequestMapping(value = "/{restaurantId}/meals/{mealId}/feedbacks",
 			method = RequestMethod.GET,
-			consumes = {HEADERS},
 			produces = {HEADERS})
 	public ResponseEntity<?> getFeedbacks(
 			@PathVariable("restaurantId") String restaurantId,
