@@ -26,5 +26,9 @@ curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"
 cat temp/8/3_feedbackGiven.txt
 echo "\nPress any key to continue..."
 read
+curl -X GET --silent "http://$restaurant/restaurants/$restaurant_id/meals/$meal_id/feedbacks" > temp/8/4_feedbacksForMealRamen.txt
+cat temp/8/4_feedbacksForMealRamen.txt
+echo "\nPress any key to continue..."
+read
 
 sleep 2
