@@ -71,7 +71,7 @@ read
 
 # Récupère les commandes qui doivent etre délivré autour de Jamie
 echo "Récupère les commandes qui doivent être livrées"
-curl -X GET --silent "http://$coursierservice/deliveries/?latitude=10.0&longitude=10.0" > temp/10/7_resultOfDeliveries.txt
+curl -X GET --silent "http://$coursierservice/deliveries/?latitude=9.7&longitude=9.7" > temp/10/7_resultOfDeliveries.txt
 echo "Result (temp/10/7_resultOfDeliveries.txt):"
 cat temp/10/7_resultOfDeliveries.txt
 delivery_id=$(grep -Po '"id": *\K[^,]*' temp/10/7_resultOfDeliveries.txt | head -1)

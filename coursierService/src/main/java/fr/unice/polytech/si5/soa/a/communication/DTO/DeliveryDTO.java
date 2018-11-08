@@ -43,7 +43,7 @@ public class DeliveryDTO implements Serializable {
         this.deliveryAddress = address;
         this.food = food;
         this.restaurant = restaurant;
-        this.latitude = 10.;
-        this.longitude = 10.;
+        this.latitude = 9.7;
+        this.longitude = 9.7;
     }
 }

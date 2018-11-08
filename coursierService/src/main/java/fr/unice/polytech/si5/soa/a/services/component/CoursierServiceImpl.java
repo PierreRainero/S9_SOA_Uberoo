@@ -67,8 +67,6 @@ public class CoursierServiceImpl implements ICoursierService {
         CoursierStatistics coursierStatistics = new CoursierStatistics();
         double speed = 0.0;
         int deliveriesCount = deliveries.size();
-        logger.info(deliveries);
-        logger.info(restaurant);
         double distance;
         for (Delivery delivery : deliveries) {
             distance = Geoposition.distance(restaurant.getLatitude(), delivery.getLatitude(), restaurant.getLongitude(), delivery.getLongitude());
