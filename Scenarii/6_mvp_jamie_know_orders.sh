@@ -73,7 +73,7 @@ read
 
 # Récupère les commandes qui doivent etre délivré autour de Jamie
 echo "Récupère les commandes qui doivent etre livrées"
-curl -X GET --silent "http://$coursierservice/deliveries/?latitude=10.0&longitude=10.0" > temp/6/7_resultOfDeliveries.txt
+curl -X GET --silent "http://$coursierservice/deliveries/?latitude=9.7&longitude=9.7" > temp/6/7_resultOfDeliveries.txt
 echo "Result (temp/6/7_resultOfDeliveries.txt):"
 cat temp/6/7_resultOfDeliveries.txt
 echo "Press any key to continue..."
