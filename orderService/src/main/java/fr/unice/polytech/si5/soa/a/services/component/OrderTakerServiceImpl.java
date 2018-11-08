@@ -69,7 +69,6 @@ public class OrderTakerServiceImpl implements IOrderTakerService {
 		order.setRestaurant(restaurantWrapped.get());
 		findMeals(order, orderToAdd.getMeals());
 		order.calculateEta();
-
 		return orderDao.addOrder(order).toDTO();
 	}
 

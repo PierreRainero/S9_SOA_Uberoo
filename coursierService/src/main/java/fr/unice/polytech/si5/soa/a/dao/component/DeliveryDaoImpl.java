@@ -92,7 +92,6 @@ public class DeliveryDaoImpl implements IDeliveryDao {
         Root<Delivery> root = criteria.from(Delivery.class);
         criteria.select(root).where(builder.equal(root.get("state"), Boolean.FALSE));
         Query<Delivery> query = session.createQuery(criteria);
-
         return query.getResultList();
     }
 

@@ -81,6 +81,8 @@ public class Delivery implements Serializable {
         this.deliveryAddress = data.getDeliveryAddress();
         this.food = data.getFood();
         creationDate = data.getCreationDate();
+        this.latitude = data.getLatitude();
+        this.longitude = data.getLongitude();
     }
 
     public DeliveryDTO toDTO() {

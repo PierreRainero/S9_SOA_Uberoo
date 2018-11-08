@@ -4,6 +4,7 @@ import fr.unice.polytech.si5.soa.a.communication.DTO.CancelDataDTO;
 import fr.unice.polytech.si5.soa.a.communication.DTO.DeliveryDTO;
 import fr.unice.polytech.si5.soa.a.communication.message.OrderDelivered;
 import fr.unice.polytech.si5.soa.a.communication.message.PaymentConfirmation;
+import fr.unice.polytech.si5.soa.a.controllers.DeliveryController;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IDeliveryDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
@@ -14,6 +15,8 @@ import fr.unice.polytech.si5.soa.a.exceptions.*;
 import fr.unice.polytech.si5.soa.a.message.MessageProducer;
 import fr.unice.polytech.si5.soa.a.services.IDeliveryService;
 import fr.unice.polytech.si5.soa.a.utils.Geoposition;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,10 @@ import java.util.stream.Collectors;
 @Primary
 @Service("DeliveryService")
 public class DeliveryServiceImpl implements IDeliveryService {
+
+
+    private static Logger logger = LogManager.getLogger(DeliveryServiceImpl.class);
+
     @Autowired
     private IDeliveryDao deliveryDao;
 
@@ -58,7 +65,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
         	throw new NoAvailableCoursierException("Cant find coursier near to the delivery address");
         }
         delivery.setCoursier(coursierWrapped.get());
-        
+
     	return deliveryDao.addDelivery(delivery).toDTO();
     }
 

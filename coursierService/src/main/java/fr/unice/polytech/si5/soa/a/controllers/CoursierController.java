@@ -30,7 +30,7 @@ public class CoursierController {
             method = RequestMethod.POST,
             consumes = {"application/JSON; charset=UTF-8"},
             produces = {"application/JSON; charset=UTF-8"})
-    public ResponseEntity<?> addOrder(@RequestBody CoursierDTO coursier) {
+    public ResponseEntity<?> addCoursier(@RequestBody CoursierDTO coursier) {
         return ResponseEntity.ok(coursierService.addCoursier(coursier));
     }
     
