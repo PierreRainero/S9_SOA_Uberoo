@@ -40,6 +40,8 @@ public class Restaurant implements Serializable {
     public Restaurant(RestaurantDTO data) {
     	name =  data.getName();
     	address = data.getAddress();
+    	longitude = data.getLongitude();
+    	latitude = data.getLatitude();
     }
 
     public RestaurantDTO toDto() {

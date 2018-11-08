@@ -22,8 +22,8 @@ public class RestaurantDTO implements Serializable {
     public RestaurantDTO(String restaurantName, String restaurantAddress) {
         this.name = restaurantName;
         this.address = restaurantAddress;
-        this.latitude = 10.0;
-        this.longitude = 10.0;
+        this.latitude = 9.7;
+        this.longitude = 9.7;
     }
 
     public RestaurantDTO(Integer id, Double longitude, Double latitude, String name, String address) {

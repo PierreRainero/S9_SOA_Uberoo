@@ -2,6 +2,7 @@ package fr.unice.polytech.si5.soa.a.services.component;
 
 import fr.unice.polytech.si5.soa.a.communication.DTO.CoursierDTO;
 import fr.unice.polytech.si5.soa.a.communication.CoursierStatistics;
+import fr.unice.polytech.si5.soa.a.controllers.DeliveryController;
 import fr.unice.polytech.si5.soa.a.dao.ICoursierDao;
 import fr.unice.polytech.si5.soa.a.dao.IRestaurantDao;
 import fr.unice.polytech.si5.soa.a.entities.Coursier;
@@ -11,6 +12,8 @@ import fr.unice.polytech.si5.soa.a.exceptions.UnknownCoursierException;
 import fr.unice.polytech.si5.soa.a.exceptions.UnknownRestaurantException;
 import fr.unice.polytech.si5.soa.a.services.ICoursierService;
 import fr.unice.polytech.si5.soa.a.utils.Geoposition;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,9 @@ import java.util.stream.Collectors;
 @Primary
 @Service("CoursierService")
 public class CoursierServiceImpl implements ICoursierService {
+
+    private static Logger logger = LogManager.getLogger(CoursierServiceImpl.class);
+
     @Autowired
     private ICoursierDao coursierDao;
 
@@ -61,6 +67,8 @@ public class CoursierServiceImpl implements ICoursierService {
         CoursierStatistics coursierStatistics = new CoursierStatistics();
         double speed = 0.0;
         int deliveriesCount = deliveries.size();
+        logger.info(deliveries);
+        logger.info(restaurant);
         double distance;
         for (Delivery delivery : deliveries) {
             distance = Geoposition.distance(restaurant.getLatitude(), delivery.getLatitude(), restaurant.getLongitude(), delivery.getLongitude());

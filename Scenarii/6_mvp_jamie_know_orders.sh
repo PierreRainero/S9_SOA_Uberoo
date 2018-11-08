@@ -53,6 +53,7 @@ echo "Press any key to continue ..."
 read
 
 # Choisit son plat et envoie la commande
+echo "Choisit son plat"
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"id\": -1, \"meals\": [ {\"name\":\"Ramen\",\"tags\":[\"Asian\"],\"restaurant\":{\"id\":$restau_id,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"}} ], \"transmitter\": { \"id\": \"$gail_id\", \"lastName\":\"Oho\",\"firstName\":\"Gail\" }, \"deliveryAddress\": \"930 Route des Colles, 06410 Biot\", \"eta\": null, \"state\": \"WAITING\", \"restaurant\":{\"id\":$restau_id,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"} }" "http://$orderService/orders" > temp/6/5_orderWithETA.txt
 cat temp/6/5_orderWithETA.txt
 sed -i 's/WAITING/VALIDATED/g' temp/6/5_orderWithETA.txt
@@ -61,6 +62,7 @@ echo "Press any key to continue..."
 read
 
 # Envoi au système, le système poste un message dans le bus pour le restaurant :
+echo "Envoie au système"
 curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 temp/6/5_orderWithETA.txt)" "http://$orderService/orders/$order_id" > temp/6/6_validatedOrder.txt
 cat temp/6/6_validatedOrder.txt
 echo "Press any key to continue ..."
@@ -70,6 +72,7 @@ read
 # ******* Scénario *********
 
 # Récupère les commandes qui doivent etre délivré autour de Jamie
+echo "Récupère les commandes qui doivent etre livrées"
 curl -X GET --silent "http://$coursierservice/deliveries/?latitude=10.0&longitude=10.0" > temp/6/7_resultOfDeliveries.txt
 echo "Result (temp/6/7_resultOfDeliveries.txt):"
 cat temp/6/7_resultOfDeliveries.txt
