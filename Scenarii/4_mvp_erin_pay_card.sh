@@ -41,6 +41,6 @@ curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tai
 echo "Press any key to continue..."
 read
 sleep 2
-# Envoie du paiement de la commande :
+# Envoi du paiement de la commande :
 orderAmount=$(grep -Po '"price": *\K[^,]*' temp/4/6_validatedOrder.txt | tail -1)
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"account\":\"FR89 3704 0044 0532 0130 00\",\"amount\":$orderAmount, \"state\":\"SENT\"}" "http://$orderService/orders/$order_id/payments" > temp/4/7_paymentCreated.txt

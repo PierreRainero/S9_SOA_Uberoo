@@ -62,7 +62,7 @@ echo "Press any key to continue..."
 read
 
 # Envoi au système, le système poste un message dans le bus pour le restaurant :
-echo "Envoie au système"
+echo "Envoi au système"
 curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 temp/6/5_orderWithETA.txt)" "http://$orderService/orders/$order_id" > temp/6/6_validatedOrder.txt
 cat temp/6/6_validatedOrder.txt
 echo "Press any key to continue ..."
