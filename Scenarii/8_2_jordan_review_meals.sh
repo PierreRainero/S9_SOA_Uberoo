@@ -5,6 +5,7 @@ restaurant="localhost:9777"
 coursierservice="localhost:9888"
 # -- Context ---
 echo "--- Creating context... ---"
+echo ''
 # Creating Jordan
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"lastName\":\"Oui\",\"firstName\":\"Jordan\"}" "http://$orderService/users" > temp/8/0_jordanId.txt
 jordan_id=$(grep -Po '"id": *\K[^,]*' temp/8/0_jordanId.txt | head -1)
@@ -23,11 +24,19 @@ read
 
 # Choisi son plat et envoit sa commande :
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"author\": \"Jordan\", \"content\": \"Super cool de ouf\", \"meal\": {\"id\": $meal_id,\"name\":\"Ramen\",\"price\":3,\"ingredients\":[\"pork\"],\"tags\":[\"Asian\"]} }" "http://$restaurant/restaurants/$restaurant_id/meals/$meal_id/feedbacks" > temp/8/3_feedbackGiven.txt
+echo ''
+echo 'Feedback given:'
+echo ''
 cat temp/8/3_feedbackGiven.txt
+echo ''
 echo "\nPress any key to continue..."
 read
 curl -X GET --silent "http://$restaurant/restaurants/$restaurant_id/meals/$meal_id/feedbacks" > temp/8/4_feedbacksForMealRamen.txt
+echo ''
+echo 'All feedback for Ramen:'
+echo ''
 cat temp/8/4_feedbacksForMealRamen.txt
+echo ''
 echo "\nPress any key to continue..."
 read
 
