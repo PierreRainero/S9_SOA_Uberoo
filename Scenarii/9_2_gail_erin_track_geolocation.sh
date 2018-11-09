@@ -62,8 +62,8 @@ order_id=$(grep -Po '"id": *\K[^,]*' temp/9/5_orderWithETA.txt | head -1)
 echo "Press any key to continue..."
 read
 
-# Envoit au système, le système poste un message dans le bus pour le restaurant :
-echo "Envoit au système"
+# Envoi au système, le système poste un message dans le bus pour le restaurant :
+echo "Envoi au système"
 curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 temp/9/5_orderWithETA.txt)" "http://$orderService/orders/$order_id" > temp/9/6_validatedOrder.txt
 cat temp/9/6_validatedOrder.txt
 echo "Press any key to continue ..."
@@ -74,7 +74,7 @@ echo "Récupère les commandes qui doivent être livrées"
 curl -X GET --silent "http://$coursierservice/deliveries/?latitude=9.7&longitude=9.7" > temp/9/7_resultOfDeliveries.txt
 echo "Result (temp/9/7_resultOfDeliveries.txt):"
 cat temp/9/7_resultOfDeliveries.txt
-delivery_id=$(grep -Po '"id": *\K[^,]*' temp/9/7_resultOfDeliveries.txt | head -1)
+delivery_id=$(grep -Po '"id": *\K[^,]*' temp/9/7_resultOfDeliveries.txt | head -2 | tail -1)
 echo "Press any key to continue..."
 read
 

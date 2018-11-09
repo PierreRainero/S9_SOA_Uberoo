@@ -1,8 +1,10 @@
-# OK-- Hostnames ---
+# -- Hostnames ---
 orderService="localhost:9555"
 restaurant="localhost:9777"
 coursierservice="localhost:9888"
 # -- Context ---
+echo "Scenario#0: MVP Bob, a hungry student wants to order some ramen"
+echo ""
 echo "--- Creating context... ---"
 # Creating user bob
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"lastName\":\"Lenon\",\"firstName\":\"Bob\"}" "http://$orderService/users" > temp/0/0_bobId.txt
@@ -16,6 +18,8 @@ sleep 2
 # Create a coursier POST /coursiers
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Jamie\",\"accountNumber\":\"FR89 3704 0044 0532 0130 00\",\"latitude\":0.0, \"longitude\":0.0}" "http://$coursierservice/coursiers" > temp/0/22_coursierCreated.txt
 sleep 2
+echo "--- Context created ---"
+echo ""
 # ************** Scenario **************
 echo "*******1- As Bob, a hungry student, I browse the food catalogue offered by Uberoo"
 echo "Press any key to continue..."
@@ -25,17 +29,20 @@ curl -X GET --silent "http://$orderService/meals?tag=Asian" > temp/0/3_resultOfC
 restaurant_id_for_orderService=$(grep -Po '"id": *\K[^,]*' temp/0/3_resultOfCatalog.txt | head -1)
 echo "Result (temp/0/3_resultOfCatalog.txt):"
 cat temp/0/3_resultOfCatalog.txt
+echo ""
+echo ""
 echo "Press any key to continue..."
 read
 
 echo "*******2- I decide to go for an asian meal, ordering a ramen soup"
-# Information complémentaire (identifiant de l'utilisateur) non nécessaire au scénario mais nécessaire pour le système :
-
 # Envoi de la commande au système et récupération de l'ETA
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{ \"id\": -1, \"meals\": [ {\"name\":\"Ramen\",\"tags\":[\"Asian\"],\"restaurant\":{\"id\":$restaurant_id_for_orderService,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"}} ], \"transmitter\": { \"id\": \"$bob_id\", \"firstName\": \"Bob\", \"lastName\": \"\" }, \"deliveryAddress\": \"930 Route des Colles, 06410 Biot\", \"eta\": null, \"state\": \"WAITING\", \"restaurant\":{\"id\":$restaurant_id_for_orderService,\"name\":\"Asiakeo\",\"restaurantAddress\":\"690 Route de Grasse, 06600 Antibes\"} }" "http://$orderService/orders" > temp/0/4_orderWithETA.txt
+echo ""
 echo "Result (temp/0/4_orderWithETA.txt):"
 cat temp/0/4_orderWithETA.txt
-echo "\nPress any key to continue..."
+echo ""
+echo ""
+echo "Press any key to continue..."
 read
 
 echo "*******3- The system estimates the ETA (e.g., 45 mins) for the food, and I decide to accept it"
@@ -44,17 +51,30 @@ sed -i 's/WAITING/VALIDATED/g' temp/0/4_orderWithETA.txt
 order_id=$(grep -Po '"id": *\K[^,]*' temp/0/4_orderWithETA.txt | head -1)
 # Envoi au système, le système poste un message dans le bus pour le restaurant :
 curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "$(tail -1 temp/0/4_orderWithETA.txt)" "http://$orderService/orders/$order_id" > temp/0/5_validatedOrder.txt
+echo ""
+echo "Result (temp/0/5_validatedOrder.txt):"
+cat temp/0/5_validatedOrder.txt
+echo ""
+echo ""
 echo "Press any key to continue..."
 read
-sleep 2
 restau_id=$(grep -Po '"id": *\K[^,]*' temp/0/5_validatedOrder.txt | tail -1)
 echo "*******4- The restaurant can consult the list of meals to prepare, and start the cooking process"
 curl -X GET --silent "http://$restaurant/restaurants/$restau_id/orders/" > temp/0/6_pendingOrders.txt
+echo ""
+echo "Result (temp/0/6_pendingOrders.txt):"
+cat temp/0/6_pendingOrders.txt
+echo ""
+echo ""
 echo "Press any key to continue..."
 read
-
 echo "*******5- A coursier is assigned to my order, and deliver it on the campus"
 curl -X GET --silent "http://$coursierservice/deliveries" > temp/0/7_pendingDeliveries.txt
+echo ""
+echo "Result (temp/0/7_pendingDeliveries.txt):"
+cat temp/0/7_pendingDeliveries.txt
+echo ""
+echo ""
 echo "Press any key to finish..."
 read
 

@@ -2,6 +2,8 @@
 orderService="localhost:9555"
 restaurant="localhost:9777"
 coursierservice="localhost:9888"
+#######
+echo "*******As Gail or Erin, I can order my lunch from a restaurant so that the food is delivered to my place"
 # -- Context ---
 echo "--- Creating context... ---"
 # Creating gail
@@ -14,7 +16,6 @@ restaurant_id=$(grep -Po '"id": *\K[^,]*' temp/1/1_restaurantCreated.txt | head 
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Ramen\",\"price\":3,\"ingredients\":[\"pork\"],\"tags\":[\"Asian\"]}" "http://$restaurant/restaurants/$restaurant_id/meals" > temp/1/2_mealCreated.txt
 sleep 2
 # ************** Scenario **************
-echo "*******As Gail or Erin, I can order my lunch from a restaurant so that the food is delivered to my place"
 echo "Press any key to continue..."
 read
 # Récupère tous les restaurants disponible :

@@ -36,3 +36,4 @@ __pycache__
 venv
 # Load testing
 loadTesting/results/
+Scenarii/temp/**
