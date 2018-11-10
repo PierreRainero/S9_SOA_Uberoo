@@ -12,7 +12,7 @@ import lombok.ToString;
  * Class name	DeliveryDTO
  * Date			08/10/2018
  *
- * @author PierreRainero
+ * @author 		PierreRainero
  */
 @Data
 @EqualsAndHashCode(exclude = {"id", "coursier", "restaurant", "food"})
@@ -39,11 +39,12 @@ public class DeliveryDTO implements Serializable {
         // Default constructor for Jackson databinding
     }
 
-    public DeliveryDTO(String address, List<String> food, RestaurantDTO restaurant) {
+    public DeliveryDTO(String address, List<String> food, RestaurantDTO restaurant, Date creationDate) {
         this.deliveryAddress = address;
         this.food = food;
         this.restaurant = restaurant;
         this.latitude = 9.7;
         this.longitude = 9.7;
+        this.creationDate = creationDate;
     }
 }

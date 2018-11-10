@@ -35,6 +35,6 @@ public class NewOrder extends Message {
     }
 
     public DeliveryDTO createDelivery() {
-        return new DeliveryDTO(address, food, new RestaurantDTO(restaurantName, restaurantAddress));
+        return new DeliveryDTO(address, food, new RestaurantDTO(restaurantName, restaurantAddress), date);
     }
 }
