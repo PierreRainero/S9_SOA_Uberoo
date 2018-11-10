@@ -35,5 +35,5 @@ local.properties
 __pycache__
 venv
 # Load testing
-loadTesting/results/
-Scenarii/temp/**
+loadTesting/results/*
+Scenarii/temp/*

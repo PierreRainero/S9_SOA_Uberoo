@@ -5,51 +5,35 @@ import scala.concurrent.duration._
 class OrderServiceLoad extends Simulation {
 
   val httpConf = http
-    .baseURL("http://host.docker.internal:9555") // Here is the root for all relative URLs
-    .acceptHeader("text/html,application/json;q=0.9,*/*;q=0.8") // Here are the common headers
+    .baseURL("http://host.docker.internal:9555")
+    .acceptHeader("application/json;q=0.9,*/*;q=0.8")
     .doNotTrackHeader("1")
     .acceptLanguageHeader("en-US,en;q=0.5")
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0")
 
-  val headers_10 = Map("Content-Type" -> "application/json") // Note the headers specific to a given request
+  val headers_10 = Map("Content-Type" -> "application/json")
 
-  val scn = scenario("Create user and order") // A scenario is a chain of requests and pauses
-    .exec(http("request_1")
-      .get("/meals")
-      .check(status.is(200)))
-/*     .pause(7) // Note that Gatling has recorded real time pauses
-    .exec(http("request_2")
-      .get("/computers?f=macbook"))
-    .pause(2)
-    .exec(http("request_3")
-      .get("/computers/6"))
-    .pause(3)
-    .exec(http("request_4")
-      .get("/"))
-    .pause(2)
-    .exec(http("request_5")
-      .get("/computers?p=1"))
-    .pause(670 milliseconds)
-    .exec(http("request_6")
-      .get("/computers?p=2"))
-    .pause(629 milliseconds)
-    .exec(http("request_7")
-      .get("/computers?p=3"))
-    .pause(734 milliseconds)
-    .exec(http("request_8")
-      .get("/computers?p=4"))
-    .pause(5)
-    .exec(http("request_9")
-      .get("/computers/new"))
-    .pause(1)
-    .exec(http("request_10") // Here's an example of a POST request
-      .post("/computers")
-      .headers(headers_10)
-      .formParam("name", "Beautiful Computer") // Note the triple double quotes: used in Scala for protecting a whole chain of characters (no need for backslash)
-      .formParam("introduced", "2012-05-30")
-      .formParam("discontinued", "")
-      .formParam("company", "37")) */
+  val scn = scenario("Create ramen order and accept ETA")
+      .exec(http("order_ramen")
+          .post("/orders")
+          .body(RawFileBody("3_order.json")).asJSON
+          .check(jsonPath("$").saveAs("jsonResponse"))
+          .check(jsonPath("$.id").saveAs("order_id"))
+          .check(status.is(200)))
+      .exec(session => {
+        val json:String = session.attributes.get("jsonResponse").get.asInstanceOf[String].replaceFirst("WAITING", "VALIDATED")
+        session.set("json", json)
+      })
+      .exec(http("accept_ETA")
+            .put("/orders/${order_id}")
+            .body(StringBody("${json}")).asJSON
+            .check(status.is(200)))
+      //.pause(1)
 
-  setUp(scn.inject(atOnceUsers(1)).protocols(httpConf))
+  setUp(
+    scn.inject(
+      rampUsersPerSec(10) to 20 during (20 seconds) randomized,
+      )
+    ).protocols(httpConf)
 }
