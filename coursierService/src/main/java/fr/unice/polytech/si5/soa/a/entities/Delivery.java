@@ -114,6 +114,7 @@ public class Delivery implements Serializable {
         if (!food.isEmpty()) {
             deliveryDTO.setFood(food);
         }
+        deliveryDTO.setCreationDate(creationDate);
         return deliveryDTO;
     }
 }

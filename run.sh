@@ -19,10 +19,10 @@ cd Scenarii
 ./cleanContext.sh
 ./9_2_gail_erin_track_geolocation.sh
 ./cleanContext.sh
-./10_2_terry_get_statistics.sh
-./cleanContext.sh
-./11_3_terry_voucher.sh # TODO:
-./12_3_jamie_inform_issue_order.sh
-./cleanContext.sh
-./13_4_terry_emit_voucher_based_on_menu.sh # TODO:
-./14_4_gail_follow_position_jamie_real_time.sh # TODO:
+#./10_2_terry_get_statistics.sh # FIXME
+#./cleanContext.sh
+#./11_3_terry_voucher.sh # TODO:
+#./12_3_jamie_inform_issue_order.sh # FIXME
+#./cleanContext.sh
+#./13_4_terry_emit_voucher_based_on_menu.sh # TODO:
+#./14_4_gail_follow_position_jamie_real_time.sh # TODO:

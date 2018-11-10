@@ -87,7 +87,9 @@ echo "Press any key to continue..."
 read
 
 echo "Jamie inform that he can't terminate the course"
-curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"coursierId\":$jamie_id,\"deliveryId\":$delivery_id,\"reasonType\":\"Panne\",\"explanations\":\"Panne du moteur\"}" "http://$coursierservice/deliveries/$delivery_id/?coursierId=$jamie_id" > temp/12/10_resultIssue.txt
+json="{\"coursierId\":$jamie_id,\"deliveryId\":$delivery_id,\"reasonType\":\"Panne\",\"explanations\":\"Panne du moteur\"}"
+echo "$json"
+curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "$json" "http://$coursierservice/deliveries/$delivery_id/?coursierId=$jamie_id" > temp/12/10_resultIssue.txt
 cat temp/12/10_resultIssue.txt
 echo "Press any key to continue..."
 read

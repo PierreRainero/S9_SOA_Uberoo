@@ -145,7 +145,6 @@ public class DeliveryServiceImpl implements IDeliveryService {
         Coursier coursier = coursierWrapped.get();
 
         delivery.setCoursier(coursier);
-        delivery.setCreationDate(new Date());
         coursier.addDelivery(delivery);
         this.coursierDao.updateCoursier(coursier);
         return this.deliveryDao.updateDelivery(delivery).toDTO();

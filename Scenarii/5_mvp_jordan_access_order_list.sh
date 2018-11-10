@@ -30,7 +30,7 @@ read
 sleep 2
 echo "As Jordan, I want to access to the order list, so that I can prepare the meal efficiently."
 curl -X GET --silent "http://$restaurant/restaurants/$restaurant_id/orders/" > temp/5/5_pendingOrders.txt
-echo "\nPending orders (temp/1/5_orderWithETA.txt):"
+echo "\nPending orders (temp/5/5_pendingOrders.txt):"
 cat temp/5/5_pendingOrders.txt
 echo "\nPress any key to continue..."
 read
