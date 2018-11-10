@@ -89,13 +89,17 @@ docker exec soa_database mysql -uroot -pteama -e "USE uberoo_coursierService; se
 restaurant_id=$(cat temp/10/resto.txt | tail -1)
 #Jamie delivers the order
 echo "Jamie delivers the order"
-curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"restaurant\":{\"id\":$restaurant_id,\"latitude\":null,\"longitude\":null,\"name\":\"Asiakeo\",\"address\":\"407 ch. de l'oued\"},\"id\":$delivery_id,\"deliveryAddress\":\"930 Route des Colles, 06410 Biot\",\"latitude\":10.0,\"longitude\":10.0,\"creationDate\":null,\"deliveryDate\":null,\"state\":true,\"coursierGetPaid\":false,\"coursier\":{\"id\":$jamie_id,\"name\":\"Jamie\",\"latitude\":10.0,\"longitude\":10.0,\"accountNumber\":\"FR89 3704 0044 0532 0130 00\"},\"cancel\":false,\"food\":[\"Ramen\"]}" "http://$coursierservice/deliveries/" > temp/10/10_resultDeliverOrder.txt
-cat temp/10/10_resultDeliverOrder.txt
+curl -X GET --silent "http://$coursierservice/deliveries" > temp/10/10_pendingDeliveries.txt
+sed -i 's/"state":false/"state":true/g' temp/10/10_pendingDeliveries.txt
+json=$(cat temp/10/10_pendingDeliveries.txt)
+json=${json:1: -1}
+curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "$json" "http://$coursierservice/deliveries" > temp/10/11_resultDeliverOrder.txt
+cat temp/10/11_resultDeliverOrder.txt
 echo "Press any key to continue..."
 read
 
 echo "Terry wants some statistics about Jamie"
-curl -X GET --silent "http://$coursierservice/coursiers/$jamie_id/deliveries/?idRestaurant=$restaurant_id" > temp/10/11_resultStatistics.txt
-cat temp/10/11_resultStatistics.txt
+curl -X GET --silent "http://$coursierservice/coursiers/$jamie_id/deliveries/?idRestaurant=$restaurant_id" > temp/10/12_resultStatistics.txt
+cat temp/10/12_resultStatistics.txt
 echo "Press any key to continue..."
 read
