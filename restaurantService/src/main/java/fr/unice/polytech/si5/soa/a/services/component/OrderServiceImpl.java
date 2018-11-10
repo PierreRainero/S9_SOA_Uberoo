@@ -134,7 +134,7 @@ public class OrderServiceImpl implements IOrderService {
 
 	@Override
 	public RestaurantOrderDTO deliverOrder(String restaurantName, String restaurantAddres, String deliveryAddress, List<String> meals, Date validationDate, String account, double amount) throws UnknowOrderException, UnknowRestaurantException, UnknowMealException {
-		Restaurant restaurant = checkAndFindRestaurant(restaurantName, deliveryAddress);
+		Restaurant restaurant = checkAndFindRestaurant(restaurantName, restaurantAddres);
 		List<Meal> mealAsObjects = createMealsList(meals, restaurant);
 		
 		Optional<RestaurantOrder> orderWrapped = orderDao.findOrderWithMinimumsInfos(restaurant, deliveryAddress, mealAsObjects, validationDate);

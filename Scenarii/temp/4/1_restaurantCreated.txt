@@ -1,1 +1,1 @@
-{"id":27,"name":"Asiakeo","restaurantAddress":"407 ch. de l'oued"}
+{"id":6,"name":"Asiakeo","restaurantAddress":"407 ch. de l'oued"}

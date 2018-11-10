@@ -85,6 +85,8 @@ cat temp/10/9_resultTakeOrder.txt
 echo "Press any key to continue..."
 read
 
+docker exec soa_database mysql -uroot -pteama -e "USE uberoo_coursierService; select id from RESTAURANT where name = 'Asiakeo';" > temp/10/resto.txt
+restaurant_id=$(cat temp/10/resto.txt | tail -1)
 #Jamie delivers the order
 echo "Jamie delivers the order"
 curl -X PUT --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"restaurant\":{\"id\":$restaurant_id,\"latitude\":null,\"longitude\":null,\"name\":\"Asiakeo\",\"address\":\"407 ch. de l'oued\"},\"id\":$delivery_id,\"deliveryAddress\":\"930 Route des Colles, 06410 Biot\",\"latitude\":10.0,\"longitude\":10.0,\"creationDate\":null,\"deliveryDate\":null,\"state\":true,\"coursierGetPaid\":false,\"coursier\":{\"id\":$jamie_id,\"name\":\"Jamie\",\"latitude\":10.0,\"longitude\":10.0,\"accountNumber\":\"FR89 3704 0044 0532 0130 00\"},\"cancel\":false,\"food\":[\"Ramen\"]}" "http://$coursierservice/deliveries/" > temp/10/10_resultDeliverOrder.txt

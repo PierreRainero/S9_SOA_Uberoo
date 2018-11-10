@@ -1,1 +1,1 @@
-{"id":25,"name":"AmericaKo","restaurantAddress":"28 rue du gras"}
+{"id":4,"name":"AmericaKo","restaurantAddress":"28 rue du gras"}

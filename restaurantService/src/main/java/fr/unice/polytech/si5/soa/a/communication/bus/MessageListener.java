@@ -105,8 +105,9 @@ public class MessageListener {
 	}
 
 	public void listenOrderDelivered(OrderDelivered orderDelivered) {
-		System.out.println("An order has been delivered ");
-		
+		System.out.println("An order has been delivered "+orderDelivered.toString());
+		System.out.println(orderDelivered.getRestaurantName());
+		System.out.println(orderDelivered.getRestaurantAddress());
 		try {
 			orderService.deliverOrder(orderDelivered.getRestaurantName(), orderDelivered.getRestaurantAddress(), orderDelivered.getDeliveryAddress(),
 					orderDelivered.getFood(), orderDelivered.getDate(), orderDelivered.getAccount(), orderDelivered.getAmount());

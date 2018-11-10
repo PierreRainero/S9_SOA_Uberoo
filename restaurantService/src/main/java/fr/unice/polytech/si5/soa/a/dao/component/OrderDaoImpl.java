@@ -126,13 +126,14 @@ public class OrderDaoImpl implements IOrderDao {
          */
         try {
         	List<RestaurantOrder> res = query.getResultList();
-
+			System.out.println("RES: "+res.size());
         	// If there is only one result and there is no meals to control
         	if(meals.isEmpty() && res.size()==1) {
         		return Optional.of(res.get(0));
         	}
         	
         	for(RestaurantOrder tmp : res) {
+				System.out.println(tmp.toString());
         		// The number of meals doesn't match
         		if(tmp.getMeals().size() != meals.size()) {
         			continue;
@@ -142,6 +143,7 @@ public class OrderDaoImpl implements IOrderDao {
         		for(Meal meal : meals) {
         			// If one of the meals doesn't match
             		if(!tmp.getMeals().contains(meal)) {
+						System.out.println("This meal "+meal.getName()+" doesnt match");
             			isTheOne = false;
             			break;
             		}
