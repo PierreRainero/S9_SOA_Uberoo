@@ -3,6 +3,8 @@ orderService="localhost:9555"
 restaurant="localhost:9777"
 coursierservice="localhost:9888"
 # -- Context ---
+echo "Scenario#2: As Gail, I can browse the food catalogue by categories so that I can immediately identify my favorite junk food"
+echo ""
 echo "--- Creating context... ---"
 # Creating gail
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"lastName\":\"Oho\",\"firstName\":\"Gail\"}" "http://$orderService/users" > temp/2/0_gailId.txt
@@ -20,13 +22,17 @@ sleep 2
 # Create a coursier POST /coursiers
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Jamie\",\"accountNumber\":\"FR89 3704 0044 0532 0130 00\",\"latitude\":0.0, \"longitude\":0.0}" "http://$coursierservice/coursiers" > temp/2/3_coursierCreated.txt
 sleep 2
+echo "--- Context created ---"
+echo ""
 # ************** Scenario **************
-echo "As Gail, I can browse the food catalogue by categories so that I can immediately identify my favorite junk food"
+echo "*******1- As Gail, I search the list of meals for all restaurant using a tag (like a categorie)"
 echo "Press any key to continue..."
 read
-# Récupère tous les plats qui ont le tag 'Asian' :
+# Récupère tous les plats de la catégorie 'Asian' :
 curl -X GET --silent "http://$orderService/meals?tag=Asian" > temp/2/4_resultOfMealsResearch.txt
 echo "Result (temp/2/4_resultOfMealsResearch.txt):"
 cat temp/2/4_resultOfMealsResearch.txt
+echo ""
+echo ""
 echo "Press any key to continue..."
 read
