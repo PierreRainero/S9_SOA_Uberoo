@@ -78,7 +78,7 @@ echo ""
 echo "Press any key to continue..."
 read
 
-echo "*******2- As Jamie, I didn't see the order anymore"
+echo "*******3- As Jamie, I don't see the order anymore"
 echo "Press any key to continue..."
 read
 curl -X GET --silent "http://$coursierservice/deliveries" > temp/7/10_pendingDeliveries.txt
