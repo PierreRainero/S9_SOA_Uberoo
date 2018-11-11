@@ -1,4 +1,4 @@
-# OK-- Hostnames ---
+# -- Hostnames ---
 orderService="localhost:9555"
 restaurant="localhost:9777"
 coursierservice="localhost:9888"

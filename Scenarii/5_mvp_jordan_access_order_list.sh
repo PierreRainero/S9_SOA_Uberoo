@@ -1,4 +1,4 @@
-# OK-- Hostnames ---
+# -- Hostnames ---
 orderService="localhost:9555"
 restaurant="localhost:9777"
 coursierservice="localhost:9888"
@@ -16,11 +16,11 @@ restaurant_id=$(grep -Po '"id": *\K[^,]*' temp/5/1_restaurantCreated1.txt | head
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Ramen\",\"price\":3,\"ingredients\":[\"pork\"],\"tags\":[\"Asian\"]}" "http://$restaurant/restaurants/$restaurant_id/meals" > temp/5/2_mealCreated1.txt
 curl -X POST --silent -H "Content-Type:application/JSON; charset=UTF-8" -d "{\"id\":-1,\"name\":\"Maxi mega burger of the death\",\"price\":29,\"ingredients\":[\"bacon\", \"salad\"],\"tags\":[\"American\"]}" "http://$restaurant/restaurants/$restaurant_id/meals" > temp/5/2_mealCreated2.txt
 sleep 2
-curl -X GET --silent "http://$orderService/restaurants" > temp/6/3_resultOfRestaurants.txt
+curl -X GET --silent "http://$orderService/restaurants" > temp/5/0_resultOfRestaurants.txt
 restau_id_order_service=$(grep -Po '"id": *\K[^,]*' temp/5/0_resultOfRestaurants.txt | tail -1)
 echo "--- Context created ---"
 echo ""
-
+# ************** Scenario **************
 # Choisi son plat et envoit sa commande :
 echo "*******1- A client create and validate an order through the orderService"
 echo "Press any key to continue..."
