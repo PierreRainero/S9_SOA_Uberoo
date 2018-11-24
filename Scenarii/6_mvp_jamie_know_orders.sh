@@ -3,7 +3,7 @@ coursierservice="localhost:9888"
 orderService="localhost:9555"
 restaurant="localhost:9777"
 # ******** Context *********
-echo "Scenario#5: As Jamie, I want to know the orders that will have to be delivered around me, so that I can choose one and go to the restaurant to begin the course."
+echo "Scenario#6: As Jamie, I want to know the orders that will have to be delivered around me, so that I can choose one and go to the restaurant to begin the course."
 echo ""
 echo "--- Creating context... ---"
 
